@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIBELS Practice Lab - Free Early Literacy Training</title>
+    <meta name="description" content="Unlimited, open-access practice and training for fluency-based early literacy. Practice DIBELS 8 subtests for grades K-8.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">📚 DIBELS Practice Lab</h1>
+                <p class="tagline">Unlimited, open-access practice and training for fluency-based early literacy</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Welcome Section -->
+                <section class="welcome-section" id="welcome-section">
+                    <h2>Welcome to DIBELS Practice Lab</h2>
+                    <p>Practice DIBELS 8 subtests with students in grades K-8. Choose your grade level and subtest to begin.</p>
+                    
+                    <!-- Grade Selection -->
+                    <div class="grade-selection">
+                        <h3>Select Grade Level</h3>
+                        <div class="grade-buttons">
+                            <button class="grade-btn" data-grade="K">Kindergarten</button>
+                            <button class="grade-btn" data-grade="1">Grade 1</button>
+                            <button class="grade-btn" data-grade="2">Grade 2</button>
+                            <button class="grade-btn" data-grade="3">Grade 3</button>
+                            <button class="grade-btn" data-grade="4">Grade 4</button>
+                            <button class="grade-btn" data-grade="5">Grade 5</button>
+                            <button class="grade-btn" data-grade="6">Grade 6</button>
+                            <button class="grade-btn" data-grade="7">Grade 7</button>
+                            <button class="grade-btn" data-grade="8">Grade 8</button>
+                        </div>
+                    </div>
+
+                    <!-- Subtest Selection -->
+                    <div class="subtest-selection hidden" id="subtest-selection">
+                        <h3>Select Subtest</h3>
+                        <div class="subtest-buttons" id="subtest-buttons">
+                            <!-- Dynamically populated based on grade -->
+                        </div>
+                    </div>
+
+                    <!-- Practice Options -->
+                    <div class="practice-options hidden" id="practice-options">
+                        <h3>Practice Options</h3>
+                        <div class="options-grid">
+                            <label class="option-item">
+                                <input type="checkbox" id="timed-mode" checked>
+                                <span class="checkmark"></span>
+                                <span class="option-text">Timed Practice (60 seconds)</span>
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="show-timer">
+                                <span class="checkmark"></span>
+                                <span class="option-text">Show Timer</span>
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="reveal-answers">
+                                <span class="checkmark"></span>
+                                <span class="option-text">Reveal Answers</span>
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="audio-modeling">
+                                <span class="checkmark"></span>
+                                <span class="option-text">Audio Modeling</span>
+                            </label>
+                        </div>
+                        <button class="start-practice-btn" id="start-practice">Start Practice</button>
+                    </div>
+                </section>
+
+                <!-- Practice Interface -->
+                <section class="practice-section hidden" id="practice-section">
+                    <div class="practice-header">
+                        <div class="practice-info">
+                            <h2 id="practice-title">Practice Session</h2>
+                            <p id="practice-subtitle">Grade K - Letter Naming Fluency</p>
+                        </div>
+                        <div class="timer-container">
+                            <div class="timer" id="timer">60</div>
+                            <div class="timer-label">seconds</div>
+                        </div>
+                    </div>
+
+                    <div class="practice-content" id="practice-content">
+                        <!-- Content will be dynamically loaded -->
+                    </div>
+
+                    <div class="practice-controls">
+                        <button class="control-btn" id="pause-btn">Pause</button>
+                        <button class="control-btn" id="reset-btn">Reset</button>
+                        <button class="control-btn" id="new-set-btn">New Set</button>
+                        <button class="control-btn" id="back-to-menu">Back to Menu</button>
+                    </div>
+
+                    <div class="scoring-panel hidden" id="scoring-panel">
+                        <h3>Scoring</h3>
+                        <div class="score-inputs">
+                            <label>
+                                Correct Responses: 
+                                <input type="number" id="correct-responses" min="0" value="0">
+                            </label>
+                            <label>
+                                Errors: 
+                                <input type="number" id="errors" min="0" value="0">
+                            </label>
+                            <button class="control-btn" id="calculate-score">Calculate Score</button>
+                        </div>
+                        <div class="score-result" id="score-result"></div>
+                    </div>
+                </section>
+
+                <!-- Educator Mode -->
+                <section class="educator-section hidden" id="educator-section">
+                    <h2>Educator Training Mode</h2>
+                    <div class="training-modules">
+                        <div class="module-card">
+                            <h3>Administration Guide</h3>
+                            <p>Learn how to properly administer each DIBELS subtest</p>
+                            <button class="module-btn" data-module="administration">View Guide</button>
+                        </div>
+                        <div class="module-card">
+                            <h3>Scoring Practice</h3>
+                            <p>Practice scoring with sample student responses</p>
+                            <button class="module-btn" data-module="scoring">Start Practice</button>
+                        </div>
+                        <div class="module-card">
+                            <h3>Error Analysis</h3>
+                            <p>Learn to identify and analyze common student errors</p>
+                            <button class="module-btn" data-module="errors">View Examples</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 DIBELS Practice Lab. Open source educational resource.</p>
+                <div class="footer-links">
+                    <button class="footer-link" id="educator-mode-btn">Educator Mode</button>
+                    <button class="footer-link" id="accessibility-btn">Accessibility</button>
+                    <button class="footer-link" id="about-btn">About</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audio-player" preload="none"></audio>
+
+    <!-- Scripts -->
+    <script src="data/content.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/subtests.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/print.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIBELS Practice Lab - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>DIBELS Practice Lab - Test Page</h1>
+    <p>This page tests the core functionality of the DIBELS Practice Lab application.</p>
+
+    <div class="test-section">
+        <h2>Content Data Tests</h2>
+        <button class="test-button" onclick="testContentData()">Test Content Data</button>
+        <div id="content-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Timer Tests</h2>
+        <button class="test-button" onclick="testTimer()">Test Timer</button>
+        <div id="timer-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Subtest Tests</h2>
+        <button class="test-button" onclick="testSubtests()">Test Subtests</button>
+        <div id="subtest-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Audio Tests</h2>
+        <button class="test-button" onclick="testAudio()">Test Audio</button>
+        <div id="audio-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Accessibility Tests</h2>
+        <button class="test-button" onclick="testAccessibility()">Test Accessibility</button>
+        <div id="accessibility-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Print Tests</h2>
+        <button class="test-button" onclick="testPrint()">Test Print</button>
+        <div id="print-test-result" class="test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>All Tests</h2>
+        <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+        <div id="all-tests-result" class="test-result"></div>
+    </div>
+
+    <script src="data/content.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/subtests.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/print.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        function testContentData() {
+            const result = document.getElementById('content-test-result');
+            try {
+                // Test if content data is loaded
+                if (typeof DIBELS_CONTENT !== 'undefined') {
+                    const grades = Object.keys(DIBELS_CONTENT.gradeSubtests);
+                    const subtests = Object.keys(DIBELS_CONTENT.subtestDescriptions);
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ Content data loaded successfully</div>
+                        <div>Grades: ${grades.join(', ')}</div>
+                        <div>Subtests: ${subtests.join(', ')}</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">✗ Content data not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testTimer() {
+            const result = document.getElementById('timer-test-result');
+            try {
+                if (typeof window.practiceTimer !== 'undefined') {
+                    // Test timer functionality
+                    window.practiceTimer.setDuration(5);
+                    window.practiceTimer.start();
+                    
+                    setTimeout(() => {
+                        const timeLeft = window.practiceTimer.getTimeLeft();
+                        const isRunning = window.practiceTimer.getIsRunning();
+                        
+                        result.innerHTML = `
+                            <div class="success">✓ Timer loaded successfully</div>
+                            <div>Time left: ${timeLeft}</div>
+                            <div>Is running: ${isRunning}</div>
+                        `;
+                        
+                        window.practiceTimer.stop();
+                    }, 1000);
+                } else {
+                    result.innerHTML = '<div class="error">✗ Timer not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testSubtests() {
+            const result = document.getElementById('subtest-test-result');
+            try {
+                if (typeof window.subtestManager !== 'undefined') {
+                    // Test subtest initialization
+                    const success = window.subtestManager.initSubtest('LNF', 'K', {});
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ Subtest manager loaded successfully</div>
+                        <div>LNF initialization: ${success ? 'Success' : 'Failed'}</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">✗ Subtest manager not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testAudio() {
+            const result = document.getElementById('audio-test-result');
+            try {
+                if (typeof window.audioManager !== 'undefined') {
+                    const isSupported = window.audioManager.isSupported;
+                    const isEnabled = window.audioManager.isEnabled();
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ Audio manager loaded successfully</div>
+                        <div>Supported: ${isSupported}</div>
+                        <div>Enabled: ${isEnabled}</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">✗ Audio manager not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testAccessibility() {
+            const result = document.getElementById('accessibility-test-result');
+            try {
+                if (typeof window.accessibilityManager !== 'undefined') {
+                    const isHighContrast = window.accessibilityManager.isHighContrast;
+                    const fontSize = window.accessibilityManager.fontSize;
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ Accessibility manager loaded successfully</div>
+                        <div>High contrast: ${isHighContrast}</div>
+                        <div>Font size: ${fontSize}</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">✗ Accessibility manager not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testPrint() {
+            const result = document.getElementById('print-test-result');
+            try {
+                if (typeof window.printManager !== 'undefined') {
+                    result.innerHTML = '<div class="success">✓ Print manager loaded successfully</div>';
+                } else {
+                    result.innerHTML = '<div class="error">✗ Print manager not loaded</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        function runAllTests() {
+            const result = document.getElementById('all-tests-result');
+            result.innerHTML = '<div>Running all tests...</div>';
+            
+            setTimeout(() => {
+                testContentData();
+                testTimer();
+                testSubtests();
+                testAudio();
+                testAccessibility();
+                testPrint();
+                
+                result.innerHTML = '<div class="success">✓ All tests completed. Check individual test results above.</div>';
+            }, 100);
+        }
+
+        // Run basic tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>
