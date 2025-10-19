@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#6366f1" rx="64"/>
+  
+  <!-- Book icon -->
+  <rect x="128" y="96" width="256" height="320" fill="#ffffff" rx="16"/>
+  <rect x="128" y="96" width="256" height="40" fill="#f1f5f9" rx="16"/>
+  
+  <!-- Text lines -->
+  <rect x="160" y="160" width="192" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="180" width="160" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="200" width="176" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="220" width="144" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="240" width="168" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="260" width="152" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="280" width="184" height="8" fill="#6366f1" rx="4"/>
+  <rect x="160" y="300" width="136" height="8" fill="#6366f1" rx="4"/>
+  
+  <!-- DIBELS text -->
+  <text x="256" y="360" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#6366f1">DIBELS</text>
+  <text x="256" y="390" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#6366f1">Practice Lab</text>
+</svg>

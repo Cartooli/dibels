@@ -116,9 +116,24 @@ class DIBELSApp {
     // Setup footer links
     setupFooterLinks() {
         const aboutBtn = document.getElementById('about-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const progressBtn = document.getElementById('progress-btn');
+        
         if (aboutBtn) {
             aboutBtn.addEventListener('click', () => {
                 this.showAbout();
+            });
+        }
+        
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                this.showSettings();
+            });
+        }
+        
+        if (progressBtn) {
+            progressBtn.addEventListener('click', () => {
+                this.showProgress();
             });
         }
     }
@@ -720,6 +735,307 @@ class DIBELSApp {
         document.head.appendChild(style);
     }
 
+    // Show settings
+    showSettings() {
+        // Hide other sections
+        document.getElementById('welcome-section').classList.add('hidden');
+        document.getElementById('practice-section').classList.add('hidden');
+        document.getElementById('educator-section').classList.add('hidden');
+        document.getElementById('progress-section').classList.add('hidden');
+        
+        // Show settings section
+        document.getElementById('settings-section').classList.remove('hidden');
+        
+        // Setup settings event listeners
+        this.setupSettingsEventListeners();
+        
+        // Load current settings
+        this.loadSettings();
+    }
+
+    // Show progress
+    showProgress() {
+        // Hide other sections
+        document.getElementById('welcome-section').classList.add('hidden');
+        document.getElementById('practice-section').classList.add('hidden');
+        document.getElementById('educator-section').classList.add('hidden');
+        document.getElementById('settings-section').classList.add('hidden');
+        
+        // Show progress section
+        document.getElementById('progress-section').classList.remove('hidden');
+        
+        // Load progress data
+        this.loadProgressData();
+    }
+
+    // Setup settings event listeners
+    setupSettingsEventListeners() {
+        // Font size
+        const fontSizeSelect = document.getElementById('font-size-select');
+        if (fontSizeSelect) {
+            fontSizeSelect.addEventListener('change', (e) => {
+                this.setFontSize(e.target.value);
+            });
+        }
+
+        // High contrast
+        const highContrastToggle = document.getElementById('high-contrast-toggle');
+        if (highContrastToggle) {
+            highContrastToggle.addEventListener('change', (e) => {
+                this.toggleHighContrast(e.target.checked);
+            });
+        }
+
+        // Reduced motion
+        const reducedMotionToggle = document.getElementById('reduced-motion-toggle');
+        if (reducedMotionToggle) {
+            reducedMotionToggle.addEventListener('change', (e) => {
+                this.toggleReducedMotion(e.target.checked);
+            });
+        }
+
+        // Default timer
+        const defaultTimer = document.getElementById('default-timer');
+        if (defaultTimer) {
+            defaultTimer.addEventListener('change', (e) => {
+                this.setDefaultTimer(parseInt(e.target.value));
+            });
+        }
+
+        // Auto-save
+        const autoSaveToggle = document.getElementById('auto-save-toggle');
+        if (autoSaveToggle) {
+            autoSaveToggle.addEventListener('change', (e) => {
+                this.setAutoSave(e.target.checked);
+            });
+        }
+
+        // Sound effects
+        const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+        if (soundEffectsToggle) {
+            soundEffectsToggle.addEventListener('change', (e) => {
+                this.setSoundEffects(e.target.checked);
+            });
+        }
+
+        // Data management
+        const exportDataBtn = document.getElementById('export-data-btn');
+        const importDataBtn = document.getElementById('import-data-btn');
+        const importFile = document.getElementById('import-file');
+        const clearDataBtn = document.getElementById('clear-data-btn');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+
+        if (exportDataBtn) {
+            exportDataBtn.addEventListener('click', () => {
+                this.exportData();
+            });
+        }
+
+        if (importDataBtn) {
+            importDataBtn.addEventListener('click', () => {
+                importFile.click();
+            });
+        }
+
+        if (importFile) {
+            importFile.addEventListener('change', (e) => {
+                this.importData(e.target.files[0]);
+            });
+        }
+
+        if (clearDataBtn) {
+            clearDataBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                    this.clearAllData();
+                }
+            });
+        }
+
+        if (closeSettingsBtn) {
+            closeSettingsBtn.addEventListener('click', () => {
+                this.backToMenu();
+            });
+        }
+    }
+
+    // Settings methods
+    loadSettings() {
+        const settings = window.progressTracker.getSettings();
+        
+        // Font size
+        const fontSizeSelect = document.getElementById('font-size-select');
+        if (fontSizeSelect && settings.fontSize) {
+            fontSizeSelect.value = settings.fontSize;
+        }
+
+        // High contrast
+        const highContrastToggle = document.getElementById('high-contrast-toggle');
+        if (highContrastToggle) {
+            highContrastToggle.checked = settings.highContrast || false;
+        }
+
+        // Reduced motion
+        const reducedMotionToggle = document.getElementById('reduced-motion-toggle');
+        if (reducedMotionToggle) {
+            reducedMotionToggle.checked = settings.reducedMotion || false;
+        }
+
+        // Default timer
+        const defaultTimer = document.getElementById('default-timer');
+        if (defaultTimer) {
+            defaultTimer.value = settings.defaultTimer || 60;
+        }
+
+        // Auto-save
+        const autoSaveToggle = document.getElementById('auto-save-toggle');
+        if (autoSaveToggle) {
+            autoSaveToggle.checked = settings.autoSave !== false;
+        }
+
+        // Sound effects
+        const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+        if (soundEffectsToggle) {
+            soundEffectsToggle.checked = settings.soundEffects !== false;
+        }
+    }
+
+    setFontSize(size) {
+        document.documentElement.style.setProperty('--font-size-base', size);
+        window.progressTracker.saveSettings({ fontSize: size });
+    }
+
+    toggleHighContrast(enabled) {
+        if (enabled) {
+            document.body.classList.add('high-contrast');
+        } else {
+            document.body.classList.remove('high-contrast');
+        }
+        window.progressTracker.saveSettings({ highContrast: enabled });
+    }
+
+    toggleReducedMotion(enabled) {
+        if (enabled) {
+            document.body.classList.add('reduced-motion');
+        } else {
+            document.body.classList.remove('reduced-motion');
+        }
+        window.progressTracker.saveSettings({ reducedMotion: enabled });
+    }
+
+    setDefaultTimer(seconds) {
+        window.progressTracker.saveSettings({ defaultTimer: seconds });
+    }
+
+    setAutoSave(enabled) {
+        window.progressTracker.saveSettings({ autoSave: enabled });
+    }
+
+    setSoundEffects(enabled) {
+        window.progressTracker.saveSettings({ soundEffects: enabled });
+    }
+
+    exportData() {
+        window.progressTracker.exportData();
+    }
+
+    async importData(file) {
+        try {
+            await window.progressTracker.importData(file);
+            alert('Data imported successfully!');
+            this.loadSettings();
+            this.loadProgressData();
+        } catch (error) {
+            alert('Error importing data: ' + error.message);
+        }
+    }
+
+    clearAllData() {
+        window.progressTracker.clearAllData();
+        alert('All data cleared successfully!');
+        this.loadSettings();
+        this.loadProgressData();
+    }
+
+    // Progress methods
+    loadProgressData() {
+        const analytics = window.progressTracker.getAnalytics();
+        
+        // Overall stats
+        document.getElementById('total-sessions').textContent = analytics.totalSessions;
+        document.getElementById('total-time').textContent = Math.round(analytics.totalTime / 60000) + ' minutes';
+        document.getElementById('average-score').textContent = Math.round(analytics.averageScore);
+        document.getElementById('average-accuracy').textContent = Math.round(analytics.averageAccuracy) + '%';
+
+        // Recent sessions
+        this.displayRecentSessions(analytics.recentSessions);
+
+        // Grade stats
+        this.displayGradeStats(analytics.byGrade);
+    }
+
+    displayRecentSessions(sessions) {
+        const container = document.getElementById('recent-sessions');
+        if (sessions.length === 0) {
+            container.innerHTML = '<p>No sessions yet. Start practicing to see your progress!</p>';
+            return;
+        }
+
+        container.innerHTML = sessions.map(session => `
+            <div class="session-item">
+                <div class="session-header">
+                    <div class="session-title">Grade ${session.grade} - ${session.subtest}</div>
+                    <div class="session-date">${new Date(session.date).toLocaleDateString()}</div>
+                </div>
+                <div class="session-stats">
+                    <div class="session-stat">
+                        <div class="session-stat-label">Duration</div>
+                        <div class="session-stat-value">${Math.round(session.duration / 1000)}s</div>
+                    </div>
+                    <div class="session-stat">
+                        <div class="session-stat-label">Score</div>
+                        <div class="session-stat-value">${session.score || 0}</div>
+                    </div>
+                    <div class="session-stat">
+                        <div class="session-stat-label">Accuracy</div>
+                        <div class="session-stat-value">${Math.round(session.accuracy || 0)}%</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    displayGradeStats(gradeStats) {
+        const container = document.getElementById('grade-stats');
+        if (Object.keys(gradeStats).length === 0) {
+            container.innerHTML = '<p>No grade data available yet.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="grade-performance">
+                ${Object.entries(gradeStats).map(([grade, stats]) => `
+                    <div class="grade-item">
+                        <div class="grade-name">Grade ${grade}</div>
+                        <div class="grade-stats">
+                            <div class="grade-stat">
+                                <div class="grade-stat-label">Sessions</div>
+                                <div class="grade-stat-value">${stats.sessions}</div>
+                            </div>
+                            <div class="grade-stat">
+                                <div class="grade-stat-label">Avg Score</div>
+                                <div class="grade-stat-value">${Math.round(stats.averageScore)}</div>
+                            </div>
+                            <div class="grade-stat">
+                                <div class="grade-stat-label">Avg Accuracy</div>
+                                <div class="grade-stat-value">${Math.round(stats.averageAccuracy)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
     // Show about
     showAbout() {
         const about = `
@@ -736,6 +1052,9 @@ class DIBELSApp {
                     <li>Printable practice sheets</li>
                     <li>Educator training modules</li>
                     <li>Accessibility features</li>
+                    <li>Progress tracking and analytics</li>
+                    <li>PWA support for offline use</li>
+                    <li>Keyboard navigation</li>
                 </ul>
                 
                 <h4>Open Source</h4>
