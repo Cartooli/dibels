@@ -385,6 +385,58 @@ class SubtestManager {
             </div>
         `;
 
+        // Add CSS for maze passage
+        this.addSubtestStyles(`
+            .passage-container {
+                max-width: 800px;
+                margin: 0 auto;
+                text-align: left;
+            }
+            
+            .passage-container h4 {
+                text-align: center;
+                margin-bottom: 2rem;
+                color: var(--text-primary);
+            }
+            
+            .maze-passage {
+                font-size: 1.25rem;
+                line-height: 1.8;
+                color: var(--text-primary);
+                background: var(--bg-secondary);
+                padding: 2rem;
+                border-radius: var(--radius-lg);
+                border: 2px solid var(--border-color);
+            }
+            
+            .maze-blank {
+                display: inline-block;
+                margin: 0 0.25rem;
+            }
+            
+            .maze-select {
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border: 2px solid var(--border-color);
+                border-radius: var(--radius-sm);
+                padding: 0.25rem 0.5rem;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            
+            .maze-select:focus {
+                outline: 2px solid var(--primary-color);
+                border-color: var(--primary-color);
+            }
+            
+            .maze-controls {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 2rem;
+            }
+        `);
+
         this.setupMazeEventListeners();
     }
 
