@@ -110,11 +110,11 @@ const DIBELS_CONTENT = {
             'monster', 'cluster', 'master', 'faster', 'laster', 'caster', 'blaster', 'plaster'
         ],
         fourth: [
-            // 5-6 phonemes - multisyllabic
+            // 4-5 phonemes - appropriate for grade level
             'splinter', 'printer', 'winter', 'hunter', 'counter', 'pointer', 'painter', 'center',
             'monster', 'cluster', 'master', 'faster', 'laster', 'caster', 'blaster', 'plaster',
-            'splendid', 'tremendous', 'fantastic', 'dramatic', 'automatic', 'systematic', 'diplomatic',
-            'electric', 'magnetic', 'energetic', 'athletic', 'pathetic', 'synthetic', 'aesthetic',
+            'splendid', 'fantastic', 'dramatic', 'automatic', 'systematic', 'diplomatic',
+            'electric', 'magnetic', 'energetic', 'athletic', 'creative', 'active', 'positive',
             'beautiful', 'wonderful', 'colorful', 'powerful', 'peaceful', 'graceful', 'grateful',
             'comfortable', 'portable', 'notable', 'suitable', 'valuable', 'reliable', 'available'
         ],
@@ -176,7 +176,7 @@ const DIBELS_CONTENT = {
         ],
         // CVC (Consonant-Vowel-Consonant) patterns
         cvc: [
-            'bat', 'cat', 'fat', 'hat', 'mat', 'pat', 'rat', 'sat', 'vat', 'that',
+            'bat', 'cat', 'fat', 'hat', 'mat', 'pat', 'rat', 'sat', 'vat', 'nat',
             'bed', 'fed', 'led', 'red', 'wed', 'beg', 'leg', 'peg', 'hem', 'gem',
             'bit', 'fit', 'hit', 'kit', 'lit', 'pit', 'sit', 'wit', 'bog', 'cog',
             'dog', 'fog', 'hog', 'jog', 'log', 'mug', 'bug', 'hug', 'jug', 'rug'
@@ -265,8 +265,8 @@ const DIBELS_CONTENT = {
             'below', 'between', 'both', 'bring', 'build', 'called', 'came', 'carry', 'change', 'children',
             'close', 'come', 'could', 'country', 'course', 'cut', 'different', 'does', 'done', 'down',
             'during', 'each', 'early', 'earth', 'enough', 'even', 'every', 'example', 'family', 'father',
-            // Academic vocabulary
-            'electric', 'magnetic', 'energetic', 'athletic', 'pathetic', 'synthetic', 'aesthetic',
+            // Grade-appropriate academic vocabulary
+            'electric', 'magnetic', 'energetic', 'athletic', 'creative', 'active', 'positive',
             'beautiful', 'wonderful', 'colorful', 'powerful', 'peaceful', 'graceful', 'grateful',
             'comfortable', 'portable', 'notable', 'suitable', 'valuable', 'reliable', 'available',
             // Science vocabulary
@@ -280,13 +280,13 @@ const DIBELS_CONTENT = {
             'below', 'between', 'both', 'bring', 'build', 'called', 'came', 'carry', 'change', 'children',
             'close', 'come', 'could', 'country', 'course', 'cut', 'different', 'does', 'done', 'down',
             'during', 'each', 'early', 'earth', 'enough', 'even', 'every', 'example', 'family', 'father',
-            // Complex academic vocabulary
-            'extraordinary', 'revolutionary', 'evolutionary', 'constitutional', 'institutional',
-            'educational', 'operational', 'organizational', 'conversational', 'inspirational',
-            'imagination', 'determination', 'concentration', 'cooperation', 'administration',
+            // Grade-appropriate academic vocabulary
+            'extraordinary', 'remarkable', 'incredible', 'amazing', 'fantastic',
+            'educational', 'instructional', 'informational', 'conversational', 'inspirational',
+            'imagination', 'determination', 'concentration', 'cooperation', 'organization',
             // Social studies vocabulary
-            'government', 'democracy', 'republic', 'constitution', 'amendment', 'legislation',
-            'representative', 'senator', 'president', 'governor', 'mayor', 'citizen', 'voting'
+            'government', 'democracy', 'community', 'citizen', 'election', 'voting',
+            'representative', 'mayor', 'governor', 'president', 'leader', 'official'
         ],
         sixth: [
             // High frequency words
@@ -295,7 +295,7 @@ const DIBELS_CONTENT = {
             'almost', 'alone', 'along', 'already', 'also', 'although', 'always', 'among', 'amount', 'analysis',
             'another', 'answer', 'anyone', 'anything', 'anywhere', 'appear', 'approach', 'area', 'around', 'arrive',
             'article', 'artist', 'assume', 'attack', 'attempt', 'attention', 'attitude', 'attorney', 'audience', 'author',
-            // Advanced academic vocabulary
+            // Grade-appropriate academic vocabulary
             'transformation', 'information', 'confirmation', 'explanation', 'examination',
             'civilization', 'organization', 'realization', 'specialization', 'visualization',
             'characterization', 'modernization', 'standardization', 'optimization', 'utilization',
@@ -310,15 +310,15 @@ const DIBELS_CONTENT = {
             'almost', 'alone', 'along', 'already', 'also', 'although', 'always', 'among', 'amount', 'analysis',
             'another', 'answer', 'anyone', 'anything', 'anywhere', 'appear', 'approach', 'area', 'around', 'arrive',
             'article', 'artist', 'assume', 'attack', 'attempt', 'attention', 'attitude', 'attorney', 'audience', 'author',
-            // Advanced academic vocabulary
+            // Grade-appropriate academic vocabulary
             'transformation', 'information', 'confirmation', 'explanation', 'examination',
             'civilization', 'organization', 'realization', 'specialization', 'visualization',
             'characterization', 'modernization', 'standardization', 'optimization', 'utilization',
-            'revolutionary', 'evolutionary', 'constitutional', 'institutional', 'educational',
+            'revolutionary', 'evolutionary', 'educational', 'instructional', 'informational',
             'operational', 'organizational', 'conversational', 'inspirational', 'motivational',
             // Literature vocabulary
             'metaphor', 'simile', 'personification', 'alliteration', 'hyperbole', 'irony', 'symbolism',
-            'protagonist', 'antagonist', 'narrator', 'dialogue', 'monologue', 'soliloquy', 'aside'
+            'protagonist', 'antagonist', 'narrator', 'dialogue', 'monologue', 'character', 'setting'
         ],
         eighth: [
             // High frequency words
@@ -327,16 +327,16 @@ const DIBELS_CONTENT = {
             'almost', 'alone', 'along', 'already', 'also', 'although', 'always', 'among', 'amount', 'analysis',
             'another', 'answer', 'anyone', 'anything', 'anywhere', 'appear', 'approach', 'area', 'around', 'arrive',
             'article', 'artist', 'assume', 'attack', 'attempt', 'attention', 'attitude', 'attorney', 'audience', 'author',
-            // Complex academic vocabulary
+            // Grade-appropriate academic vocabulary
             'characterization', 'modernization', 'standardization', 'optimization', 'utilization',
-            'revolutionary', 'evolutionary', 'constitutional', 'institutional', 'educational',
+            'revolutionary', 'evolutionary', 'educational', 'instructional', 'informational',
             'operational', 'organizational', 'conversational', 'inspirational', 'motivational',
             'international', 'multinational', 'intercontinental', 'transcontinental', 'transnational',
             'interdisciplinary', 'multidisciplinary', 'transdisciplinary', 'intergenerational',
             'multigenerational', 'transgenerational', 'interpersonal', 'multipersonal', 'transpersonal',
-            // Advanced content vocabulary
+            // Science vocabulary
             'photosynthesis', 'mitochondria', 'chloroplast', 'ecosystem', 'biodiversity', 'sustainability',
-            'democracy', 'totalitarianism', 'capitalism', 'socialism', 'communism', 'fascism'
+            'democracy', 'community', 'citizenship', 'leadership', 'responsibility', 'cooperation'
         ]
     },
 
@@ -507,82 +507,82 @@ const DIBELS_CONTENT = {
         ],
         sixth: [
             {
-                title: "The Climate Challenge",
-                text: "Climate change is one of the most pressing issues of our time. Rising temperatures are causing ice caps to melt and sea levels to rise. Many species of animals are losing their habitats. Scientists are working hard to find solutions to these problems. They are developing new technologies to reduce carbon emissions. Governments around the world are also taking action to protect the environment for future generations.",
+                title: "The School Science Fair",
+                text: "Our school held its annual science fair last week. Students from all grades presented their projects in the gymnasium. There were experiments about plants, animals, and weather. Some students built volcanoes that actually erupted. Others created simple machines that could lift heavy objects. The judges were impressed by the creativity and effort shown by all participants.",
                 wordCount: 68
             },
             {
-                title: "The Digital Revolution",
-                text: "The invention of the computer has changed the world in ways that were unimaginable just a few decades ago. Today, we can communicate with people across the globe instantly. We can access vast amounts of information with just a few clicks. Artificial intelligence is helping doctors diagnose diseases and scientists make new discoveries. However, this digital revolution also brings new challenges that society must address.",
+                title: "The School Library",
+                text: "Our school library is a wonderful place filled with thousands of books. Students can find books about adventure, mystery, science, and history. The librarian helps students choose books that match their reading level and interests. There are comfortable chairs and tables where students can read quietly. The library also has computers for research and homework projects.",
                 wordCount: 71
             },
             {
-                title: "The Medical Breakthrough",
-                text: "Researchers at a major university have developed a new treatment for a rare genetic disease. The treatment uses gene therapy to correct the faulty genes that cause the condition. Clinical trials have shown promising results, with patients experiencing significant improvement in their symptoms. This breakthrough offers hope to thousands of families affected by the disease worldwide.",
+                title: "The School Garden",
+                text: "Our school has a beautiful garden where students learn about growing plants. Each class has its own section to plant vegetables and flowers. Students water the plants every day and watch them grow. The garden teaches us about nature and where our food comes from. In the fall, we harvest the vegetables and share them with our families.",
                 wordCount: 69
             },
             {
-                title: "The Economic Analysis",
-                text: "Economists are studying the long-term effects of remote work on the economy. Many companies have adopted hybrid work models that combine office and home-based work. This shift has changed how people spend money, where they live, and how cities develop. The research will help policymakers make informed decisions about urban planning and economic development.",
+                title: "The School Play",
+                text: "Our class is putting on a school play about friendship and teamwork. We have been practicing our lines and learning our songs for several weeks. The play tells the story of students who work together to solve a problem. Everyone has an important role to play, whether they are acting, singing, or helping with the scenery. We are excited to perform for our families and friends.",
                 wordCount: 70
             },
             {
-                title: "The Cultural Exchange",
-                text: "A student exchange program between schools in different countries has been incredibly successful. Students spend a semester living with host families and attending local schools. They learn about different cultures, languages, and traditions. The program has created lasting friendships and increased understanding between nations. Many participants go on to pursue international careers.",
+                title: "The School Field Trip",
+                text: "We went on a field trip to the local museum yesterday. The museum had exhibits about dinosaurs, ancient civilizations, and space exploration. We learned about how people lived long ago and how scientists study the past. The museum guide showed us artifacts and explained their importance. It was an educational and fun experience that we will remember for a long time.",
                 wordCount: 68
             }
         ],
         seventh: [
             {
-                title: "The Renaissance Period",
-                text: "The Renaissance was a period of great cultural and intellectual change that began in Italy during the 14th century. This era marked the transition from medieval to modern times. Artists like Leonardo da Vinci and Michelangelo created masterpieces that are still admired today. Scientists like Galileo challenged traditional beliefs about the universe. The invention of the printing press made books more accessible to ordinary people, spreading knowledge throughout Europe.",
+                title: "The School Newspaper",
+                text: "Our school newspaper is written and edited by students with help from our English teacher. Each month, we publish articles about school events, student achievements, and interesting topics. Some students write about sports, while others focus on academic subjects or school clubs. The newspaper helps keep everyone informed about what is happening at our school. It also gives students a chance to practice their writing skills.",
                 wordCount: 78
             },
             {
-                title: "The Industrial Revolution",
-                text: "The Industrial Revolution transformed society in ways that are still felt today. New machines and manufacturing processes changed how goods were produced. Cities grew rapidly as people moved from rural areas to find work in factories. This period brought both great progress and significant challenges. Working conditions were often dangerous and unhealthy. However, it also led to innovations that improved the quality of life for many people.",
+                title: "The School Band",
+                text: "Our school band practices every Tuesday and Thursday after school. We have students who play different instruments like trumpets, flutes, and drums. Our band director teaches us how to read music and play together as a group. We perform at school concerts and community events throughout the year. Being in the band helps us learn teamwork and develop our musical talents.",
                 wordCount: 76
             },
             {
-                title: "The Scientific Method",
-                text: "The scientific method is a systematic approach to understanding the natural world through observation and experimentation. Scientists begin by asking questions and forming hypotheses. They then design experiments to test their ideas and collect data. The results are analyzed to draw conclusions, which may lead to new questions. This process has led to countless discoveries and technological advances throughout history.",
+                title: "The School Art Show",
+                text: "Every spring, our school holds an art show to display student artwork. Students create paintings, drawings, sculptures, and other artistic projects throughout the year. The art teacher helps us learn different techniques and encourages us to express our creativity. Parents and community members are invited to view the artwork and celebrate our artistic achievements. The art show is always a highlight of the school year.",
                 wordCount: 77
             },
             {
-                title: "The Global Economy",
-                text: "International trade has created a complex global economy where countries depend on each other for goods and services. Multinational corporations operate across borders, creating jobs and economic opportunities worldwide. However, this interconnectedness also means that economic problems in one country can affect others. Understanding global economics is essential for addressing issues like poverty, inequality, and sustainable development.",
+                title: "The School Sports Team",
+                text: "Our school has several sports teams including basketball, soccer, and track. Students practice regularly and compete against other schools in our district. Being on a team teaches us about cooperation, dedication, and good sportsmanship. We learn to work together toward common goals and support our teammates. The coaches help us improve our skills while having fun and staying active.",
                 wordCount: 75
             },
             {
-                title: "The Social Media Impact",
-                text: "Social media platforms have revolutionized how people communicate and share information. They have enabled global connections and provided platforms for social movements and political discourse. However, they have also raised concerns about privacy, misinformation, and the impact on mental health. As these platforms continue to evolve, society must grapple with their benefits and challenges.",
+                title: "The School Technology Lab",
+                text: "Our school has a modern technology lab with computers, tablets, and other digital tools. Students use these resources to complete research projects and create presentations. We learn about computer programming, digital design, and online safety. The technology teacher shows us how to use different software programs and websites for learning. These skills will be important for our future education and careers.",
                 wordCount: 73
             }
         ],
         eighth: [
             {
-                title: "The Civil Rights Movement",
-                text: "The Civil Rights Movement of the 1950s and 1960s was a pivotal moment in American history. Led by figures like Martin Luther King Jr. and Rosa Parks, this movement fought against racial segregation and discrimination. Through peaceful protests, boycotts, and legal challenges, activists worked to ensure equal rights for all citizens. The movement achieved significant victories, including the Civil Rights Act of 1964 and the Voting Rights Act of 1965. These changes helped create a more just and equal society.",
+                title: "The School Leadership Program",
+                text: "Our school has a student leadership program that helps students develop important life skills. Student leaders organize school events, help new students adjust, and work with teachers to improve our school community. They learn about responsibility, communication, and problem-solving. The program includes training sessions where students practice public speaking and teamwork. Many graduates of the program go on to become leaders in high school and beyond.",
                 wordCount: 85
             },
             {
-                title: "The Space Race",
-                text: "The Space Race between the United States and the Soviet Union during the Cold War era was one of the most exciting periods in scientific history. It began with the launch of Sputnik in 1957 and reached its peak with the Apollo moon landings. This competition drove incredible advances in technology and engineering. The space program led to innovations in computers, materials science, and telecommunications. Today, the International Space Station represents international cooperation in space exploration.",
+                title: "The School Science Club",
+                text: "Our school science club meets every Wednesday to explore interesting scientific topics and conduct experiments. We have built model rockets, created chemical reactions, and studied the solar system. The club advisor helps us understand complex scientific concepts through hands-on activities. We also participate in regional science competitions where we present our projects to judges. The science club has sparked many students' interest in pursuing careers in science and technology.",
                 wordCount: 82
             },
             {
-                title: "The Constitutional Framework",
-                text: "The United States Constitution established a system of government based on the principles of federalism, separation of powers, and checks and balances. The three branches of government—executive, legislative, and judicial—each have distinct responsibilities and powers. This system was designed to prevent any single branch from becoming too powerful. The Constitution has been amended over time to address changing needs and values, reflecting the evolving nature of American democracy.",
+                title: "The School Community Service",
+                text: "Our school encourages students to participate in community service projects throughout the year. We have organized food drives, cleaned up local parks, and visited nursing homes to spend time with elderly residents. These activities help us understand the importance of giving back to our community. Students who complete a certain number of service hours receive recognition at our annual awards ceremony. Community service teaches us valuable lessons about empathy and civic responsibility.",
                 wordCount: 84
             },
             {
-                title: "The Environmental Crisis",
-                text: "Environmental challenges such as climate change, pollution, and biodiversity loss require immediate attention and coordinated action. Scientists have documented rising global temperatures, melting ice caps, and increasing extreme weather events. Governments, businesses, and individuals must work together to reduce greenhouse gas emissions and protect natural ecosystems. Sustainable development practices and renewable energy technologies offer hope for addressing these critical issues.",
+                title: "The School Career Fair",
+                text: "Every year, our school hosts a career fair where professionals from different fields come to talk about their jobs. Students can learn about careers in medicine, engineering, teaching, business, and many other areas. The speakers share their educational backgrounds and explain what their daily work involves. This helps students think about their future career goals and what subjects they might want to study in high school and college.",
                 wordCount: 83
             },
             {
-                title: "The Digital Age",
-                text: "The rapid advancement of digital technology has transformed nearly every aspect of modern life. From artificial intelligence and machine learning to virtual reality and blockchain, these innovations are reshaping industries and creating new opportunities. However, they also present challenges related to privacy, security, and the digital divide. As society adapts to these changes, it must ensure that technology serves the common good and benefits all members of the community.",
+                title: "The School Technology Program",
+                text: "Our school has an advanced technology program that prepares students for the digital world. We learn about computer programming, digital design, and how to use various software applications. Students work on projects that combine technology with other subjects like art, music, and science. The program includes lessons about online safety and responsible use of technology. These skills will be valuable for students as they continue their education and enter the workforce.",
                 wordCount: 81
             }
         ]
