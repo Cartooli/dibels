@@ -628,8 +628,10 @@ body {
     display: flex;
     align-items: center;
     padding: var(--space-4);
-    background: white;
-    border: 2px solid var(--gray-200);
+    background: #ffffff; /* Fallback */
+    background: var(--bg-secondary);
+    border: 2px solid #e2e8f0; /* Fallback */
+    border: 2px solid var(--border-color);
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -639,6 +641,17 @@ body {
 .option-item:hover {
     border-color: var(--primary-color);
     box-shadow: var(--shadow-md);
+}
+
+/* Dark mode styling for option items */
+[data-theme="dark"] .option-item {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .option-item .option-text {
+    color: var(--text-primary);
 }
 
 /* Dark mode hover states for option items */
@@ -872,7 +885,8 @@ body {
 
 /* Scoring Panel */
 .scoring-panel {
-    background: white;
+    background: #ffffff; /* Fallback */
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-md);
@@ -941,7 +955,8 @@ body {
 }
 
 .module-card {
-    background: white;
+    background: #ffffff; /* Fallback */
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-md);
@@ -1208,7 +1223,8 @@ input, select, textarea {
 }
 
 .modal-content {
-    background: white;
+    background: #ffffff; /* Fallback */
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-8);
     max-width: 800px;
