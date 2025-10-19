@@ -468,19 +468,45 @@ class DIBELSApp {
                         <li>Use a stopwatch or timer for accurate timing</li>
                         <li>Follow standardized procedures exactly</li>
                         <li>Provide encouragement but avoid giving hints</li>
+                        <li>Allow adequate practice items before testing</li>
+                        <li>Maintain a neutral, encouraging demeanor</li>
+                    </ul>
+                </div>
+                <div class="guide-section">
+                    <h4>Subtest-Specific Guidelines</h4>
+                    <ul>
+                        <li><strong>LNF:</strong> Present letters in random order, 1 second per letter</li>
+                        <li><strong>PSF:</strong> Use clear pronunciation, avoid emphasis on individual sounds</li>
+                        <li><strong>NWF:</strong> Present nonsense words clearly, emphasize blending</li>
+                        <li><strong>WRF:</strong> Use grade-appropriate word lists, 3 seconds per word</li>
+                        <li><strong>ORF:</strong> Use grade-appropriate passages, 1 minute timing</li>
+                        <li><strong>Maze:</strong> Follow timing guidelines precisely, 3 minutes total</li>
                     </ul>
                 </div>
                 <div class="guide-section">
                     <h4>Scoring Guidelines</h4>
                     <ul>
                         <li>Mark errors immediately as they occur</li>
-                        <li>Count self-corrections as correct</li>
+                        <li>Count self-corrections as correct if made within 3 seconds</li>
                         <li>Count hesitations longer than 3 seconds as errors</li>
                         <li>Stop at the time limit, even mid-word</li>
                         <li>Calculate accuracy: (Correct / Total) × 100</li>
+                        <li>Record exact responses for error analysis</li>
+                        <li>Use standardized scoring rubrics</li>
                     </ul>
                 </div>
-                <button class="control-btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+                <div class="guide-section">
+                    <h4>Common Administration Errors to Avoid</h4>
+                    <ul>
+                        <li>Giving hints or prompts during testing</li>
+                        <li>Allowing extra time beyond specified limits</li>
+                        <li>Incorrectly pronouncing test items</li>
+                        <li>Recording responses inaccurately</li>
+                        <li>Providing feedback during the assessment</li>
+                        <li>Rushing through directions</li>
+                    </ul>
+                </div>
+                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
             </div>
         `;
         
@@ -492,12 +518,13 @@ class DIBELSApp {
         const practice = `
             <div class="educator-content">
                 <h3>Scoring Practice</h3>
-                <p>Practice scoring with sample student responses:</p>
+                <p>Practice scoring with sample student responses. Try scoring these examples and check your accuracy:</p>
+                
                 <div class="scoring-practice">
                     <div class="sample-response">
                         <h4>Sample LNF Response</h4>
-                        <p>Student read: "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z"</p>
-                        <p>Time: 45 seconds</p>
+                        <p><strong>Student read:</strong> "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z"</p>
+                        <p><strong>Time:</strong> 45 seconds</p>
                         <div class="scoring-inputs">
                             <label>Correct: <input type="number" id="practice-correct" value="26"></label>
                             <label>Errors: <input type="number" id="practice-errors" value="0"></label>
@@ -505,8 +532,45 @@ class DIBELSApp {
                         </div>
                         <div id="practice-score-result"></div>
                     </div>
+                    
+                    <div class="sample-response">
+                        <h4>Sample PSF Response</h4>
+                        <p><strong>Word:</strong> "cat"</p>
+                        <p><strong>Student response:</strong> "/k/ /a/ /t/"</p>
+                        <p><strong>Correct answer:</strong> 3 phonemes</p>
+                        <div class="scoring-inputs">
+                            <label>Phonemes: <input type="number" id="psf-correct" value="3"></label>
+                            <button class="control-btn" onclick="calculatePSFScore()">Check Answer</button>
+                        </div>
+                        <div id="psf-score-result"></div>
+                    </div>
+                    
+                    <div class="sample-response">
+                        <h4>Sample ORF Response</h4>
+                        <p><strong>Passage:</strong> "The cat sat on the mat."</p>
+                        <p><strong>Student read:</strong> "The cat sat on the mat."</p>
+                        <p><strong>Time:</strong> 6 seconds</p>
+                        <div class="scoring-inputs">
+                            <label>Words Correct: <input type="number" id="orf-correct" value="6"></label>
+                            <label>Errors: <input type="number" id="orf-errors" value="0"></label>
+                            <button class="control-btn" onclick="calculateORFScore()">Calculate WCPM</button>
+                        </div>
+                        <div id="orf-score-result"></div>
+                    </div>
                 </div>
-                <button class="control-btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+                
+                <div class="guide-section">
+                    <h4>Scoring Tips</h4>
+                    <ul>
+                        <li>Count only words read correctly within the time limit</li>
+                        <li>Self-corrections count as correct if made within 3 seconds</li>
+                        <li>Hesitations longer than 3 seconds count as errors</li>
+                        <li>For ORF, calculate Words Correct Per Minute (WCPM)</li>
+                        <li>For PSF, count individual phonemes, not syllables</li>
+                    </ul>
+                </div>
+                
+                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
             </div>
         `;
         
@@ -521,24 +585,47 @@ class DIBELSApp {
                 <div class="error-types">
                     <h4>Common Error Types</h4>
                     <ul>
-                        <li><strong>Substitution:</strong> Student says different word/sound</li>
-                        <li><strong>Omission:</strong> Student skips word/sound</li>
-                        <li><strong>Insertion:</strong> Student adds extra word/sound</li>
+                        <li><strong>Substitution:</strong> Student says different word/sound (e.g., "cat" → "bat")</li>
+                        <li><strong>Omission:</strong> Student skips word/sound (e.g., "cat" → "at")</li>
+                        <li><strong>Insertion:</strong> Student adds extra word/sound (e.g., "cat" → "cats")</li>
                         <li><strong>Hesitation:</strong> Student pauses >3 seconds</li>
-                        <li><strong>Self-correction:</strong> Student corrects own error</li>
+                        <li><strong>Self-correction:</strong> Student corrects own error within 3 seconds</li>
+                        <li><strong>Repetition:</strong> Student repeats word/sound multiple times</li>
                     </ul>
                 </div>
                 <div class="error-patterns">
                     <h4>Error Patterns to Note</h4>
                     <ul>
-                        <li>Consistent letter reversals (b/d, p/q)</li>
-                        <li>Difficulty with specific letter sounds</li>
-                        <li>Struggles with vowel sounds</li>
-                        <li>Problems with consonant blends</li>
+                        <li>Consistent letter reversals (b/d, p/q, m/w)</li>
+                        <li>Difficulty with specific letter sounds (/r/, /l/, /th/)</li>
+                        <li>Struggles with vowel sounds (short vs. long vowels)</li>
+                        <li>Problems with consonant blends (bl, cr, st, etc.)</li>
                         <li>Difficulty with multisyllabic words</li>
+                        <li>Confusion with similar-looking letters (b/p, d/q)</li>
+                        <li>Difficulty with digraphs (sh, ch, th, wh)</li>
                     </ul>
                 </div>
-                <button class="control-btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+                <div class="guide-section">
+                    <h4>Intervention Strategies by Error Type</h4>
+                    <ul>
+                        <li><strong>Letter Reversals:</strong> Use visual cues, tracing, and kinesthetic activities</li>
+                        <li><strong>Sound Confusion:</strong> Focus on auditory discrimination and articulation</li>
+                        <li><strong>Blend Difficulties:</strong> Practice blending sounds step-by-step</li>
+                        <li><strong>Vowel Problems:</strong> Use visual vowel charts and mouth position practice</li>
+                        <li><strong>Multisyllabic Words:</strong> Teach syllable division and chunking strategies</li>
+                    </ul>
+                </div>
+                <div class="guide-section">
+                    <h4>Recording and Tracking Errors</h4>
+                    <ul>
+                        <li>Record exact student responses during testing</li>
+                        <li>Note patterns across multiple assessments</li>
+                        <li>Track progress over time</li>
+                        <li>Use error analysis to inform instruction</li>
+                        <li>Share findings with intervention teams</li>
+                    </ul>
+                </div>
+                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
             </div>
         `;
         
@@ -667,9 +754,49 @@ window.calculatePracticeScore = function() {
     const result = document.getElementById('practice-score-result');
     if (result) {
         result.innerHTML = `
-            <div><strong>Total Responses:</strong> ${total}</div>
-            <div><strong>Accuracy:</strong> ${accuracy.toFixed(1)}%</div>
-            <div><strong>Score:</strong> ${score}</div>
+            <div class="scoring-result">
+                <div><strong>Total Responses:</strong> ${total}</div>
+                <div><strong>Accuracy:</strong> ${accuracy.toFixed(1)}%</div>
+                <div><strong>Score:</strong> ${score}</div>
+            </div>
+        `;
+    }
+};
+
+window.calculatePSFScore = function() {
+    const phonemes = parseInt(document.getElementById('psf-correct').value) || 0;
+    const correct = 3; // "cat" has 3 phonemes
+    
+    const result = document.getElementById('psf-score-result');
+    if (result) {
+        if (phonemes === correct) {
+            result.innerHTML = `
+                <div class="scoring-result" style="background: var(--success-color);">
+                    <p>✓ Correct! "cat" has 3 phonemes: /k/ /a/ /t/</p>
+                </div>
+            `;
+        } else {
+            result.innerHTML = `
+                <div class="scoring-result" style="background: var(--accent-color);">
+                    <p>✗ Incorrect. "cat" has 3 phonemes: /k/ /a/ /t/</p>
+                </div>
+            `;
+        }
+    }
+};
+
+window.calculateORFScore = function() {
+    const correct = parseInt(document.getElementById('orf-correct').value) || 0;
+    const errors = parseInt(document.getElementById('orf-errors').value) || 0;
+    const time = 6; // 6 seconds
+    const wcpm = Math.round((correct / time) * 60);
+    
+    const result = document.getElementById('orf-score-result');
+    if (result) {
+        result.innerHTML = `
+            <div class="scoring-result">
+                <p><strong>Words Correct:</strong> ${correct} | <strong>Errors:</strong> ${errors} | <strong>WCPM:</strong> ${wcpm}</p>
+            </div>
         `;
     }
 };
