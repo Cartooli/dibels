@@ -227,7 +227,7 @@ class AccessibilityManager {
             
             .accessibility-panel h3 {
                 margin: 0 0 1rem 0;
-                color: var(--gray-700);
+                color: #000000;
             }
             
             .accessibility-toggle {
@@ -254,7 +254,7 @@ class AccessibilityManager {
             
             .font-size-controls label {
                 font-weight: 500;
-                color: var(--gray-700);
+                color: #000000;
             }
             
             .font-size-controls input[type="range"] {

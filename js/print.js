@@ -30,7 +30,7 @@ class PrintManager {
                 
                 .print-subtitle {
                     font-size: 14pt;
-                    color: #666;
+                    color: #000000;
                 }
                 
                 .print-instructions {
