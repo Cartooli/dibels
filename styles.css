@@ -79,9 +79,15 @@
     
     .grade-btn,
     .subtest-btn,
-    .option-item {
+    .option-item,
+    .module-card {
         border-width: 3px;
         border-color: #000000;
+        color: #000000;
+    }
+    
+    .subtest-btn .subtest-desc,
+    .module-card p {
         color: #000000;
     }
     
@@ -205,7 +211,7 @@ body {
     padding: var(--space-4) var(--space-3);
     font-size: var(--font-size-base);
     font-weight: 500;
-    color: var(--gray-900);
+    color: #000000;
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: var(--shadow-sm);
@@ -257,7 +263,7 @@ body {
     padding: var(--space-6) var(--space-4);
     font-size: var(--font-size-base);
     font-weight: 500;
-    color: var(--gray-900);
+    color: #000000;
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: var(--shadow-sm);
@@ -290,7 +296,7 @@ body {
 
 .subtest-btn .subtest-desc {
     font-size: var(--font-size-sm);
-    color: var(--gray-700);
+    color: #374151;
     opacity: 1;
 }
 
@@ -369,7 +375,7 @@ body {
 
 .option-text {
     font-weight: 500;
-    color: var(--gray-900);
+    color: #000000;
 }
 
 /* Start Practice Button */
@@ -582,11 +588,11 @@ body {
     font-size: var(--font-size-xl);
     font-weight: 600;
     margin-bottom: var(--space-3);
-    color: var(--gray-900);
+    color: #000000;
 }
 
 .module-card p {
-    color: var(--gray-800);
+    color: #1f2937;
     margin-bottom: var(--space-6);
 }
 
