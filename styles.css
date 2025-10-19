@@ -174,7 +174,7 @@ body {
 
 .welcome-section p {
     font-size: var(--font-size-lg);
-    color: var(--gray-600);
+    color: var(--gray-700);
     margin-bottom: var(--space-8);
 }
 
@@ -417,7 +417,7 @@ body {
 }
 
 .practice-info p {
-    color: var(--gray-600);
+    color: var(--gray-700);
     font-size: var(--font-size-lg);
 }
 
@@ -434,7 +434,7 @@ body {
 
 .timer-label {
     font-size: var(--font-size-sm);
-    color: var(--gray-600);
+    color: var(--gray-700);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -616,7 +616,7 @@ body {
 }
 
 .footer p {
-    color: var(--gray-600);
+    color: var(--gray-700);
     margin-bottom: var(--space-4);
 }
 
