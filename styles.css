@@ -180,7 +180,7 @@ body {
 
 .welcome-section p {
     font-size: var(--font-size-lg);
-    color: var(--gray-700);
+    color: #000000;
     margin-bottom: var(--space-8);
 }
 
@@ -423,7 +423,7 @@ body {
 }
 
 .practice-info p {
-    color: var(--gray-700);
+    color: #000000;
     font-size: var(--font-size-lg);
 }
 
@@ -440,7 +440,7 @@ body {
 
 .timer-label {
     font-size: var(--font-size-sm);
-    color: var(--gray-700);
+    color: #000000;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -459,6 +459,20 @@ body {
     align-items: center;
 }
 
+/* Subtest Instructions */
+.subtest-instructions h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: #000000;
+}
+
+.subtest-instructions p {
+    font-size: var(--font-size-lg);
+    color: #000000;
+    margin-bottom: var(--space-6);
+}
+
 /* Practice Controls */
 .practice-controls {
     display: flex;
@@ -470,7 +484,7 @@ body {
 
 .control-btn {
     background: var(--gray-100);
-    color: var(--gray-700);
+    color: #000000;
     border: 2px solid var(--gray-200);
     border-radius: var(--radius-lg);
     padding: var(--space-3) var(--space-6);
@@ -524,7 +538,7 @@ body {
     align-items: center;
     gap: var(--space-2);
     font-weight: 500;
-    color: var(--gray-700);
+    color: #000000;
 }
 
 .score-inputs input {
@@ -622,7 +636,7 @@ body {
 }
 
 .footer p {
-    color: var(--gray-700);
+    color: #000000;
     margin-bottom: var(--space-4);
 }
 
@@ -764,14 +778,14 @@ input:focus {
 }
 
 .guide-section h4, .error-types h4, .error-patterns h4 {
-    color: var(--gray-800);
+    color: #000000;
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-3);
 }
 
 .guide-section ul, .error-types ul, .error-patterns ul {
     margin-left: var(--space-6);
-    color: var(--gray-700);
+    color: #000000;
 }
 
 .scoring-practice {
@@ -786,7 +800,7 @@ input:focus {
 }
 
 .sample-response h4 {
-    color: var(--gray-800);
+    color: #000000;
     margin-bottom: var(--space-2);
 }
 
