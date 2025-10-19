@@ -30,8 +30,9 @@ class DIBELSApp {
 
         // Subtest selection
         document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('subtest-btn')) {
-                this.selectSubtest(e.target.dataset.subtest);
+            if (e.target.classList.contains('subtest-btn') || e.target.closest('.subtest-btn')) {
+                const button = e.target.classList.contains('subtest-btn') ? e.target : e.target.closest('.subtest-btn');
+                this.selectSubtest(button.dataset.subtest);
             }
         });
 
@@ -171,16 +172,22 @@ class DIBELSApp {
 
     // Select subtest
     selectSubtest(subtest) {
+        console.log('Selecting subtest:', subtest);
         this.currentSubtest = subtest;
         
         // Update UI
         document.querySelectorAll('.subtest-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
-        document.querySelector(`[data-subtest="${subtest}"]`).classList.add('selected');
+        const selectedButton = document.querySelector(`[data-subtest="${subtest}"]`);
+        if (selectedButton) {
+            selectedButton.classList.add('selected');
+        }
         
         // Update practice options based on subtest
         this.updatePracticeOptionsForSubtest(subtest);
+        
+        console.log('Current grade:', this.currentGrade, 'Current subtest:', this.currentSubtest);
     }
 
     // Show practice options
@@ -219,7 +226,9 @@ class DIBELSApp {
 
     // Start practice
     startPractice() {
+        console.log('Starting practice - Grade:', this.currentGrade, 'Subtest:', this.currentSubtest);
         if (!this.currentGrade || !this.currentSubtest) {
+            console.log('Missing grade or subtest selection');
             alert('Please select a grade and subtest first.');
             return;
         }

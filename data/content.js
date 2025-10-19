@@ -7,7 +7,7 @@ const DIBELS_CONTENT = {
         'K': ['LNF', 'PSF', 'NWF'],
         '1': ['LNF', 'PSF', 'NWF', 'WRF'],
         '2': ['LNF', 'PSF', 'NWF', 'WRF', 'ORF'],
-        '3': ['LWF', 'WRF', 'ORF', 'Maze'],
+        '3': ['LNF', 'WRF', 'ORF', 'Maze'],
         '4': ['WRF', 'ORF', 'Maze'],
         '5': ['WRF', 'ORF', 'Maze'],
         '6': ['WRF', 'ORF', 'Maze'],
