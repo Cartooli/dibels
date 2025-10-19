@@ -608,9 +608,9 @@ const DIBELS_CONTENT = {
                 questions: [
                     { position: 3, options: ["has", "had", "will have", "having"] },
                     { position: 7, options: ["beautiful", "ugly", "small", "big"] },
-                    { position: 11, options: ["plant", "eat", "throw", "break"] },
-                    { position: 15, options: ["water", "dry", "burn", "freeze"] },
-                    { position: 19, options: ["teaches", "hurts", "scares", "bothers"] }
+                    { position: 11, options: ["plant", "grow", "raise", "cultivate"] },
+                    { position: 15, options: ["water", "feed", "care for", "tend"] },
+                    { position: 19, options: ["teaches", "shows", "helps", "informs"] }
                 ]
             },
             {
@@ -619,9 +619,9 @@ const DIBELS_CONTENT = {
                 questions: [
                     { position: 3, options: ["is", "was", "will be", "being"] },
                     { position: 7, options: ["quiet", "loud", "dark", "bright"] },
-                    { position: 11, options: ["come", "go", "run", "jump"] },
+                    { position: 11, options: ["come", "visit", "go", "travel"] },
                     { position: 15, options: ["many", "few", "some", "all"] },
-                    { position: 19, options: ["helps", "hurts", "ignores", "forgets"] }
+                    { position: 19, options: ["helps", "assists", "guides", "supports"] }
                 ]
             },
             {
@@ -632,7 +632,7 @@ const DIBELS_CONTENT = {
                     { position: 7, options: ["where", "when", "why", "how"] },
                     { position: 11, options: ["has", "had", "will have", "having"] },
                     { position: 15, options: ["run", "walk", "sit", "sleep"] },
-                    { position: 19, options: ["make", "break", "lose", "forget"] }
+                    { position: 19, options: ["make", "find", "meet", "become"] }
                 ]
             },
             {
@@ -641,9 +641,9 @@ const DIBELS_CONTENT = {
                 questions: [
                     { position: 3, options: ["is", "was", "will be", "being"] },
                     { position: 7, options: ["very", "not", "somewhat", "quite"] },
-                    { position: 11, options: ["paint", "eat", "throw", "break"] },
-                    { position: 15, options: ["use", "lose", "hide", "forget"] },
-                    { position: 19, options: ["helps", "hurts", "scares", "bothers"] }
+                    { position: 11, options: ["paint", "draw", "create", "make"] },
+                    { position: 15, options: ["use", "try", "find", "choose"] },
+                    { position: 19, options: ["helps", "teaches", "shows", "allows"] }
                 ]
             }
         ],
