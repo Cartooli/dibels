@@ -110,12 +110,12 @@ class SubtestManager {
                 justify-content: center;
                 width: 60px;
                 height: 60px;
-                background: white;
-                border: 2px solid var(--gray-200);
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
                 border-radius: var(--radius-lg);
                 font-size: 2rem;
                 font-weight: 600;
-                color: #000000;
+                color: var(--text-primary);
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -123,7 +123,8 @@ class SubtestManager {
             
             .letter-item:hover {
                 border-color: var(--primary-color);
-                background: var(--gray-50);
+                background: var(--primary-color);
+                color: var(--text-primary);
             }
             
             .letter-item.correct {
@@ -207,12 +208,12 @@ class SubtestManager {
                 align-items: center;
                 justify-content: center;
                 padding: 1rem;
-                background: white;
-                border: 2px solid var(--gray-200);
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
                 border-radius: var(--radius-lg);
                 font-size: 1.5rem;
                 font-weight: 600;
-                color: #000000;
+                color: var(--text-primary);
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -221,7 +222,8 @@ class SubtestManager {
             
             .word-item:hover {
                 border-color: var(--primary-color);
-                background: var(--gray-50);
+                background: var(--primary-color);
+                color: var(--text-primary);
             }
             
             .word-item.read {
@@ -262,12 +264,12 @@ class SubtestManager {
                 align-items: center;
                 justify-content: center;
                 padding: 1rem;
-                background: white;
-                border: 2px solid var(--gray-200);
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
                 border-radius: var(--radius-lg);
                 font-size: 1.25rem;
                 font-weight: 500;
-                color: #000000;
+                color: var(--text-primary);
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -276,7 +278,8 @@ class SubtestManager {
             
             .word-item:hover {
                 border-color: var(--primary-color);
-                background: var(--gray-50);
+                background: var(--primary-color);
+                color: var(--text-primary);
             }
             
             .word-item.read {
@@ -322,17 +325,17 @@ class SubtestManager {
             .passage-container h4 {
                 text-align: center;
                 margin-bottom: 2rem;
-                color: #000000;
+                color: var(--text-primary);
             }
             
             .passage-text {
                 font-size: 1.25rem;
                 line-height: 1.8;
-                color: #000000;
-                background: white;
+                color: var(--text-primary);
+                background: var(--bg-secondary);
                 padding: 2rem;
                 border-radius: var(--radius-lg);
-                border: 2px solid var(--gray-200);
+                border: 2px solid var(--border-color);
             }
             
             .passage-word {

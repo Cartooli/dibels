@@ -178,44 +178,44 @@ body {
     }
 }
 
-/* Dark Mode Theme - Sophisticated dark palette */
+/* Dark Mode Theme - Enhanced contrast palette */
 [data-theme="dark"] {
-    --bg-primary: #0a0a0a; /* Rich black */
-    --bg-secondary: #111111; /* Dark charcoal */
-    --bg-tertiary: #1a1a1a; /* Slightly lighter charcoal */
-    --bg-quaternary: #262626; /* For elevated surfaces */
-    --text-primary: #fafafa; /* Near white */
-    --text-secondary: #d4d4d8; /* Zinc 300 - Softer than pure white */
-    --text-muted: #a1a1aa; /* Zinc 400 - Readable muted text */
-    --text-subtle: #71717a; /* Zinc 500 - Subtle text */
-    --border-color: #404040; /* Zinc 700 - Subtle borders */
-    --border-subtle: #262626; /* Zinc 800 - Very subtle borders */
-    --shadow-color: rgba(0, 0, 0, 0.4); /* Stronger shadows for dark mode */
-    --shadow-subtle: rgba(0, 0, 0, 0.2);
+    --bg-primary: #0f0f0f; /* Slightly lighter than pure black for better contrast */
+    --bg-secondary: #1a1a1a; /* Dark charcoal with better contrast */
+    --bg-tertiary: #262626; /* Lighter charcoal for better separation */
+    --bg-quaternary: #333333; /* For elevated surfaces with better contrast */
+    --text-primary: #ffffff; /* Pure white for maximum contrast */
+    --text-secondary: #e5e5e5; /* High contrast secondary text */
+    --text-muted: #b3b3b3; /* Better contrast muted text */
+    --text-subtle: #999999; /* Improved subtle text contrast */
+    --border-color: #4a4a4a; /* Better contrast borders */
+    --border-subtle: #333333; /* Improved subtle borders */
+    --shadow-color: rgba(0, 0, 0, 0.5); /* Stronger shadows for dark mode */
+    --shadow-subtle: rgba(0, 0, 0, 0.3);
     
-    /* Dark Mode Neutral Colors - Zinc palette */
-    --gray-50: #18181b;
-    --gray-100: #27272a;
-    --gray-200: #3f3f46;
-    --gray-300: #52525b;
-    --gray-400: #71717a;
-    --gray-500: #a1a1aa;
-    --gray-600: #d4d4d8;
-    --gray-700: #e4e4e7;
-    --gray-800: #f4f4f5;
-    --gray-900: #fafafa;
+    /* Dark Mode Neutral Colors - Enhanced contrast palette */
+    --gray-50: #1a1a1a;
+    --gray-100: #2a2a2a;
+    --gray-200: #404040;
+    --gray-300: #555555;
+    --gray-400: #777777;
+    --gray-500: #999999;
+    --gray-600: #bbbbbb;
+    --gray-700: #dddddd;
+    --gray-800: #eeeeee;
+    --gray-900: #ffffff;
     
-    /* Dark Mode Accent Colors - Vibrant and accessible */
-    --primary-color: #8b5cf6; /* Violet 500 - More vibrant */
-    --primary-dark: #7c3aed; /* Violet 600 */
-    --primary-light: #a78bfa; /* Violet 400 */
-    --secondary-color: #06d6a0; /* Emerald 400 - Brighter green */
-    --secondary-dark: #05c085; /* Emerald 500 */
-    --accent-color: #fbbf24; /* Amber 400 - Warmer accent */
-    --accent-dark: #f59e0b; /* Amber 500 */
-    --warning-color: #f87171; /* Red 400 - Softer red */
-    --success-color: #34d399; /* Emerald 400 - Fresh green */
-    --info-color: #60a5fa; /* Blue 400 - Softer blue */
+    /* Dark Mode Accent Colors - High contrast and accessible */
+    --primary-color: #a78bfa; /* Lighter violet for better contrast */
+    --primary-dark: #8b5cf6; /* Medium violet */
+    --primary-light: #c4b5fd; /* Light violet */
+    --secondary-color: #34d399; /* Brighter green for better contrast */
+    --secondary-dark: #10b981; /* Darker green */
+    --accent-color: #fbbf24; /* Bright amber for visibility */
+    --accent-dark: #f59e0b; /* Darker amber */
+    --warning-color: #fca5a5; /* Lighter red for better contrast */
+    --success-color: #4ade80; /* Brighter green for better contrast */
+    --info-color: #93c5fd; /* Lighter blue for better contrast */
 }
 
 /* System Dark Mode Support */
@@ -443,6 +443,12 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* Dark mode hover states for grade buttons */
+[data-theme="dark"] .grade-btn:hover {
+    color: var(--text-primary);
+    background: var(--primary-color);
+}
+
 .grade-btn:focus {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
@@ -520,6 +526,17 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* Dark mode hover states - ensure white text on dark backgrounds */
+[data-theme="dark"] .subtest-btn:hover {
+    color: var(--text-primary);
+    background: var(--secondary-color);
+}
+
+[data-theme="dark"] .subtest-btn:hover .subtest-name,
+[data-theme="dark"] .subtest-btn:hover .subtest-desc {
+    color: var(--text-primary);
+}
+
 .subtest-btn:focus {
     outline: 3px solid var(--secondary-color);
     outline-offset: 2px;
@@ -587,6 +604,16 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* Dark mode hover states for option items */
+[data-theme="dark"] .option-item:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .option-item:hover .option-text {
+    color: var(--text-primary);
+}
+
 .option-item:focus {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
@@ -625,7 +652,7 @@ body {
 
 .option-text {
     font-weight: 500;
-    color: #000000;
+    color: var(--text-primary);
 }
 
 /* Start Practice Button - Premium design */
@@ -691,7 +718,7 @@ body {
 }
 
 .practice-info p {
-    color: #000000;
+    color: var(--text-primary);
     font-size: var(--font-size-lg);
 }
 
@@ -708,7 +735,7 @@ body {
 
 .timer-label {
     font-size: var(--font-size-sm);
-    color: #000000;
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -787,6 +814,13 @@ body {
     border-color: var(--gray-300);
 }
 
+/* Dark mode hover states for control buttons */
+[data-theme="dark"] .control-btn:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+}
+
 .control-btn.primary {
     background: var(--primary-color);
     color: white;
@@ -826,7 +860,7 @@ body {
     align-items: center;
     gap: var(--space-2);
     font-weight: 500;
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .score-inputs input {
@@ -881,6 +915,17 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
+/* Dark mode hover states for module cards */
+[data-theme="dark"] .module-card:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .module-card:hover h3,
+[data-theme="dark"] .module-card:hover p {
+    color: var(--text-primary);
+}
+
 .module-card:focus {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
@@ -890,11 +935,11 @@ body {
     font-size: var(--font-size-xl);
     font-weight: 600;
     margin-bottom: var(--space-3);
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .module-card p {
-    color: #000000;
+    color: var(--text-primary);
     margin-bottom: var(--space-6);
 }
 
@@ -1130,14 +1175,14 @@ input, select, textarea {
 }
 
 .guide-section h4, .error-types h4, .error-patterns h4 {
-    color: #000000;
+    color: var(--text-primary);
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-3);
 }
 
 .guide-section ul, .error-types ul, .error-patterns ul {
     margin-left: var(--space-6);
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .scoring-practice {
@@ -1152,7 +1197,7 @@ input, select, textarea {
 }
 
 .sample-response h4 {
-    color: #000000;
+    color: var(--text-primary);
     margin-bottom: var(--space-2);
 }
 
@@ -1206,9 +1251,22 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    outline: 3px solid var(--primary-color);
+    outline-offset: 3px;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+/* High contrast focus states for better visibility */
+@media (prefers-contrast: high) {
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 4px solid var(--primary-color);
+        outline-offset: 4px;
+        box-shadow: 0 0 0 2px var(--primary-color);
+    }
 }
 
 /* Premium hover effects */
@@ -1271,6 +1329,37 @@ textarea:focus-visible {
 [data-theme="dark"] .guide-section ul,
 [data-theme="dark"] .sample-response h4 {
     color: var(--text-primary);
+}
+
+/* Additional dark mode contrast improvements */
+[data-theme="dark"] .grade-btn,
+[data-theme="dark"] .subtest-btn,
+[data-theme="dark"] .option-item,
+[data-theme="dark"] .module-card {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .grade-btn:hover,
+[data-theme="dark"] .subtest-btn:hover,
+[data-theme="dark"] .option-item:hover,
+[data-theme="dark"] .module-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+}
+
+/* Ensure proper contrast for interactive elements in dark mode */
+[data-theme="dark"] .letter-item,
+[data-theme="dark"] .word-item {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .letter-item:hover,
+[data-theme="dark"] .word-item:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
 }
 
 /* Print styles */
