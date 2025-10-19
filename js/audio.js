@@ -432,7 +432,13 @@ audioStyle.textContent = `
         align-items: center;
         gap: 0.5rem;
         font-size: 0.9rem;
-        color: #000000;
+        color: #000000; /* Fallback */
+        color: var(--text-primary);
+    }
+    
+    /* Dark mode audio settings */
+    [data-theme="dark"] .audio-settings label {
+        color: var(--text-primary);
     }
     
     .audio-settings input[type="range"] {

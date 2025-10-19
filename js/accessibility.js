@@ -218,8 +218,10 @@ class AccessibilityManager {
             
             /* Accessibility panel */
             .accessibility-panel {
-                background: var(--gray-100);
-                border: 2px solid var(--gray-200);
+                background: #f1f5f9; /* Fallback */
+                background: var(--bg-secondary);
+                border: 2px solid #e2e8f0; /* Fallback */
+                border: 2px solid var(--border-color);
                 border-radius: var(--radius-lg);
                 padding: 1rem;
                 margin: 1rem 0;
@@ -227,7 +229,18 @@ class AccessibilityManager {
             
             .accessibility-panel h3 {
                 margin: 0 0 1rem 0;
-                color: #000000;
+                color: #000000; /* Fallback */
+                color: var(--text-primary);
+            }
+            
+            /* Dark mode accessibility panel */
+            [data-theme="dark"] .accessibility-panel {
+                background: var(--bg-secondary);
+                border-color: var(--border-color);
+            }
+            
+            [data-theme="dark"] .accessibility-panel h3 {
+                color: var(--text-primary);
             }
             
             .accessibility-toggle {
@@ -254,7 +267,13 @@ class AccessibilityManager {
             
             .font-size-controls label {
                 font-weight: 500;
-                color: #000000;
+                color: #000000; /* Fallback */
+                color: var(--text-primary);
+            }
+            
+            /* Dark mode font size controls */
+            [data-theme="dark"] .font-size-controls label {
+                color: var(--text-primary);
             }
             
             .font-size-controls input[type="range"] {
