@@ -115,7 +115,7 @@ class SubtestManager {
                 border-radius: var(--radius-lg);
                 font-size: 2rem;
                 font-weight: 600;
-                color: var(--gray-800);
+                color: #000000;
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -212,7 +212,7 @@ class SubtestManager {
                 border-radius: var(--radius-lg);
                 font-size: 1.5rem;
                 font-weight: 600;
-                color: var(--gray-800);
+                color: #000000;
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -267,7 +267,7 @@ class SubtestManager {
                 border-radius: var(--radius-lg);
                 font-size: 1.25rem;
                 font-weight: 500;
-                color: var(--gray-800);
+                color: #000000;
                 cursor: pointer;
                 transition: all var(--transition-fast);
                 user-select: none;
@@ -322,13 +322,13 @@ class SubtestManager {
             .passage-container h4 {
                 text-align: center;
                 margin-bottom: 2rem;
-                color: var(--gray-700);
+                color: #000000;
             }
             
             .passage-text {
                 font-size: 1.25rem;
                 line-height: 1.8;
-                color: var(--gray-800);
+                color: #000000;
                 background: white;
                 padding: 2rem;
                 border-radius: var(--radius-lg);
