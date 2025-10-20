@@ -4,11 +4,36 @@
 
 const DIBELS_CONTENT = {
     // DIBELS 8 Benchmark Scores by Grade Level
+    // NOTE: These are approximate benchmark goals based on DIBELS 8 standards.
+    // Actual benchmarks may vary by assessment period (Beginning, Middle, End of Year).
+    // Consult official DIBELS 8 materials for the most current benchmarks.
+    // Source: Based on DIBELS 8th Edition general guidance
     benchmarks: {
         'K': {
-            'LNF': { wellAboveAverage: 40, aboveAverage: 29, average: 18, belowAverage: 8, wellBelowAverage: 0 },
-            'PSF': { wellAboveAverage: 45, aboveAverage: 35, average: 24, belowAverage: 10, wellBelowAverage: 0 },
-            'NWF-CLS': { wellAboveAverage: 30, aboveAverage: 21, average: 13, belowAverage: 5, wellBelowAverage: 0 }
+            'LNF': { 
+                wellAboveAverage: 40, 
+                aboveAverage: 29, 
+                average: 18, 
+                belowAverage: 8, 
+                wellBelowAverage: 0,
+                note: 'End of Year benchmark; letters per minute'
+            },
+            'PSF': { 
+                wellAboveAverage: 45, 
+                aboveAverage: 35, 
+                average: 24, 
+                belowAverage: 10, 
+                wellBelowAverage: 0,
+                note: 'End of Year benchmark; phonemes per minute'
+            },
+            'NWF-CLS': { 
+                wellAboveAverage: 30, 
+                aboveAverage: 21, 
+                average: 13, 
+                belowAverage: 5, 
+                wellBelowAverage: 0,
+                note: 'End of Year benchmark; correct letter sounds per minute'
+            }
         },
         '1': {
             'PSF': { wellAboveAverage: 62, aboveAverage: 53, average: 44, belowAverage: 28, wellBelowAverage: 0 },
@@ -67,48 +92,65 @@ const DIBELS_CONTENT = {
             description: 'Measures the ability to recognize and name uppercase and lowercase letters arranged in random order.',
             timeLimit: 60,
             instructions: 'Name each letter as quickly as you can. If you don\'t know a letter, you can skip it and move to the next one.',
-            administration: 'Student has 1 minute to name as many letters as possible from a page of randomly arranged letters.',
-            scoring: 'Number of letters named correctly in 1 minute'
+            administration: 'Student has 1 minute to name as many letters as possible from a page of randomly arranged uppercase and lowercase letters. Examiner points to letters and student names them. If student hesitates for 3 seconds, examiner points to next letter.',
+            scoring: 'Number of letters named correctly in 1 minute. Each correct letter name = 1 point.',
+            materials: '104 letters (mixed uppercase and lowercase) arranged in random order',
+            discontinueRule: 'None - complete full minute regardless of performance'
         },
         'PSF': {
             name: 'Phonemic Segmentation Fluency',
             description: 'Measures the ability to segment words into individual phonemes fluently.',
             timeLimit: 60,
             instructions: 'I will say a word. Tell me all the sounds you hear in the word. For example, the word "cat" has three sounds: /k/ /a/ /t/.',
-            administration: 'Examiner says words aloud. Student produces individual phonemes in each word.',
-            scoring: 'Number of correct phonemes produced in 1 minute'
+            administration: 'Examiner says words aloud one at a time. Student produces individual phonemes in each word. Examiner moves to next word after student finishes or after 3-4 seconds.',
+            scoring: 'Number of correct phonemes produced in 1 minute. Each correct phoneme = 1 point. Phonemes must be produced in correct order.',
+            materials: 'List of 2-5 phoneme words',
+            discontinueRule: 'None - complete full minute regardless of performance',
+            scoringNote: 'Accept reasonable pronunciation. Long/short vowel variations acceptable.'
         },
         'NWF': {
             name: 'Nonsense Word Fluency',
             description: 'Measures the ability to decode nonsense (made-up) words using phonics skills.',
             timeLimit: 60,
             instructions: 'Read these made-up words. They are not real words, so use your letter sounds to read them.',
-            administration: 'Student reads VC and CVC nonsense words. Can produce letter sounds or whole words.',
-            scoring: 'Correct Letter Sounds (CLS) and Whole Words Read Correct (WRC)'
+            administration: 'Student reads VC and CVC nonsense words in 1 minute. Student can produce individual letter sounds OR read the whole word. Both are acceptable.',
+            scoring: 'Two scores: (1) Correct Letter Sounds (CLS) - each correct sound = 1 point, (2) Whole Words Read Correct (WRC) - entire word read correctly = bonus',
+            materials: 'Approximately 50 VC and CVC nonsense words',
+            discontinueRule: 'None - complete full minute regardless of performance',
+            scoringNote: 'If student reads whole word correctly, mark CLS for all letters AND count WRC. Credit both sound-by-sound and whole word reading.'
         },
         'WRF': {
             name: 'Word Reading Fluency',
             description: 'Measures the ability to read high-frequency words and decodable words fluently.',
             timeLimit: 60,
             instructions: 'Read each word as quickly and accurately as you can.',
-            administration: 'Student reads words from a list for 1 minute.',
-            scoring: 'Number of words read correctly in 1 minute'
+            administration: 'Student reads words from a list in 1 minute. Words include high-frequency sight words and phonetically regular words. Student reads left to right, top to bottom.',
+            scoring: 'Number of words read correctly in 1 minute. Each correct word = 1 point.',
+            materials: 'List of approximately 100 grade-appropriate words',
+            discontinueRule: 'None - complete full minute regardless of performance',
+            scoringNote: 'Self-corrections within 3 seconds count as correct'
         },
         'ORF': {
             name: 'Oral Reading Fluency',
             description: 'Measures the ability to read connected text accurately and fluently.',
             timeLimit: 60,
             instructions: 'Read this passage aloud as quickly and accurately as you can. If you make a mistake, you can correct it. If you don\'t know a word, I will tell it to you after 3 seconds.',
-            administration: 'Student reads grade-level passage aloud for 1 minute.',
-            scoring: 'Words read correctly minus errors'
+            administration: 'Student reads grade-level passage aloud for 1 minute. Examiner marks errors (omissions, substitutions, mispronunciations). Student continues reading for full minute.',
+            scoring: 'Words Read Correct per minute (WRC) = Total words read minus errors. Errors include omissions, substitutions, and hesitations over 3 seconds.',
+            materials: 'Grade-leveled passage (multiple forms available)',
+            discontinueRule: 'None - complete full minute regardless of performance',
+            scoringNote: 'Self-corrections within 3 seconds count as correct. Insertions do not count as errors. Repeated errors on same word count each time.'
         },
         'Maze': {
             name: 'Maze Comprehension',
             description: 'Measures reading comprehension by selecting correct words to complete a passage.',
             timeLimit: 180,
             instructions: 'Read the passage silently. For each blank with three word choices, circle the word that best completes the sentence.',
-            administration: 'Student reads passage silently and selects correct words from three choices at regular intervals.',
-            scoring: 'Number of correct word choices in 3 minutes'
+            administration: 'Student reads passage silently and selects correct words from three choices. First word choice is always correct. Distractors are semantic, syntactic, or random. Choices appear every 7th word approximately.',
+            scoring: 'Number of correct word choices in 3 minutes. First choice does not count. Only completed answers count.',
+            materials: 'Grade-leveled passage with embedded multiple-choice items',
+            discontinueRule: 'None - complete full 3 minutes regardless of performance',
+            scoringNote: 'Only mark as correct if clearly indicated. Ambiguous marks = incorrect. Student must finish reading sentence to count answer.'
         }
     },
 
@@ -180,7 +222,7 @@ const DIBELS_CONTENT = {
             { word: 'this', phonemes: ['/th/', '/i/', '/s/'], count: 3 },
             { word: 'that', phonemes: ['/th/', '/a/', '/t/'], count: 3 },
             { word: 'with', phonemes: ['/w/', '/i/', '/th/'], count: 3 },
-            { word: 'when', phonemes: ['/w/', '/h/', '/e/', '/n/'], count: 4 },
+            { word: 'when', phonemes: ['/w/', '/e/', '/n/'], count: 3 },
             { word: 'went', phonemes: ['/w/', '/e/', '/n/', '/t/'], count: 4 },
             { word: 'fast', phonemes: ['/f/', '/a/', '/s/', '/t/'], count: 4 },
             { word: 'jump', phonemes: ['/j/', '/u/', '/m/', '/p/'], count: 4 },
@@ -224,46 +266,46 @@ const DIBELS_CONTENT = {
             'yaf', 'yep', 'yif', 'yop', 'yud',
             'zaf', 'zep', 'zif', 'zop', 'zud'
         ],
-        // CCVC patterns - consonant blends
+        // CCVC patterns - consonant blends (all true nonsense words)
         ccvc: [
             'blaf', 'blep', 'blif', 'blop', 'blup',
             'braf', 'brep', 'brif', 'brop', 'brup',
             'claf', 'clep', 'clif', 'clop', 'clup',
-            'craf', 'crep', 'crif', 'crop', 'crup',
-            'draf', 'drep', 'drif', 'drop', 'drup',
-            'flaf', 'flep', 'flif', 'flop', 'flup',
+            'craf', 'crep', 'crif', 'crup', 'crob',
+            'draf', 'drep', 'drif', 'drob', 'drup',
+            'flaf', 'flep', 'flif', 'flob', 'flup',
             'fraf', 'frep', 'frif', 'frop', 'frup',
             'glaf', 'glep', 'glif', 'glop', 'glup',
             'graf', 'grep', 'grif', 'grop', 'grup',
-            'plaf', 'plep', 'plif', 'plop', 'plup',
-            'praf', 'prep', 'prif', 'prop', 'prup',
+            'plaf', 'plep', 'plif', 'plob', 'plup',
+            'praf', 'preb', 'prif', 'prob', 'prup',
             'scaf', 'scep', 'scif', 'scop', 'scup',
             'skaf', 'skep', 'skif', 'skop', 'skup',
-            'slaf', 'slep', 'slif', 'slop', 'slup',
+            'slaf', 'slep', 'slif', 'slob', 'slup',
             'smaf', 'smep', 'smif', 'smop', 'smup',
             'snaf', 'snep', 'snif', 'snop', 'snup',
-            'spaf', 'spep', 'spif', 'spop', 'spup',
-            'staf', 'step', 'stif', 'stop', 'stup',
+            'spaf', 'spep', 'spif', 'spob', 'spup',
+            'staf', 'steb', 'stif', 'stob', 'stup',
             'swaf', 'swep', 'swif', 'swop', 'swup',
             'traf', 'trep', 'trif', 'trop', 'trup'
         ],
-        // CVCC patterns - ending blends
+        // CVCC patterns - ending blends (all true nonsense words)
         cvcc: [
-            'baft', 'bamp', 'band', 'bank', 'bent',
-            'best', 'daft', 'damp', 'dent', 'filt',
-            'gaft', 'gamp', 'gelt', 'gent', 'gust',
-            'haft', 'hamp', 'hent', 'hift', 'hust',
-            'jaft', 'jamp', 'jelt', 'jent', 'just',
-            'kaft', 'kamp', 'kent', 'kift', 'kust',
-            'laft', 'lamp', 'lent', 'lift', 'lust',
-            'maft', 'mamp', 'melt', 'ment', 'mift',
-            'naft', 'namp', 'nelt', 'nent', 'nift',
-            'paft', 'pamp', 'pelt', 'pent', 'pift',
-            'raft', 'ramp', 'rent', 'rift', 'rust',
-            'saft', 'samp', 'sent', 'sift', 'sust',
-            'taft', 'tamp', 'tent', 'tift', 'tust',
-            'vaft', 'vamp', 'vent', 'vift', 'vust',
-            'waft', 'wamp', 'went', 'wift', 'wust'
+            'baft', 'bamp', 'bant', 'bask', 'bept',
+            'besk', 'daft', 'damp', 'dint', 'filt',
+            'gaft', 'gamp', 'gelt', 'gept', 'gusk',
+            'haft', 'hamp', 'hept', 'hift', 'husk',
+            'jaft', 'jamp', 'jelt', 'jept', 'jusk',
+            'kaft', 'kamp', 'kelt', 'kift', 'kusk',
+            'laft', 'lask', 'lept', 'lisk', 'lusk',
+            'maft', 'mamp', 'melk', 'mept', 'mift',
+            'naft', 'namp', 'nelt', 'nept', 'nift',
+            'paft', 'pamp', 'pelk', 'pept', 'pift',
+            'rask', 'remp', 'rept', 'rusk', 'rusk',
+            'saft', 'samp', 'selt', 'susk', 'susk',
+            'taft', 'tamp', 'tept', 'tift', 'tusk',
+            'vaft', 'vamp', 'vept', 'vift', 'vusk',
+            'welk', 'wamp', 'wept', 'wift', 'wusk'
         ]
     },
 
@@ -362,19 +404,19 @@ const DIBELS_CONTENT = {
             {
                 title: "My Cat",
                 text: "I have a cat. My cat is big. My cat is soft. My cat can run. My cat can jump. I like my cat. My cat likes me.",
-                wordCount: 31,
+                wordCount: 28,
                 genre: 'narrative'
             },
             {
                 title: "The Sun",
                 text: "The sun is up. The sun is hot. The sun is bright. I see the sun. The sun helps us. The sun is good.",
-                wordCount: 28,
+                wordCount: 24,
                 genre: 'informational'
             },
             {
                 title: "At the Park",
                 text: "We go to the park. I see a dog. I see a bird. I see the trees. We play at the park. The park is fun.",
-                wordCount: 30,
+                wordCount: 26,
                 genre: 'narrative'
             }
         ],
@@ -382,19 +424,19 @@ const DIBELS_CONTENT = {
             {
                 title: "The Lost Ball",
                 text: "Tom had a red ball. He took it to the park. Tom threw the ball high. The ball went over the fence. A girl found the ball. She gave it back to Tom. Tom said thank you. Now Tom is more careful with his ball.",
-                wordCount: 50,
+                wordCount: 45,
                 genre: 'narrative'
             },
             {
                 title: "Frogs",
                 text: "Frogs are animals that live near water. Frogs have smooth, wet skin. They have long back legs for jumping. Frogs eat flies and bugs. Baby frogs are called tadpoles. Tadpoles live in water. When they grow up, they can live on land too.",
-                wordCount: 49,
+                wordCount: 43,
                 genre: 'informational'
             },
             {
                 title: "The Garden",
                 text: "Mom and I planted a garden. We dug holes in the dirt. We put seeds in the holes. Then we watered them. Every day I checked the garden. Soon little green plants came up. Now we have tomatoes and carrots to eat.",
-                wordCount: 48,
+                wordCount: 42,
                 genre: 'narrative'
             }
         ],
@@ -402,19 +444,19 @@ const DIBELS_CONTENT = {
             {
                 title: "The Camping Trip",
                 text: "Our family went camping last weekend. We drove to the mountains. Dad set up the tent while Mom made sandwiches. My sister and I collected wood for the fire. That night we roasted marshmallows. We saw many stars in the sky. I heard an owl hooting. In the morning, we went hiking. It was the best trip ever.",
-                wordCount: 63,
+                wordCount: 58,
                 genre: 'narrative'
             },
             {
                 title: "Butterflies",
                 text: "Butterflies are beautiful insects with colorful wings. They start life as tiny eggs. The eggs hatch into caterpillars. Caterpillars eat leaves and grow bigger. Then they form a chrysalis. Inside the chrysalis, the caterpillar changes into a butterfly. This process is called metamorphosis. When the butterfly comes out, its wings are wet and folded. Soon they dry and the butterfly can fly.",
-                wordCount: 68,
+                wordCount: 62,
                 genre: 'informational'
             },
             {
                 title: "The New Student",
                 text: "Maya was nervous on her first day at a new school. She didn't know anyone in her class. At recess, she sat alone on a bench. A girl named Emma came over. Emma asked if Maya wanted to play jump rope. Maya smiled and said yes. By lunchtime, Maya had made three new friends. She was glad she came to her new school.",
-                wordCount: 67,
+                wordCount: 63,
                 genre: 'narrative'
             }
         ],
@@ -422,19 +464,19 @@ const DIBELS_CONTENT = {
             {
                 title: "The Science Project",
                 text: "Carlos wanted to do something special for the science fair. He decided to build a volcano. First, he made the mountain shape with clay and cardboard. Then he painted it brown and gray to look like a real volcano. For the eruption, he mixed baking soda, vinegar, and red food coloring. On the day of the fair, Carlos poured the mixture into his volcano. It fizzed and bubbled over the sides. Everyone gathered around to watch. His teacher was very impressed. Carlos won second place in the fair.",
-                wordCount: 98,
+                wordCount: 88,
                 genre: 'narrative'
             },
             {
                 title: "The Water Cycle",
                 text: "Water moves in a cycle on Earth. First, the sun heats water in oceans, rivers, and lakes. The water evaporates and turns into water vapor, which is a gas. The water vapor rises into the air and cools down. It condenses into tiny droplets that form clouds. When the droplets get big enough, they fall as rain or snow. This is called precipitation. The water flows back into oceans and rivers, and the cycle starts again. This process keeps happening over and over.",
-                wordCount: 95,
+                wordCount: 83,
                 genre: 'informational'
             },
             {
                 title: "The Time Capsule",
                 text: "Our class made a time capsule to bury in the school yard. Everyone brought something special to put inside. I brought a picture of my family and a letter about my life. My friend Sarah brought a popular toy. We included a newspaper and some coins too. Our teacher wrote about our class and what we learned this year. We sealed everything in a metal box. The principal helped us dig a hole and bury it. We'll open it in twenty-five years. I wonder what we'll think when we see it again.",
-                wordCount: 104,
+                wordCount: 92,
                 genre: 'narrative'
             }
         ],
@@ -442,19 +484,19 @@ const DIBELS_CONTENT = {
             {
                 title: "Benjamin Franklin's Inventions",
                 text: "Benjamin Franklin was one of America's greatest inventors. He created many useful things that we still use today. Franklin invented bifocal glasses, which help people see both near and far. He also invented the lightning rod to protect buildings from lightning strikes. The Franklin stove heated homes more efficiently than fireplaces. He discovered that lightning is electricity by flying a kite in a storm. Franklin was also a statesman and helped write the Declaration of Independence. His inventions and ideas changed America forever.",
-                wordCount: 93,
+                wordCount: 83,
                 genre: 'informational'
             },
             {
                 title: "The School Play Audition",
                 text: "Jessica wanted the lead role in the school play. She had practiced her lines for weeks. When audition day came, she felt butterflies in her stomach. Jessica watched other students perform. They were all very good. When her turn came, she walked onto the stage. The bright lights made it hard to see the audience. Jessica took a deep breath and began to speak. Her voice was clear and strong. She remembered every word. After the audition, the director smiled at her. Jessica felt proud of herself no matter what happened.",
-                wordCount: 102,
+                wordCount: 91,
                 genre: 'narrative'
             },
             {
                 title: "Ecosystems",
                 text: "An ecosystem is a community of living things and their environment. Plants, animals, and tiny organisms all work together. Each organism has a role in the ecosystem. Plants make food using sunlight through photosynthesis. Herbivores eat plants for energy. Carnivores hunt other animals. Decomposers break down dead plants and animals. This returns nutrients to the soil. When one part of an ecosystem changes, it affects everything else. That's why it's important to protect natural habitats. Healthy ecosystems help all living things survive.",
-                wordCount: 95,
+                wordCount: 82,
                 genre: 'informational'
             }
         ],
@@ -462,19 +504,19 @@ const DIBELS_CONTENT = {
             {
                 title: "The Journey West",
                 text: "In the 1840s, thousands of pioneers traveled west across America in covered wagons. They were searching for better land and new opportunities. The journey was extremely difficult and dangerous. Families had to cross rivers, climb mountains, and travel through deserts. They faced harsh weather, disease, and limited food supplies. The trip took about five months to complete. Despite these hardships, the pioneers showed remarkable courage and determination. They helped settle the western territories and eventually formed new states. Their journey changed the face of America forever and demonstrated the strength of the human spirit.",
-                wordCount: 103,
+                wordCount: 94,
                 genre: 'informational'
             },
             {
                 title: "The Championship Game",
                 text: "The score was tied with thirty seconds left in the championship game. Marcus dribbled the basketball down the court. His heart pounded as the crowd roared. He looked for an open teammate but everyone was covered. Twenty seconds remained. Marcus drove toward the basket. A defender blocked his path. He spun around and passed to his teammate Sarah. She caught the ball with five seconds left. Sarah jumped and shot the ball toward the basket. The buzzer sounded. Everyone watched as the ball arced through the air. It swished through the net! The team celebrated their amazing victory.",
-                wordCount: 110,
+                wordCount: 98,
                 genre: 'narrative'
             },
             {
                 title: "Renewable Energy",
                 text: "Renewable energy comes from natural sources that don't run out. Solar power uses energy from the sun. Special panels convert sunlight into electricity. Wind turbines capture the power of moving air. Hydroelectric dams use flowing water to generate electricity. Geothermal energy taps into heat from inside the Earth. These clean energy sources don't pollute the environment like fossil fuels do. As technology improves, renewable energy is becoming less expensive. Many countries are investing in these sustainable solutions. Using renewable energy helps fight climate change and protects our planet for future generations.",
-                wordCount: 104,
+                wordCount: 91,
                 genre: 'informational'
             }
         ],
@@ -482,13 +524,13 @@ const DIBELS_CONTENT = {
             {
                 title: "The Ancient Egyptian Pyramids",
                 text: "The pyramids of ancient Egypt are among the most remarkable structures ever built. The largest pyramid, the Great Pyramid of Giza, was constructed around 2560 BCE. It took approximately twenty years to complete and required thousands of workers. The pyramid originally stood 481 feet tall and contained about 2.3 million stone blocks. Each block weighed between two and fifteen tons. Workers transported these massive stones without modern machinery, using ropes, wooden sleds, and human strength. The pyramids served as tombs for pharaohs and contained treasures and belongings for the afterlife. Today, these ancient wonders continue to fascinate people and reveal secrets about Egyptian civilization.",
-                wordCount: 113,
+                wordCount: 104,
                 genre: 'informational'
             },
             {
                 title: "The Storm",
                 text: "Dark clouds gathered on the horizon as the wind began to howl. Sarah secured the shutters on the old farmhouse while her grandfather brought the animals into the barn. The weather forecast had predicted a severe storm, and they knew they had to prepare quickly. Thunder rumbled in the distance, growing louder with each passing minute. Rain started falling in large, heavy drops, quickly turning into sheets of water. The electricity flickered once, twice, then went out completely. Sarah lit candles throughout the house while her grandfather checked the emergency supplies. They settled in to wait out the storm, listening to the wind rattle the windows and shake the walls.",
-                wordCount: 119,
+                wordCount: 110,
                 genre: 'narrative'
             }
         ],
@@ -496,13 +538,13 @@ const DIBELS_CONTENT = {
             {
                 title: "The Scientific Method",
                 text: "The scientific method is a systematic approach that scientists use to investigate questions and solve problems. It begins with careful observation of natural phenomena and asking thoughtful questions about what has been observed. Scientists then formulate a hypothesis, which is an educated guess or proposed explanation. Next, they design controlled experiments to test their hypothesis objectively. During experiments, scientists collect and analyze data meticulously, looking for patterns and relationships. They draw conclusions based on their findings and compare results with their original hypothesis. If the data doesn't support the hypothesis, scientists revise their ideas and test again. This process has led to countless discoveries and technological innovations throughout human history.",
-                wordCount: 119,
+                wordCount: 110,
                 genre: 'informational'
             },
             {
                 title: "The Decision",
                 text: "Standing at the crossroads of her future, Elena faced the most difficult decision of her young life. She had received acceptance letters from two outstanding universities, each offering unique opportunities and challenges. The first school had an excellent science program and would allow her to pursue her passion for marine biology. However, it was located across the country, far from her family and everything familiar. The second university was closer to home and offered a generous scholarship, but its marine science department wasn't as renowned. Elena spent sleepless nights weighing her options, discussing possibilities with family and mentors. She knew that whatever choice she made would shape her future in profound ways.",
-                wordCount: 122,
+                wordCount: 112,
                 genre: 'narrative'
             }
         ],
@@ -510,13 +552,13 @@ const DIBELS_CONTENT = {
             {
                 title: "The Industrial Revolution",
                 text: "The Industrial Revolution fundamentally transformed society during the late eighteenth and nineteenth centuries. Beginning in Great Britain, this period marked a dramatic shift from agrarian economies to industrial manufacturing. The invention of the steam engine revolutionized transportation and factory production. Textile mills, iron foundries, and coal mines emerged as major industries. People migrated from rural areas to cities seeking employment in factories. While industrialization created unprecedented economic growth and technological innovation, it also generated significant social problems. Workers endured dangerous conditions, long hours, and low wages. Child labor was commonplace. Urban areas became overcrowded and polluted. These challenges eventually led to labor movements, reforms, and government regulations that improved working conditions and established workers' rights.",
-                wordCount: 122,
+                wordCount: 115,
                 genre: 'informational'
             },
             {
                 title: "The Discovery",
                 text: "Dr. Chen carefully examined the artifacts unearthed from the archaeological site. Her team had been excavating this location for three months, uncovering pottery, tools, and architectural remains. However, nothing compared to what she held in her hands now—a perfectly preserved tablet covered in an unknown writing system. The symbols were unlike anything documented in existing databases. This discovery could potentially rewrite our understanding of ancient civilizations in this region. Dr. Chen photographed the tablet from every angle, documenting each detail meticulously. She immediately contacted colleagues at the university, knowing that deciphering this mysterious script would require expertise from linguists, historians, and computer specialists. This moment represented why she had dedicated her life to archaeology.",
-                wordCount: 124,
+                wordCount: 114,
                 genre: 'narrative'
             }
         ]
@@ -528,13 +570,13 @@ const DIBELS_CONTENT = {
             {
                 title: "Weather Patterns",
                 text: "Weather [can/will/may] change quickly throughout the day. Sometimes it is [sunny/rainy/cloudy] and warm in the morning. Later, clouds might [appear/disappear/form] and cover the sky. When [dark/light/bright] clouds gather, rain often [falls/rises/stays]. Weather affects what we [wear/eat/drink] and the activities we [do/see/hear] outdoors.",
-                wordCount: 52,
+                wordCount: 42,
                 correctAnswers: ['can', 'sunny', 'appear', 'dark', 'falls', 'wear', 'do']
             },
             {
                 title: "The Library",
                 text: "The library is a [quiet/loud/busy] place where people come to [read/play/run]. There are [many/few/some] different kinds of books. You can [find/lose/hide] books about animals, [space/food/toys], and history. The [librarian/teacher/student] helps you find what you [need/want/have]. Libraries are [important/funny/small] for learning.",
-                wordCount: 51,
+                wordCount: 40,
                 correctAnswers: ['quiet', 'read', 'many', 'find', 'space', 'librarian', 'need', 'important']
             }
         ],
@@ -542,7 +584,7 @@ const DIBELS_CONTENT = {
             {
                 title: "The Solar System",
                 text: "Our solar system [consists/contains/includes] of eight planets that [orbit/circle/revolve] around the Sun. Each planet has [unique/special/different] characteristics and features. Mercury is the [closest/nearest/first] planet to the Sun, while Neptune is the [farthest/last/distant]. Earth is the [only/single/one] planet known to [support/have/contain] life. Scientists [continue/keep/try] to study the other planets to [learn/discover/find] more about our [universe/galaxy/system].",
-                wordCount: 68,
+                wordCount: 54,
                 correctAnswers: ['consists', 'orbit', 'unique', 'closest', 'farthest', 'only', 'support', 'continue', 'learn', 'universe']
             }
         ],
@@ -550,7 +592,7 @@ const DIBELS_CONTENT = {
             {
                 title: "Photosynthesis",
                 text: "Photosynthesis is the [process/way/method] by which plants [make/create/produce] their own food. Plants [use/need/take] sunlight, water, and carbon dioxide for this [important/vital/necessary] process. Chlorophyll, the [substance/material/chemical] that makes plants green, [captures/absorbs/takes] sunlight. The plant then [converts/changes/transforms] this energy into [sugar/food/glucose] that it can use to [grow/live/survive].",
-                wordCount: 64,
+                wordCount: 45,
                 correctAnswers: ['process', 'make', 'use', 'important', 'substance', 'captures', 'converts', 'sugar', 'grow']
             }
         ],
@@ -558,7 +600,7 @@ const DIBELS_CONTENT = {
             {
                 title: "The Renaissance",
                 text: "The Renaissance was a [period/time/era] of great cultural and [intellectual/mental/artistic] change that began in [Italy/Europe/Rome] during the 14th century. This era [marked/showed/indicated] the transition from [medieval/ancient/old] to modern times. Artists like Leonardo da Vinci and Michelangelo [created/made/painted] masterpieces that are still [admired/appreciated/valued] today. The invention of the [printing/writing/copying] press made books more [accessible/available/common] to people.",
-                wordCount: 68,
+                wordCount: 55,
                 correctAnswers: ['period', 'intellectual', 'Italy', 'marked', 'medieval', 'created', 'admired', 'printing', 'accessible']
             }
         ],
@@ -566,7 +608,7 @@ const DIBELS_CONTENT = {
             {
                 title: "The Scientific Revolution",
                 text: "The Scientific Revolution [fundamentally/completely/totally] changed how people [understood/viewed/perceived] the natural world. Scientists like Copernicus, Galileo, and Newton [challenged/questioned/disputed] traditional beliefs and [developed/created/invented] new methods of [inquiry/investigation/research]. The heliocentric model of the solar system [replaced/changed/altered] the geocentric view. This period [established/founded/created] the foundation for modern [science/knowledge/understanding] and technology.",
-                wordCount: 60,
+                wordCount: 47,
                 correctAnswers: ['fundamentally', 'understood', 'challenged', 'developed', 'inquiry', 'replaced', 'established', 'science']
             }
         ],
@@ -574,7 +616,7 @@ const DIBELS_CONTENT = {
             {
                 title: "Climate Change",
                 text: "Climate change [represents/shows/indicates] one of the most [significant/important/serious] challenges facing our [planet/world/Earth] today. Human [activities/actions/behaviors] such as burning fossil [fuels/resources/materials] have increased greenhouse gas [emissions/releases/outputs]. These gases [trap/capture/hold] heat in the atmosphere, causing global [temperatures/climates/conditions] to rise. Scientists [warn/caution/alert] that without immediate [action/response/intervention], the consequences could be [catastrophic/devastating/severe] for future generations.",
-                wordCount: 67,
+                wordCount: 51,
                 correctAnswers: ['represents', 'significant', 'planet', 'activities', 'fuels', 'emissions', 'trap', 'temperatures', 'warn', 'action', 'catastrophic']
             }
         ]
