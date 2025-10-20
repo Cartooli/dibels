@@ -1,7 +1,7 @@
 // Theme Manager for DIBELS Practice Lab
 class ThemeManager {
     constructor() {
-        this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
+        this.currentTheme = this.getStoredTheme() || 'light'; // Default to light mode
         this.themeToggle = document.getElementById('theme-toggle');
         this.themeIcon = document.getElementById('theme-icon');
         this.themeText = document.getElementById('theme-text');
