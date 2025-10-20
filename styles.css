@@ -1124,6 +1124,7 @@ body {
 @media (max-width: 480px) {
     .grade-buttons {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2);
     }
     
     .options-grid {
@@ -1136,6 +1137,58 @@ body {
     
     .progress-stats {
         grid-template-columns: 1fr;
+    }
+    
+    /* Enhanced touch targets for mobile */
+    button,
+    .grade-btn,
+    .subtest-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: var(--space-3) var(--space-4);
+    }
+    
+    /* Improve readability on small screens */
+    body {
+        font-size: 16px; /* Prevents iOS zoom on input focus */
+    }
+    
+    h1, .logo {
+        font-size: var(--font-size-2xl);
+    }
+    
+    h2 {
+        font-size: var(--font-size-xl);
+    }
+    
+    h3 {
+        font-size: var(--font-size-lg);
+    }
+    
+    /* Stack controls vertically */
+    .practice-controls,
+    .score-inputs {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .practice-controls button {
+        width: 100%;
+    }
+    
+    /* Full-width inputs on mobile */
+    input[type="number"],
+    input[type="text"],
+    textarea {
+        width: 100%;
+        font-size: 16px; /* Prevents zoom on focus */
+    }
+    
+    /* Improve spacing in modals */
+    .modal-content {
+        max-width: 95vw;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 }
 
