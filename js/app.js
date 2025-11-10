@@ -240,15 +240,21 @@ class DIBELSApp {
     }
 
     // Start practice
-    startPractice() {
+    async startPractice() {
         console.log('Starting practice - Grade:', this.currentGrade, 'Subtest:', this.currentSubtest);
         if (!this.currentGrade || !this.currentSubtest) {
             console.log('Missing grade or subtest selection');
-            alert('Please select a grade and subtest first.');
+            this.showToast('Please select a grade and subtest first.', 'warning');
             return;
         }
         
+        // Show loading
+        this.showLoading('Preparing practice session...');
+        
         this.updatePracticeOptions();
+        
+        // Small delay to show loading animation
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         // Initialize subtest
         const success = window.subtestManager.initSubtest(
@@ -258,7 +264,8 @@ class DIBELSApp {
         );
         
         if (!success) {
-            alert('Failed to initialize practice session.');
+            this.hideLoading();
+            this.showToast('Failed to initialize practice session.', 'error');
             return;
         }
         
@@ -269,6 +276,10 @@ class DIBELSApp {
         window.subtestManager.startPractice();
         
         this.isPracticeActive = true;
+        
+        // Hide loading and show success
+        this.hideLoading();
+        this.showToast('Practice session started!', 'success', 3000);
         
         // Update accessibility
         window.accessibilityManager.setupPracticeAccessibility();
@@ -299,7 +310,7 @@ class DIBELSApp {
         // Show/hide timer based on options
         const timerContainer = document.querySelector('.timer-container');
         if (timerContainer) {
-            if (this.practiceOptions.showTimer) {
+            if (this.practiceOptions.timed) {
                 timerContainer.classList.remove('hidden');
             } else {
                 timerContainer.classList.add('hidden');
@@ -308,6 +319,20 @@ class DIBELSApp {
         
         // Add print button
         this.addPrintButton();
+        
+        // Focus practice content for accessibility
+        setTimeout(() => {
+            const practiceContent = document.getElementById('practice-content');
+            if (practiceContent) {
+                const firstFocusable = practiceContent.querySelector('[tabindex="0"], [tabindex="-1"]');
+                if (firstFocusable) {
+                    firstFocusable.tabIndex = 0;
+                    firstFocusable.focus();
+                } else {
+                    practiceTitle.focus();
+                }
+            }
+        }, 100);
     }
 
     // Pause practice
@@ -394,17 +419,24 @@ class DIBELSApp {
             return;
         }
         
-        const accuracy = (correct / total) * 100;
-        const score = correct - errors; // DIBELS scoring typically subtracts errors
+        // Use scoring engine for accurate DIBELS scoring
+        const scoreData = window.scoringEngine.calculateScore(
+            this.currentSubtest,
+            { correct, errors },
+            { mode: 'detailed' }
+        );
         
-        scoreResult.innerHTML = `
-            <div><strong>Total Responses:</strong> ${total}</div>
-            <div><strong>Accuracy:</strong> ${accuracy.toFixed(1)}%</div>
-            <div><strong>Score:</strong> ${score}</div>
-        `;
+        // Display formatted score with benchmark comparison
+        scoreResult.innerHTML = window.scoringEngine.formatScoreDisplay(
+            scoreData,
+            this.currentSubtest,
+            this.currentGrade
+        );
         
         // Announce score
-        window.accessibilityManager.announce(`Practice completed. Score: ${score}. Accuracy: ${accuracy.toFixed(1)} percent.`);
+        window.accessibilityManager.announce(
+            `Practice completed. ${scoreData.display}. Accuracy: ${scoreData.accuracy} percent.`
+        );
     }
 
     // Update timer display
@@ -957,8 +989,8 @@ class DIBELSApp {
     }
 
     // Progress methods
-    loadProgressData() {
-        const analytics = window.progressTracker.getAnalytics();
+    async loadProgressData() {
+        const analytics = await window.progressTracker.getAnalytics();
         
         // Overall stats
         document.getElementById('total-sessions').textContent = analytics.totalSessions;
@@ -1036,6 +1068,79 @@ class DIBELSApp {
         `;
     }
 
+    // Toast notification system
+    showToast(message, type = 'info', duration = 5000) {
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const icons = {
+            success: '✓',
+            error: '✗',
+            info: 'ℹ',
+            warning: '⚠'
+        };
+        
+        toast.innerHTML = `
+            <div class="toast-icon">${icons[type] || icons.info}</div>
+            <div class="toast-content">
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" aria-label="Close notification">&times;</button>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Close button handler
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+            toast.remove();
+        });
+        
+        // Auto-remove after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+        
+        // Announce to screen readers
+        window.accessibilityManager?.announce(message);
+        
+        return toast;
+    }
+    
+    // Show loading overlay
+    showLoading(message = 'Loading...') {
+        const overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="loading-message">
+                <div class="loading-spinner"></div>
+                <h3>${message}</h3>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+    
+    // Hide loading overlay
+    hideLoading() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+    
     // Show about
     showAbout() {
         const about = `

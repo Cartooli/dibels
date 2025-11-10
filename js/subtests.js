@@ -55,6 +55,32 @@ class SubtestManager {
     renderContent() {
         const contentElement = document.getElementById('practice-content');
         if (!contentElement) return;
+        
+        // Validate content exists and is not empty
+        if (!this.currentContent || !this.currentContent.content) {
+            contentElement.innerHTML = `
+                <div class="error-message">
+                    <h3>Content Error</h3>
+                    <p>Failed to generate practice content. Please try again.</p>
+                    <button class="control-btn" onclick="window.dibelsApp.backToMenu()">Back to Menu</button>
+                </div>
+            `;
+            return;
+        }
+        
+        // Validate content is not empty array/object
+        const content = this.currentContent.content;
+        if ((Array.isArray(content) && content.length === 0) ||
+            (typeof content === 'object' && Object.keys(content).length === 0)) {
+            contentElement.innerHTML = `
+                <div class="error-message">
+                    <h3>Content Error</h3>
+                    <p>No practice items available for this subtest and grade combination.</p>
+                    <button class="control-btn" onclick="window.dibelsApp.backToMenu()">Back to Menu</button>
+                </div>
+            `;
+            return;
+        }
 
         switch (this.currentSubtest) {
             case 'LNF':
@@ -88,8 +114,8 @@ class SubtestManager {
                 <p>${instructions}</p>
             </div>
             <div class="lnf-content">
-                <div class="letter-grid">
-                    ${content.map(letter => `<span class="letter-item">${letter}</span>`).join('')}
+                <div class="letter-grid" role="grid" aria-label="Letter naming practice grid">
+                    ${content.map((letter, index) => `<span class="letter-item" role="gridcell" tabindex="-1" data-nav-index="${index}" aria-label="Letter ${letter}">${letter}</span>`).join('')}
                 </div>
             </div>
         `;
@@ -102,6 +128,20 @@ class SubtestManager {
                 gap: 1rem;
                 max-width: 800px;
                 margin: 0 auto;
+            }
+            
+            @media (max-width: 768px) {
+                .letter-grid {
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 0.75rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .letter-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 0.5rem;
+                }
             }
             
             .letter-item {
@@ -203,6 +243,20 @@ class SubtestManager {
                 margin: 0 auto;
             }
             
+            @media (max-width: 768px) {
+                .word-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 0.75rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .word-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 0.5rem;
+                }
+            }
+            
             .word-item {
                 display: flex;
                 align-items: center;
@@ -243,12 +297,20 @@ class SubtestManager {
                 <h3>Word Reading Fluency</h3>
                 <p>${instructions}</p>
             </div>
-            <div class="wrf-content">
+            <div class="wrf-content" id="wrf-content">
                 <div class="word-grid">
                     ${content.map(word => `<span class="word-item">${word}</span>`).join('')}
                 </div>
             </div>
         `;
+        
+        // Add audio controls if audio modeling is enabled
+        if (this.practiceOptions.audioModeling && window.audioControls) {
+            const wrfContent = container.querySelector('#wrf-content');
+            if (wrfContent) {
+                window.audioControls.addAudioControls(wrfContent, content, 'WRF');
+            }
+        }
 
         this.addSubtestStyles(`
             .word-grid {
@@ -299,7 +361,7 @@ class SubtestManager {
                 <h3>Oral Reading Fluency</h3>
                 <p>${instructions}</p>
             </div>
-            <div class="orf-content">
+            <div class="orf-content" id="orf-content">
                 <div class="passage-container">
                     <h4>${content.title}</h4>
                     <div class="passage-text" id="passage-text">
@@ -314,6 +376,17 @@ class SubtestManager {
                 </div>
             </div>
         `;
+        
+        // Add audio controls if audio modeling is enabled
+        if (this.practiceOptions.audioModeling && window.audioControls) {
+            const orfContent = container.querySelector('#orf-content');
+            if (orfContent) {
+                window.audioControls.addAudioControls(orfContent, content, 'ORF');
+            }
+        }
+        
+        // Setup word tracking for WCPM
+        this.setupORFTracking();
 
         this.addSubtestStyles(`
             .passage-container {
@@ -435,6 +508,95 @@ class SubtestManager {
                 justify-content: center;
                 margin-top: 2rem;
             }
+            
+            .maze-results {
+                background: var(--bg-secondary);
+                border: 2px solid var(--border-color);
+                border-radius: var(--radius-xl);
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+            
+            .result-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+                border-bottom: 2px solid var(--border-color);
+                padding-bottom: 0.75rem;
+            }
+            
+            .result-header h4 {
+                margin: 0;
+                color: var(--text-primary);
+                font-size: 1.25rem;
+            }
+            
+            .result-score {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-color);
+            }
+            
+            .result-breakdown {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .result-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0.75rem;
+                border-radius: var(--radius-lg);
+            }
+            
+            .result-item.correct {
+                background: var(--success-color);
+                color: white;
+            }
+            
+            .result-item.incorrect {
+                background: var(--accent-color);
+                color: white;
+            }
+            
+            .result-item.unanswered {
+                background: var(--warning-color);
+                color: white;
+            }
+            
+            .result-label {
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+            }
+            
+            .result-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+            
+            .result-accuracy {
+                text-align: center;
+                padding: 1rem;
+                background: var(--primary-color);
+                color: white;
+                border-radius: var(--radius-lg);
+                font-size: 1.125rem;
+                font-weight: 600;
+            }
+            
+            .accuracy-label {
+                margin-right: 0.5rem;
+            }
+            
+            .accuracy-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
         `);
 
         this.setupMazeEventListeners();
@@ -442,22 +604,33 @@ class SubtestManager {
 
     // Render maze passage with blanks
     renderMazePassage(content) {
-        const words = content.text.split(' ');
+        const text = content.text;
         let result = '';
+        let questionIndex = 0;
         
-        for (let i = 0; i < words.length; i++) {
-            const question = content.questions.find(q => q.position === i);
-            if (question) {
+        // Split by words but preserve the [option1/option2/option3] format
+        const parts = text.split(/(\s+)/);
+        
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            
+            // Check if this part contains maze choices [option1/option2/option3]
+            const mazeMatch = part.match(/\[([^\]]+)\]/);
+            if (mazeMatch) {
+                const options = mazeMatch[1].split('/');
+                const correctAnswer = content.correctAnswers[questionIndex];
+                
                 result += `<span class="maze-blank">
-                    <select class="maze-select" data-position="${i}">
+                    <select class="maze-select" data-position="${questionIndex}" data-correct="${correctAnswer}">
                         <option value="">Choose...</option>
-                        ${question.options.map(option => 
-                            `<option value="${option}">${option}</option>`
+                        ${options.map(option => 
+                            `<option value="${option.trim()}">${option.trim()}</option>`
                         ).join('')}
                     </select>
-                </span> `;
+                </span>`;
+                questionIndex++;
             } else {
-                result += words[i] + ' ';
+                result += part;
             }
         }
         
@@ -502,9 +675,110 @@ class SubtestManager {
                     this.handleLetterClick(e.target);
                 } else if (e.target.classList.contains('word-item')) {
                     this.handleWordClick(e.target);
+                } else if (e.target.classList.contains('passage-word')) {
+                    this.handlePassageWordClick(e.target);
                 }
             });
         }
+    }
+    
+    // Setup ORF word tracking
+    setupORFTracking() {
+        this.orfWordIndex = 0;
+        this.orfStartTime = null;
+        this.orfWordTimes = [];
+        
+        const startBtn = document.getElementById('start-reading');
+        const stopBtn = document.getElementById('stop-reading');
+        
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                this.startORFTracking();
+            });
+        }
+        
+        if (stopBtn) {
+            stopBtn.addEventListener('click', () => {
+                this.stopORFTracking();
+            });
+        }
+    }
+    
+    // Start ORF tracking
+    startORFTracking() {
+        this.orfStartTime = Date.now();
+        this.orfWordIndex = 0;
+        this.orfWordTimes = [];
+        
+        // Highlight first word
+        const firstWord = document.querySelector('.passage-word[data-word-index="0"]');
+        if (firstWord) {
+            firstWord.classList.add('current');
+        }
+    }
+    
+    // Stop ORF tracking
+    stopORFTracking() {
+        if (this.orfStartTime) {
+            const duration = (Date.now() - this.orfStartTime) / 1000;
+            const wordsRead = this.orfWordIndex;
+            const wcpm = Math.round((wordsRead / duration) * 60);
+            
+            // Calculate errors (words marked as errors)
+            const errorWords = document.querySelectorAll('.passage-word.error').length;
+            const correctWords = wordsRead - errorWords;
+            const actualWCPM = Math.round((correctWords / duration) * 60);
+            
+            // Show results
+            alert(`Words read: ${wordsRead}\nTime: ${duration.toFixed(1)}s\nWCPM: ${actualWCPM}`);
+        }
+    }
+    
+    // Handle passage word click
+    handlePassageWordClick(element) {
+        const wordIndex = parseInt(element.dataset.wordIndex);
+        
+        // Remove current class from all words
+        document.querySelectorAll('.passage-word.current').forEach(w => {
+            w.classList.remove('current');
+        });
+        
+        // Mark as read or error (right-click for error)
+        if (!element.classList.contains('read') && !element.classList.contains('error')) {
+            element.classList.add('read');
+            this.orfWordIndex++;
+            
+            // Record timing
+            if (this.orfStartTime) {
+                this.orfWordTimes.push({
+                    word: element.textContent,
+                    index: wordIndex,
+                    time: Date.now() - this.orfStartTime,
+                    correct: true
+                });
+            }
+            
+            // Highlight next word
+            const nextWord = document.querySelector(`.passage-word[data-word-index="${wordIndex + 1}"]`);
+            if (nextWord) {
+                nextWord.classList.add('current');
+            }
+        } else if (element.classList.contains('read')) {
+            // Toggle to error on second click
+            element.classList.remove('read');
+            element.classList.add('error');
+        } else if (element.classList.contains('error')) {
+            // Reset on third click
+            element.classList.remove('error');
+            this.orfWordIndex--;
+        }
+        
+        this.responses.push({
+            word: element.textContent,
+            index: wordIndex,
+            response: element.classList.contains('read') ? 'correct' : 'error',
+            timestamp: Date.now()
+        });
     }
 
     // Handle letter click (LNF)
@@ -569,21 +843,81 @@ class SubtestManager {
         answerDisplay.style.display = 'block';
     }
 
-    // Simple phoneme breakdown (placeholder)
+    // Phoneme breakdown with dictionary
     breakIntoPhonemes(word) {
-        // This is a simplified version - real implementation would use proper phoneme analysis
-        const vowels = 'aeiou';
-        let phonemes = [];
-        let current = '';
+        // Common word phoneme dictionary
+        const phonemeDict = {
+            'cat': ['k', 'æ', 't'],
+            'dog': ['d', 'ɔ', 'g'],
+            'bat': ['b', 'æ', 't'],
+            'mat': ['m', 'æ', 't'],
+            'sat': ['s', 'æ', 't'],
+            'rat': ['r', 'æ', 't'],
+            'hat': ['h', 'æ', 't'],
+            'pat': ['p', 'æ', 't'],
+            'sun': ['s', 'ʌ', 'n'],
+            'run': ['r', 'ʌ', 'n'],
+            'fun': ['f', 'ʌ', 'n'],
+            'bun': ['b', 'ʌ', 'n'],
+            'pig': ['p', 'ɪ', 'g'],
+            'big': ['b', 'ɪ', 'g'],
+            'dig': ['d', 'ɪ', 'g'],
+            'fig': ['f', 'ɪ', 'g'],
+            'top': ['t', 'ɑ', 'p'],
+            'hop': ['h', 'ɑ', 'p'],
+            'mop': ['m', 'ɑ', 'p'],
+            'pop': ['p', 'ɑ', 'p'],
+            'red': ['r', 'ɛ', 'd'],
+            'bed': ['b', 'ɛ', 'd'],
+            'led': ['l', 'ɛ', 'd'],
+            'fed': ['f', 'ɛ', 'd'],
+            'sit': ['s', 'ɪ', 't'],
+            'hit': ['h', 'ɪ', 't'],
+            'bit': ['b', 'ɪ', 't'],
+            'fit': ['f', 'ɪ', 't'],
+            'cup': ['k', 'ʌ', 'p'],
+            'pup': ['p', 'ʌ', 'p'],
+            'bug': ['b', 'ʌ', 'g'],
+            'hug': ['h', 'ʌ', 'g'],
+            'mug': ['m', 'ʌ', 'g'],
+            'rug': ['r', 'ʌ', 'g'],
+            'tub': ['t', 'ʌ', 'b']
+        };
         
-        for (let char of word.toLowerCase()) {
-            current += char;
-            if (vowels.includes(char)) {
-                phonemes.push(current);
-                current = '';
+        const lowerWord = word.toLowerCase();
+        
+        // Check dictionary first
+        if (phonemeDict[lowerWord]) {
+            return phonemeDict[lowerWord];
+        }
+        
+        // Fallback algorithm for unknown words
+        // Basic CVC pattern recognition
+        const chars = lowerWord.split('');
+        const vowels = 'aeiou';
+        const phonemes = [];
+        
+        for (let i = 0; i < chars.length; i++) {
+            const char = chars[i];
+            const nextChar = chars[i + 1];
+            
+            // Handle common digraphs
+            if (char === 's' && nextChar === 'h') {
+                phonemes.push('sh');
+                i++;
+            } else if (char === 'c' && nextChar === 'h') {
+                phonemes.push('ch');
+                i++;
+            } else if (char === 't' && nextChar === 'h') {
+                phonemes.push('th');
+                i++;
+            } else if (char === 'w' && nextChar === 'h') {
+                phonemes.push('wh');
+                i++;
+            } else {
+                phonemes.push(char);
             }
         }
-        if (current) phonemes.push(current);
         
         return phonemes;
     }
@@ -592,24 +926,79 @@ class SubtestManager {
     checkMazeAnswers() {
         const selects = document.querySelectorAll('.maze-select');
         let correct = 0;
-        let total = selects.length;
+        let incorrect = 0;
+        let unanswered = 0;
+        const total = selects.length;
         
         selects.forEach(select => {
-            const position = parseInt(select.dataset.position);
-            const question = this.currentContent.content.questions.find(q => q.position === position);
+            const correctAnswer = select.dataset.correct;
             const selectedValue = select.value;
             
-            if (question && selectedValue === question.options[0]) {
+            if (selectedValue === correctAnswer) {
                 correct++;
                 select.style.background = 'var(--success-color)';
                 select.style.color = 'white';
-            } else if (question && selectedValue) {
+                select.style.borderColor = 'var(--success-color)';
+            } else if (selectedValue) {
+                incorrect++;
                 select.style.background = 'var(--accent-color)';
                 select.style.color = 'white';
+                select.style.borderColor = 'var(--accent-color)';
+            } else {
+                unanswered++;
+                select.style.background = 'var(--warning-color)';
+                select.style.color = 'white';
+                select.style.borderColor = 'var(--warning-color)';
             }
         });
         
-        alert(`You got ${correct} out of ${total} correct!`);
+        // Display results in a result panel
+        this.displayMazeResults(correct, incorrect, unanswered, total);
+    }
+
+    // Display maze results
+    displayMazeResults(correct, incorrect, unanswered, total) {
+        // Find or create results container
+        let resultsContainer = document.getElementById('maze-results');
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'maze-results';
+            resultsContainer.className = 'maze-results';
+            
+            const mazeControls = document.querySelector('.maze-controls');
+            if (mazeControls) {
+                mazeControls.after(resultsContainer);
+            }
+        }
+        
+        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+        
+        resultsContainer.innerHTML = `
+            <div class="result-header">
+                <h4>Results</h4>
+                <div class="result-score">${correct} / ${total}</div>
+            </div>
+            <div class="result-breakdown">
+                <div class="result-item correct">
+                    <span class="result-label">Correct:</span>
+                    <span class="result-value">${correct}</span>
+                </div>
+                <div class="result-item incorrect">
+                    <span class="result-label">Incorrect:</span>
+                    <span class="result-value">${incorrect}</span>
+                </div>
+                <div class="result-item unanswered">
+                    <span class="result-label">Unanswered:</span>
+                    <span class="result-value">${unanswered}</span>
+                </div>
+            </div>
+            <div class="result-accuracy">
+                <span class="accuracy-label">Accuracy:</span>
+                <span class="accuracy-value">${accuracy}%</span>
+            </div>
+        `;
+        
+        resultsContainer.style.display = 'block';
     }
 
     // Show maze answers
@@ -617,22 +1006,26 @@ class SubtestManager {
         const selects = document.querySelectorAll('.maze-select');
         
         selects.forEach(select => {
-            const position = parseInt(select.dataset.position);
-            const question = this.currentContent.content.questions.find(q => q.position === position);
+            const correctAnswer = select.dataset.correct;
             
-            if (question) {
-                select.value = question.options[0];
+            if (correctAnswer) {
+                select.value = correctAnswer;
                 select.style.background = 'var(--success-color)';
                 select.style.color = 'white';
+                select.style.borderColor = 'var(--success-color)';
             }
         });
+        
+        // Show all answers, so display message
+        const total = selects.length;
+        this.displayMazeResults(total, 0, 0, total);
     }
 
     // Show scoring panel
     showScoringPanel() {
         const scoringPanel = document.getElementById('scoring-panel');
         if (scoringPanel) {
-            scoringPanel.style.display = 'block';
+            scoringPanel.classList.remove('hidden');
         }
     }
 
@@ -658,6 +1051,26 @@ class SubtestManager {
             accuracy: totalResponses > 0 ? (correctResponses / totalResponses) * 100 : 0,
             responses: this.responses
         };
+    }
+    
+    // Get current practice content for printing
+    getCurrentContent() {
+        return {
+            subtest: this.currentSubtest,
+            grade: this.currentGrade,
+            content: this.currentContent,
+            options: this.practiceOptions
+        };
+    }
+    
+    // Reset subtest
+    reset() {
+        this.responses = [];
+        this.startTime = null;
+        this.endTime = null;
+        this.orfWordIndex = 0;
+        this.orfStartTime = null;
+        this.orfWordTimes = [];
     }
 }
 

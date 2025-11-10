@@ -130,36 +130,36 @@
                             <p id="practice-subtitle">Grade K - Letter Naming Fluency</p>
                         </div>
                         <div class="timer-container">
-                            <div class="timer" id="timer">60</div>
+                            <div class="timer" id="timer" role="timer" aria-live="polite" aria-atomic="true" aria-label="Time remaining">60</div>
                             <div class="timer-label">seconds</div>
                         </div>
                     </div>
 
-                    <div class="practice-content" id="practice-content">
+                    <div class="practice-content" id="practice-content" role="main" aria-label="Practice exercise content">
                         <!-- Content will be dynamically loaded -->
                     </div>
 
-                    <div class="practice-controls">
-                        <button class="control-btn" id="pause-btn">Pause</button>
-                        <button class="control-btn" id="reset-btn">Reset</button>
-                        <button class="control-btn" id="new-set-btn">New Set</button>
-                        <button class="control-btn" id="back-to-menu">Back to Menu</button>
+                    <div class="practice-controls" role="group" aria-label="Practice controls">
+                        <button class="control-btn" id="pause-btn" aria-label="Pause or resume timer">Pause</button>
+                        <button class="control-btn" id="reset-btn" aria-label="Reset and restart practice">Reset</button>
+                        <button class="control-btn" id="new-set-btn" aria-label="Generate new practice set">New Set</button>
+                        <button class="control-btn" id="back-to-menu" aria-label="Return to main menu">Back to Menu</button>
                     </div>
 
-                    <div class="scoring-panel hidden" id="scoring-panel">
+                    <div class="scoring-panel hidden" id="scoring-panel" role="region" aria-label="Scoring panel">
                         <h3>Scoring</h3>
                         <div class="score-inputs">
-                            <label>
+                            <label for="correct-responses">
                                 Correct Responses: 
-                                <input type="number" id="correct-responses" min="0" value="0">
+                                <input type="number" id="correct-responses" min="0" value="0" aria-label="Number of correct responses" aria-describedby="score-result">
                             </label>
-                            <label>
+                            <label for="errors">
                                 Errors: 
-                                <input type="number" id="errors" min="0" value="0">
+                                <input type="number" id="errors" min="0" value="0" aria-label="Number of errors" aria-describedby="score-result">
                             </label>
-                            <button class="control-btn" id="calculate-score">Calculate Score</button>
+                            <button class="control-btn" id="calculate-score" aria-label="Calculate final score">Calculate Score</button>
                         </div>
-                        <div class="score-result" id="score-result"></div>
+                        <div class="score-result" id="score-result" role="status" aria-live="polite" aria-atomic="true"></div>
                     </div>
                 </section>
 
@@ -309,11 +309,15 @@
 
     <!-- Audio Elements -->
     <audio id="audio-player" preload="none"></audio>
+    
+    <!-- Screen Reader Announcements -->
+    <div id="sr-announcements" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Scripts -->
     <script src="data/content.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/timer.js"></script>
+    <script src="js/scoring.js"></script>
     <script src="js/subtests.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/print.js"></script>

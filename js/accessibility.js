@@ -18,6 +18,27 @@ class AccessibilityManager {
         this.setupFontSizeControls();
         this.setupFocusManagement();
         this.addAccessibilityStyles();
+        this.setupTimerAnnouncements();
+    }
+    
+    // Setup timer announcements
+    setupTimerAnnouncements() {
+        // Announce timer warnings at key intervals
+        if (window.practiceTimer) {
+            window.practiceTimer.onTick((timeLeft) => {
+                if (timeLeft === 30) {
+                    this.announce('30 seconds remaining');
+                } else if (timeLeft === 10) {
+                    this.announce('10 seconds remaining');
+                } else if (timeLeft === 5) {
+                    this.announce('5 seconds remaining', 'assertive');
+                }
+            });
+            
+            window.practiceTimer.onComplete(() => {
+                this.announce('Time is up. Practice session complete.', 'assertive');
+            });
+        }
     }
 
     // Detect if screen reader is present
@@ -351,15 +372,32 @@ class AccessibilityManager {
 
     // Announce text to screen readers
     announce(text, priority = 'polite') {
-        const announcement = document.createElement('div');
-        announcement.className = 'aria-live';
-        announcement.setAttribute('aria-live', priority);
-        announcement.textContent = text;
-        document.body.appendChild(announcement);
+        // Use dedicated announcement region
+        let announcementRegion = document.getElementById('sr-announcements');
         
+        if (!announcementRegion) {
+            // Fallback: create announcement region if it doesn't exist
+            announcementRegion = document.createElement('div');
+            announcementRegion.id = 'sr-announcements';
+            announcementRegion.className = 'sr-only';
+            announcementRegion.setAttribute('role', 'status');
+            announcementRegion.setAttribute('aria-live', 'polite');
+            announcementRegion.setAttribute('aria-atomic', 'true');
+            document.body.appendChild(announcementRegion);
+        }
+        
+        // Update priority if needed
+        announcementRegion.setAttribute('aria-live', priority);
+        
+        // Set the text
+        announcementRegion.textContent = text;
+        
+        // Clear after a delay to allow for new announcements
         setTimeout(() => {
-            document.body.removeChild(announcement);
-        }, 1000);
+            if (announcementRegion.textContent === text) {
+                announcementRegion.textContent = '';
+            }
+        }, 3000);
     }
 
     // Add skip links

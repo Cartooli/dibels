@@ -10,36 +10,81 @@ class ProgressTracker {
     init() {
         this.loadSettings();
         this.setupIndexedDB();
+        this.setupAutoSave();
+    }
+    
+    setupAutoSave() {
+        // Auto-save on page unload
+        window.addEventListener('beforeunload', (e) => {
+            const settings = this.getSettings();
+            if (settings.autoSave !== false) {
+                // Save any pending data
+                this.saveProgress(this.getProgress());
+            }
+        });
+        
+        // Periodic auto-save every 30 seconds
+        setInterval(() => {
+            const settings = this.getSettings();
+            if (settings.autoSave !== false) {
+                this.saveProgress(this.getProgress());
+            }
+        }, 30000);
     }
 
     setupIndexedDB() {
+        // Check if IndexedDB is available
+        if (!('indexedDB' in window)) {
+            console.warn('IndexedDB not available, using localStorage fallback');
+            this.db = null;
+            return;
+        }
+        
         const request = indexedDB.open('DIBELSPracticeDB', 1);
         
-        request.onerror = () => {
-            console.error('IndexedDB failed to open');
+        request.onerror = (event) => {
+            console.error('IndexedDB failed to open:', event.target.error);
+            this.db = null;
+            // Fallback to localStorage
+            console.log('Using localStorage fallback');
         };
         
         request.onsuccess = () => {
             this.db = request.result;
             console.log('IndexedDB opened successfully');
+            
+            // Handle database errors during operation
+            this.db.onerror = (event) => {
+                console.error('IndexedDB error:', event.target.error);
+            };
         };
         
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             
-            // Create practice sessions store
-            if (!db.objectStoreNames.contains('practiceSessions')) {
-                const sessionStore = db.createObjectStore('practiceSessions', { keyPath: 'id', autoIncrement: true });
-                sessionStore.createIndex('date', 'date', { unique: false });
-                sessionStore.createIndex('grade', 'grade', { unique: false });
-                sessionStore.createIndex('subtest', 'subtest', { unique: false });
+            try {
+                // Create practice sessions store
+                if (!db.objectStoreNames.contains('practiceSessions')) {
+                    const sessionStore = db.createObjectStore('practiceSessions', { keyPath: 'id', autoIncrement: true });
+                    sessionStore.createIndex('date', 'date', { unique: false });
+                    sessionStore.createIndex('grade', 'grade', { unique: false });
+                    sessionStore.createIndex('subtest', 'subtest', { unique: false });
+                }
+                
+                // Create progress data store
+                if (!db.objectStoreNames.contains('progressData')) {
+                    const progressStore = db.createObjectStore('progressData', { keyPath: 'id' });
+                    progressStore.createIndex('type', 'type', { unique: false });
+                }
+            } catch (error) {
+                console.error('Error creating IndexedDB stores:', error);
+                this.db = null;
             }
-            
-            // Create progress data store
-            if (!db.objectStoreNames.contains('progressData')) {
-                const progressStore = db.createObjectStore('progressData', { keyPath: 'id' });
-                progressStore.createIndex('type', 'type', { unique: false });
-            }
+        };
+        
+        request.onblocked = () => {
+            console.warn('IndexedDB open request blocked');
+            alert('Please close other tabs with this application to enable full functionality.');
         };
     }
 
@@ -81,19 +126,42 @@ class ProgressTracker {
 
     saveSession(session) {
         if (this.db) {
-            const transaction = this.db.transaction(['practiceSessions'], 'readwrite');
-            const store = transaction.objectStore('practiceSessions');
-            store.put(session);
+            try {
+                const transaction = this.db.transaction(['practiceSessions'], 'readwrite');
+                const store = transaction.objectStore('practiceSessions');
+                const request = store.put(session);
+                
+                request.onerror = () => {
+                    console.error('Error saving session to IndexedDB, falling back to localStorage');
+                    this.saveSessionToLocalStorage(session);
+                };
+            } catch (error) {
+                console.error('Error accessing IndexedDB:', error);
+                this.saveSessionToLocalStorage(session);
+            }
         } else {
-            // Fallback to localStorage
-            const sessions = this.getSessions();
+            this.saveSessionToLocalStorage(session);
+        }
+    }
+    
+    saveSessionToLocalStorage(session) {
+        try {
+            const stored = localStorage.getItem(this.sessionsKey);
+            let sessions = stored ? JSON.parse(stored) : [];
+            
             const existingIndex = sessions.findIndex(s => s.id === session.id);
             if (existingIndex >= 0) {
                 sessions[existingIndex] = session;
             } else {
                 sessions.push(session);
             }
+            
             localStorage.setItem(this.sessionsKey, JSON.stringify(sessions));
+        } catch (error) {
+            console.error('Error saving session to localStorage:', error);
+            if (error.name === 'QuotaExceededError') {
+                alert('Storage quota exceeded. Some data may not be saved.');
+            }
         }
     }
 
@@ -114,6 +182,7 @@ class ProgressTracker {
     }
 
     getSessions(limit = 50) {
+        // Always return a Promise for consistent async handling
         if (this.db) {
             return new Promise((resolve, reject) => {
                 const transaction = this.db.transaction(['practiceSessions'], 'readonly');
@@ -136,13 +205,17 @@ class ProgressTracker {
                 request.onerror = () => reject(request.error);
             });
         } else {
-            const stored = localStorage.getItem(this.sessionsKey);
-            return stored ? JSON.parse(stored).slice(0, limit) : [];
+            // Wrap localStorage in Promise for consistency
+            return new Promise((resolve) => {
+                const stored = localStorage.getItem(this.sessionsKey);
+                const sessions = stored ? JSON.parse(stored).slice(0, limit) : [];
+                resolve(sessions);
+            });
         }
     }
 
     // Progress Tracking
-    updateProgress(session) {
+    async updateProgress(session) {
         const progress = this.getProgress();
         
         // Update overall stats
@@ -185,44 +258,44 @@ class ProgressTracker {
         subtestStats.lastPractice = session.date;
 
         // Calculate averages
-        this.calculateAverages(progress);
+        await this.calculateAverages(progress);
 
         this.saveProgress(progress);
     }
 
-    calculateAverages(progress) {
+    async calculateAverages(progress) {
         // Calculate grade averages
-        Object.keys(progress.byGrade).forEach(grade => {
+        for (const grade of Object.keys(progress.byGrade)) {
             const gradeStats = progress.byGrade[grade];
-            const gradeSessions = this.getSessionsByGrade(grade);
+            const gradeSessions = await this.getSessionsByGrade(grade);
             if (gradeSessions.length > 0) {
                 const totalScore = gradeSessions.reduce((sum, s) => sum + (s.score || 0), 0);
                 const totalAccuracy = gradeSessions.reduce((sum, s) => sum + (s.accuracy || 0), 0);
                 gradeStats.averageScore = totalScore / gradeSessions.length;
                 gradeStats.averageAccuracy = totalAccuracy / gradeSessions.length;
             }
-        });
+        }
 
         // Calculate subtest averages
-        Object.keys(progress.bySubtest).forEach(subtest => {
+        for (const subtest of Object.keys(progress.bySubtest)) {
             const subtestStats = progress.bySubtest[subtest];
-            const subtestSessions = this.getSessionsBySubtest(subtest);
+            const subtestSessions = await this.getSessionsBySubtest(subtest);
             if (subtestSessions.length > 0) {
                 const totalScore = subtestSessions.reduce((sum, s) => sum + (s.score || 0), 0);
                 const totalAccuracy = subtestSessions.reduce((sum, s) => sum + (s.accuracy || 0), 0);
                 subtestStats.averageScore = totalScore / subtestSessions.length;
                 subtestStats.averageAccuracy = totalAccuracy / subtestSessions.length;
             }
-        });
+        }
     }
 
-    getSessionsByGrade(grade) {
-        const sessions = this.getSessions();
+    async getSessionsByGrade(grade) {
+        const sessions = await this.getSessions();
         return sessions.filter(s => s.grade === grade && s.status === 'completed');
     }
 
-    getSessionsBySubtest(subtest) {
-        const sessions = this.getSessions();
+    async getSessionsBySubtest(subtest) {
+        const sessions = await this.getSessions();
         return sessions.filter(s => s.subtest === subtest && s.status === 'completed');
     }
 
@@ -268,8 +341,8 @@ class ProgressTracker {
     }
 
     // Analytics and Reports
-    getAnalytics(timeframe = 'all') {
-        const sessions = this.getSessions();
+    async getAnalytics(timeframe = 'all') {
+        const sessions = await this.getSessions();
         const now = new Date();
         let filteredSessions = sessions;
 
@@ -408,30 +481,35 @@ class ProgressTracker {
         }
     }
 
-    clearOldSessions(daysToKeep = 90) {
+    async clearOldSessions(daysToKeep = 90) {
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - daysToKeep);
         
-        const sessions = this.getSessions();
+        const sessions = await this.getSessions();
         const filteredSessions = sessions.filter(s => new Date(s.date) >= cutoff);
         
         localStorage.setItem(this.sessionsKey, JSON.stringify(filteredSessions));
         
         if (this.db) {
-            const transaction = this.db.transaction(['practiceSessions'], 'readwrite');
-            const store = transaction.objectStore('practiceSessions');
-            const index = store.index('date');
-            const request = index.openCursor();
-            
-            request.onsuccess = (event) => {
-                const cursor = event.target.result;
-                if (cursor) {
-                    if (new Date(cursor.value.date) < cutoff) {
-                        cursor.delete();
+            return new Promise((resolve, reject) => {
+                const transaction = this.db.transaction(['practiceSessions'], 'readwrite');
+                const store = transaction.objectStore('practiceSessions');
+                const index = store.index('date');
+                const request = index.openCursor();
+                
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        if (new Date(cursor.value.date) < cutoff) {
+                            cursor.delete();
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve();
                     }
-                    cursor.continue();
-                }
-            };
+                };
+                request.onerror = () => reject(request.error);
+            });
         }
     }
 }

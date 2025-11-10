@@ -5,8 +5,8 @@ class Timer {
         this.isRunning = false;
         this.intervalId = null;
         this.callbacks = {
-            onTick: null,
-            onComplete: null
+            onTick: [],
+            onComplete: []
         };
     }
 
@@ -25,15 +25,17 @@ class Timer {
             this.timeLeft--;
             this.updateDisplay();
             
-            if (this.callbacks.onTick) {
-                this.callbacks.onTick(this.timeLeft);
-            }
+            // Call all onTick callbacks
+            this.callbacks.onTick.forEach(callback => {
+                if (callback) callback(this.timeLeft);
+            });
             
             if (this.timeLeft <= 0) {
                 this.stop();
-                if (this.callbacks.onComplete) {
-                    this.callbacks.onComplete();
-                }
+                // Call all onComplete callbacks
+                this.callbacks.onComplete.forEach(callback => {
+                    if (callback) callback();
+                });
             }
         }, 1000);
     }
@@ -56,8 +58,9 @@ class Timer {
 
     // Reset the timer
     reset(seconds = 60) {
-        this.stop();
         this.timeLeft = seconds;
+        this.pause();
+        this.intervalId = null;
         this.updateDisplay();
     }
 
@@ -78,11 +81,17 @@ class Timer {
 
     // Set callback functions
     onTick(callback) {
-        this.callbacks.onTick = callback;
+        this.callbacks.onTick.push(callback);
     }
 
     onComplete(callback) {
-        this.callbacks.onComplete = callback;
+        this.callbacks.onComplete.push(callback);
+    }
+    
+    // Clear all callbacks
+    clearCallbacks() {
+        this.callbacks.onTick = [];
+        this.callbacks.onComplete = [];
     }
 
     // Get current time left
