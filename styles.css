@@ -705,6 +705,133 @@ body {
     color: var(--text-primary);
 }
 
+/* Disabled option item styling */
+.option-item:has(input[disabled]) {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.option-item:has(input[disabled]):hover {
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transform: none;
+}
+
+.option-item:has(input[disabled]) .option-text {
+    color: var(--text-muted);
+    position: relative;
+}
+
+.option-item:has(input[disabled]) .option-text::after {
+    content: ' (not available)';
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.option-item:has(input[disabled]) .checkmark {
+    border-color: var(--gray-400);
+    background: var(--bg-tertiary);
+    cursor: not-allowed;
+}
+
+/* Dark mode disabled states */
+[data-theme="dark"] .option-item:has(input[disabled]) {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    opacity: 0.5;
+}
+
+[data-theme="dark"] .option-item:has(input[disabled]) .option-text {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .option-item:has(input[disabled]) .checkmark {
+    border-color: var(--gray-600);
+    background: var(--bg-tertiary);
+}
+
+/* Fallback for browsers that don't support :has() */
+.option-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.option-item.disabled:hover {
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transform: none;
+}
+
+.option-item.disabled .option-text {
+    color: var(--text-muted);
+}
+
+.option-item.disabled .option-text::after {
+    content: ' (not available)';
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.option-item.disabled .checkmark {
+    border-color: var(--gray-400);
+    background: var(--bg-tertiary);
+    cursor: not-allowed;
+}
+
+[data-theme="dark"] .option-item.disabled {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    opacity: 0.5;
+}
+
+[data-theme="dark"] .option-item.disabled .option-text {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .option-item.disabled .checkmark {
+    border-color: var(--gray-600);
+    background: var(--bg-tertiary);
+}
+
+/* Input error styling */
+.input-error {
+    display: block;
+    color: var(--error-color, #dc2626);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+    min-height: 1.25rem;
+}
+
+input[aria-invalid="true"] {
+    border-color: var(--error-color, #dc2626);
+    box-shadow: 0 0 0 1px var(--error-color, #dc2626);
+}
+
+input[aria-invalid="true"]:focus {
+    outline-color: var(--error-color, #dc2626);
+    border-color: var(--error-color, #dc2626);
+}
+
+.error-message {
+    color: var(--error-color, #dc2626);
+    padding: var(--space-2);
+    background: rgba(220, 38, 38, 0.1);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-2);
+}
+
+[data-theme="dark"] .error-message {
+    background: rgba(220, 38, 38, 0.2);
+}
+
 /* Start Practice Button - Premium design */
 .start-practice-btn {
     background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);

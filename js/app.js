@@ -63,6 +63,17 @@ class DIBELSApp {
             }
         });
 
+        // Scoring input validation (real-time)
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'correct-responses' || e.target.id === 'errors') {
+                const correctInput = document.getElementById('correct-responses');
+                const errorsInput = document.getElementById('errors');
+                if (correctInput && errorsInput) {
+                    this.validateScoreInputs(correctInput, errorsInput);
+                }
+            }
+        });
+
         // Timer events
         window.practiceTimer.onTick((timeLeft) => {
             this.updateTimerDisplay(timeLeft);
@@ -217,15 +228,43 @@ class DIBELSApp {
     updatePracticeOptionsForSubtest(subtest) {
         const revealAnswers = document.getElementById('reveal-answers');
         const audioModeling = document.getElementById('audio-modeling');
+        const revealAnswersLabel = revealAnswers?.closest('.option-item');
+        const audioModelingLabel = audioModeling?.closest('.option-item');
         
         if (revealAnswers) {
-            // Enable reveal answers for PSF and NWF
-            revealAnswers.disabled = !['PSF', 'NWF'].includes(subtest);
+            const isDisabled = !['PSF', 'NWF'].includes(subtest);
+            revealAnswers.disabled = isDisabled;
+            
+            // Add/update tooltip and disabled class
+            if (revealAnswersLabel) {
+                if (isDisabled) {
+                    revealAnswersLabel.setAttribute('title', 'Reveal Answers is only available for Phonemic Segmentation Fluency (PSF) and Nonsense Word Fluency (NWF) subtests');
+                    revealAnswersLabel.setAttribute('aria-label', 'Reveal Answers (not available for this subtest)');
+                    revealAnswersLabel.classList.add('disabled');
+                } else {
+                    revealAnswersLabel.removeAttribute('title');
+                    revealAnswersLabel.setAttribute('aria-label', 'Reveal Answers');
+                    revealAnswersLabel.classList.remove('disabled');
+                }
+            }
         }
         
         if (audioModeling) {
-            // Enable audio modeling for ORF and WRF
-            audioModeling.disabled = !['ORF', 'WRF'].includes(subtest);
+            const isDisabled = !['ORF', 'WRF'].includes(subtest);
+            audioModeling.disabled = isDisabled;
+            
+            // Add/update tooltip and disabled class
+            if (audioModelingLabel) {
+                if (isDisabled) {
+                    audioModelingLabel.setAttribute('title', 'Audio Modeling is only available for Oral Reading Fluency (ORF) and Word Reading Fluency (WRF) subtests');
+                    audioModelingLabel.setAttribute('aria-label', 'Audio Modeling (not available for this subtest)');
+                    audioModelingLabel.classList.add('disabled');
+                } else {
+                    audioModelingLabel.removeAttribute('title');
+                    audioModelingLabel.setAttribute('aria-label', 'Audio Modeling');
+                    audioModelingLabel.classList.remove('disabled');
+                }
+            }
         }
     }
 
@@ -410,12 +449,19 @@ class DIBELSApp {
         
         if (!correctInput || !errorsInput || !scoreResult) return;
         
+        // Validate inputs
+        const validationResult = this.validateScoreInputs(correctInput, errorsInput);
+        if (!validationResult.isValid) {
+            scoreResult.innerHTML = `<div class="error-message">${validationResult.message}</div>`;
+            return;
+        }
+        
         const correct = parseInt(correctInput.value) || 0;
         const errors = parseInt(errorsInput.value) || 0;
         const total = correct + errors;
         
         if (total === 0) {
-            scoreResult.textContent = 'Please enter correct responses and errors.';
+            scoreResult.innerHTML = '<div class="error-message">Please enter correct responses and errors.</div>';
             return;
         }
         
@@ -437,6 +483,71 @@ class DIBELSApp {
         window.accessibilityManager.announce(
             `Practice completed. ${scoreData.display}. Accuracy: ${scoreData.accuracy} percent.`
         );
+    }
+
+    // Validate score inputs
+    validateScoreInputs(correctInput, errorsInput) {
+        const correctError = document.getElementById('correct-responses-error');
+        const errorsError = document.getElementById('errors-error');
+        
+        // Clear previous errors
+        if (correctError) correctError.textContent = '';
+        if (errorsError) errorsError.textContent = '';
+        correctInput.setAttribute('aria-invalid', 'false');
+        errorsInput.setAttribute('aria-invalid', 'false');
+        
+        const correct = correctInput.value.trim();
+        const errors = errorsInput.value.trim();
+        
+        // Check if empty
+        if (correct === '' && errors === '') {
+            return {
+                isValid: false,
+                message: 'Please enter values for correct responses and errors.'
+            };
+        }
+        
+        // Validate correct responses
+        if (correct !== '') {
+            const correctNum = parseInt(correct);
+            if (isNaN(correctNum)) {
+                if (correctError) correctError.textContent = 'Please enter a valid number.';
+                correctInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Invalid input for correct responses.' };
+            }
+            if (correctNum < 0) {
+                if (correctError) correctError.textContent = 'Value cannot be negative.';
+                correctInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Correct responses cannot be negative.' };
+            }
+            if (correctNum > 1000) {
+                if (correctError) correctError.textContent = 'Value is too large (max: 1000).';
+                correctInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Value exceeds maximum (1000).' };
+            }
+        }
+        
+        // Validate errors
+        if (errors !== '') {
+            const errorsNum = parseInt(errors);
+            if (isNaN(errorsNum)) {
+                if (errorsError) errorsError.textContent = 'Please enter a valid number.';
+                errorsInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Invalid input for errors.' };
+            }
+            if (errorsNum < 0) {
+                if (errorsError) errorsError.textContent = 'Value cannot be negative.';
+                errorsInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Errors cannot be negative.' };
+            }
+            if (errorsNum > 1000) {
+                if (errorsError) errorsError.textContent = 'Value is too large (max: 1000).';
+                errorsInput.setAttribute('aria-invalid', 'true');
+                return { isValid: false, message: 'Value exceeds maximum (1000).' };
+            }
+        }
+        
+        return { isValid: true };
     }
 
     // Update timer display

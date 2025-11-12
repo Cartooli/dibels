@@ -151,11 +151,19 @@
                         <div class="score-inputs">
                             <label for="correct-responses">
                                 Correct Responses: 
-                                <input type="number" id="correct-responses" min="0" value="0" aria-label="Number of correct responses" aria-describedby="score-result">
+                                <input type="number" id="correct-responses" min="0" max="1000" value="0" 
+                                       aria-label="Number of correct responses" 
+                                       aria-describedby="score-result correct-responses-error"
+                                       aria-invalid="false">
+                                <span class="input-error" id="correct-responses-error" role="alert" aria-live="polite"></span>
                             </label>
                             <label for="errors">
                                 Errors: 
-                                <input type="number" id="errors" min="0" value="0" aria-label="Number of errors" aria-describedby="score-result">
+                                <input type="number" id="errors" min="0" max="1000" value="0" 
+                                       aria-label="Number of errors" 
+                                       aria-describedby="score-result errors-error"
+                                       aria-invalid="false">
+                                <span class="input-error" id="errors-error" role="alert" aria-live="polite"></span>
                             </label>
                             <button class="control-btn" id="calculate-score" aria-label="Calculate final score">Calculate Score</button>
                         </div>
