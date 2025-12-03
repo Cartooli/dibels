@@ -35,7 +35,7 @@ class ScoringEngine {
     scoreLNF(data, mode) {
         const { correct = 0, errors = 0, timeInSeconds = 60 } = data;
         const total = correct + errors;
-        const accuracy = total > 0 ? (correct / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, total, 'LNF');
         
         // LNF score is correct letters per minute
         const score = correct;
@@ -69,7 +69,7 @@ class ScoringEngine {
     scorePSF(data, mode) {
         const { correct = 0, errors = 0, timeInSeconds = 60 } = data;
         const total = correct + errors;
-        const accuracy = total > 0 ? (correct / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, total, 'PSF');
         
         // PSF score is correct phonemes per minute
         const score = correct;
@@ -107,7 +107,7 @@ class ScoringEngine {
         const cls = correctLetterSounds;
         const wrc = correctWholeWords;
         const total = cls + errors;
-        const accuracy = total > 0 ? (cls / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(cls, total, 'NWF');
         
         const clsRate = timeInSeconds > 0 ? (cls / timeInSeconds) * 60 : 0;
         const wrcRate = timeInSeconds > 0 ? (wrc / timeInSeconds) * 60 : 0;
@@ -142,7 +142,7 @@ class ScoringEngine {
     scoreWRF(data, mode) {
         const { correct = 0, errors = 0, timeInSeconds = 60 } = data;
         const total = correct + errors;
-        const accuracy = total > 0 ? (correct / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, total, 'WRF');
         
         // WRF score is correct words per minute
         const score = correct;
@@ -176,7 +176,7 @@ class ScoringEngine {
     scoreORF(data, mode) {
         const { correct = 0, errors = 0, timeInSeconds = 60 } = data;
         const total = correct + errors;
-        const accuracy = total > 0 ? (correct / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, total, 'ORF');
         
         // ORF uses Words Correct Per Minute (WCPM)
         const wcpm = timeInSeconds > 0 ? Math.round((correct / timeInSeconds) * 60) : 0;
@@ -217,7 +217,7 @@ class ScoringEngine {
         const { correct = 0, incorrect = 0, unanswered = 0, timeInSeconds = 180 } = data;
         const total = correct + incorrect + unanswered;
         const attempted = correct + incorrect;
-        const accuracy = attempted > 0 ? (correct / attempted) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, attempted, 'Maze');
         
         // Maze score is number of correct selections
         const score = correct;
@@ -257,7 +257,7 @@ class ScoringEngine {
     scoreGeneric(data, mode) {
         const { correct = 0, errors = 0 } = data;
         const total = correct + errors;
-        const accuracy = total > 0 ? (correct / total) * 100 : 0;
+        const accuracy = this.calculateAccuracy(correct, total, 'Generic');
         const score = correct - errors;
 
         if (mode === 'simplified') {
@@ -331,15 +331,27 @@ class ScoringEngine {
     formatScoreDisplay(scoreData, subtest, grade) {
         const benchmark = this.getBenchmarkComparison(subtest, grade, scoreData.score || scoreData.wcpm || 0);
         
+        // Get accuracy level and badge
+        const accuracy = parseFloat(scoreData.accuracy) || 0;
+        const accuracyInfo = this.getAccuracyLevel(accuracy);
+        
         let html = `
             <div class="score-display">
                 <div class="score-main">
-                    <div class="score-value">${scoreData.display}</div>
+                    <div class="score-value">
+                        ${scoreData.display}
+                        <span class="accuracy-badge ${accuracyInfo.level}" role="status" aria-label="Accuracy level: ${accuracyInfo.label}">
+                            ${scoreData.accuracy}%
+                        </span>
+                    </div>
                     ${benchmark ? `
                         <div class="score-level" style="color: ${benchmark.color}">
                             ${benchmark.level}
                         </div>
                     ` : ''}
+                    <div class="accuracy-context" role="status">
+                        <strong>Accuracy:</strong> ${accuracyInfo.label}
+                    </div>
                 </div>
         `;
 
@@ -380,6 +392,40 @@ class ScoringEngine {
             .replace(/([A-Z])/g, ' $1')
             .replace(/^./, str => str.toUpperCase())
             .trim();
+    }
+
+    // Enhanced accuracy calculation with validation
+    calculateAccuracy(correct, total, subtest = '') {
+        if (total === 0) return 0;
+        
+        // Validate inputs
+        if (correct < 0 || total < 0) {
+            console.warn(`[${subtest}] Negative values in accuracy calculation`);
+            return 0;
+        }
+        
+        if (correct > total) {
+            console.warn(`[${subtest}] Correct responses (${correct}) exceed total responses (${total})`);
+            return 100; // Cap at 100%
+        }
+        
+        const accuracy = (correct / total) * 100;
+        
+        // Round to 1 decimal place for consistency
+        return Math.round(accuracy * 10) / 10;
+    }
+
+    // Get accuracy badge level
+    getAccuracyLevel(accuracy) {
+        if (accuracy >= 95) {
+            return { level: 'excellent', label: 'Excellent accuracy' };
+        } else if (accuracy >= 85) {
+            return { level: 'good', label: 'Good accuracy' };
+        } else if (accuracy >= 75) {
+            return { level: 'fair', label: 'Fair accuracy - review errors' };
+        } else {
+            return { level: 'low', label: 'Low accuracy - needs improvement' };
+        }
     }
 }
 

@@ -2,8 +2,10 @@
 class Timer {
     constructor() {
         this.timeLeft = 60;
+        this.initialDuration = 60;
         this.isRunning = false;
         this.intervalId = null;
+        this.startTime = null;
         this.callbacks = {
             onTick: [],
             onComplete: []
@@ -13,12 +15,18 @@ class Timer {
     // Set the timer duration
     setDuration(seconds) {
         this.timeLeft = seconds;
+        this.initialDuration = seconds;
         this.updateDisplay();
     }
 
     // Start the timer
     start() {
         if (this.isRunning) return;
+        
+        // Record start time
+        if (!this.startTime) {
+            this.startTime = Date.now();
+        }
         
         this.isRunning = true;
         this.intervalId = setInterval(() => {
@@ -59,6 +67,8 @@ class Timer {
     // Reset the timer
     reset(seconds = 60) {
         this.timeLeft = seconds;
+        this.initialDuration = seconds;
+        this.startTime = null;
         this.pause();
         this.intervalId = null;
         this.updateDisplay();
@@ -102,6 +112,24 @@ class Timer {
     // Check if timer is running
     getIsRunning() {
         return this.isRunning;
+    }
+
+    // Get elapsed time in seconds
+    getTimeElapsed() {
+        return this.initialDuration - this.timeLeft;
+    }
+
+    // Get elapsed time from start in milliseconds
+    getActualElapsedTime() {
+        if (this.startTime) {
+            return Date.now() - this.startTime;
+        }
+        return 0;
+    }
+
+    // Get initial duration
+    getInitialDuration() {
+        return this.initialDuration;
     }
 
     // Format time as MM:SS

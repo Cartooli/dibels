@@ -167,6 +167,18 @@
                             </label>
                             <button class="control-btn" id="calculate-score" aria-label="Calculate final score">Calculate Score</button>
                         </div>
+                        
+                        <!-- Real-time accuracy indicator -->
+                        <div class="accuracy-indicator hidden" id="accuracy-indicator" role="status" aria-live="polite">
+                            <div class="accuracy-bar">
+                                <div class="accuracy-fill" id="accuracy-fill"></div>
+                            </div>
+                            <span class="accuracy-text" id="accuracy-text">Enter scores to see accuracy</span>
+                        </div>
+                        
+                        <!-- Accuracy warning container -->
+                        <div id="accuracy-warning" class="hidden" role="alert" aria-live="assertive"></div>
+                        
                         <div class="score-result" id="score-result" role="status" aria-live="polite" aria-atomic="true"></div>
                     </div>
                 </section>

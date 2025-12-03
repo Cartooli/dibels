@@ -63,13 +63,14 @@ class DIBELSApp {
             }
         });
 
-        // Scoring input validation (real-time)
+        // Scoring input validation and real-time accuracy
         document.addEventListener('input', (e) => {
             if (e.target.id === 'correct-responses' || e.target.id === 'errors') {
                 const correctInput = document.getElementById('correct-responses');
                 const errorsInput = document.getElementById('errors');
                 if (correctInput && errorsInput) {
                     this.validateScoreInputs(correctInput, errorsInput);
+                    this.updateRealTimeAccuracy(correctInput, errorsInput);
                 }
             }
         });
@@ -465,10 +466,17 @@ class DIBELSApp {
             return;
         }
         
+        // Get actual time used from timer
+        const timeUsed = this.getActualTimeUsed();
+        
         // Use scoring engine for accurate DIBELS scoring
         const scoreData = window.scoringEngine.calculateScore(
             this.currentSubtest,
-            { correct, errors },
+            { 
+                correct, 
+                errors,
+                timeInSeconds: timeUsed
+            },
             { mode: 'detailed' }
         );
         
@@ -479,10 +487,79 @@ class DIBELSApp {
             this.currentGrade
         );
         
-        // Announce score
-        window.accessibilityManager.announce(
-            `Practice completed. ${scoreData.display}. Accuracy: ${scoreData.accuracy} percent.`
-        );
+        // Enhanced accessibility announcement
+        if (window.accessibilityManager && window.accessibilityManager.announceAccuracy) {
+            window.accessibilityManager.announceAccuracy(parseFloat(scoreData.accuracy), scoreData);
+        } else {
+            const accuracyLevel = window.scoringEngine.getAccuracyLevel(parseFloat(scoreData.accuracy));
+            window.accessibilityManager?.announce(
+                `Practice completed. ${scoreData.display}. Accuracy: ${scoreData.accuracy} percent. ${accuracyLevel.label}.`
+            );
+        }
+    }
+
+    // Get actual time used in practice
+    getActualTimeUsed() {
+        if (window.practiceTimer && this.practiceOptions.timed) {
+            // Get elapsed time from timer
+            return window.practiceTimer.getTimeElapsed();
+        }
+        // For untimed practice, estimate based on actual elapsed time
+        if (window.practiceTimer && window.practiceTimer.getActualElapsedTime() > 0) {
+            return Math.round(window.practiceTimer.getActualElapsedTime() / 1000);
+        }
+        return 60; // Default to 60 seconds if timer not available
+    }
+
+    // Real-time accuracy calculation
+    updateRealTimeAccuracy(correctInput, errorsInput) {
+        const correct = parseInt(correctInput.value) || 0;
+        const errors = parseInt(errorsInput.value) || 0;
+        const total = correct + errors;
+        
+        // Get or create accuracy indicator
+        let indicator = document.getElementById('accuracy-indicator');
+        if (!indicator) {
+            return; // Will be created in HTML
+        }
+        
+        const fill = document.getElementById('accuracy-fill');
+        const text = document.getElementById('accuracy-text');
+        
+        if (total > 0) {
+            const accuracy = ((correct / total) * 100);
+            const accuracyLevel = window.scoringEngine.getAccuracyLevel(accuracy);
+            
+            if (fill) {
+                fill.style.width = `${accuracy}%`;
+                // Update color based on level
+                fill.className = `accuracy-fill ${accuracyLevel.level}`;
+            }
+            
+            if (text) {
+                text.textContent = `Accuracy: ${accuracy.toFixed(1)}% - ${accuracyLevel.label}`;
+            }
+            
+            indicator.classList.remove('hidden');
+            
+            // Announce to screen readers (debounced to avoid too many announcements)
+            if (!this.accuracyDebounceTimer) {
+                this.accuracyDebounceTimer = setTimeout(() => {
+                    if (window.accessibilityManager && window.accessibilityManager.announceAccuracyChange) {
+                        window.accessibilityManager.announceAccuracyChange(accuracy, accuracyLevel.label);
+                    }
+                    this.accuracyDebounceTimer = null;
+                }, 2000);
+            }
+        } else {
+            indicator.classList.add('hidden');
+            if (text) {
+                text.textContent = 'Enter scores to see accuracy';
+            }
+            if (fill) {
+                fill.style.width = '0%';
+            }
+        }
     }
 
     // Validate score inputs
@@ -544,6 +621,30 @@ class DIBELSApp {
                 if (errorsError) errorsError.textContent = 'Value is too large (max: 1000).';
                 errorsInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Value exceeds maximum (1000).' };
+            }
+        }
+        
+        // Add helpful accuracy warning for low accuracy
+        if (correct !== '' && errors !== '') {
+            const correctNum = parseInt(correct);
+            const errorsNum = parseInt(errors);
+            const total = correctNum + errorsNum;
+            
+            if (total > 10) {
+                const accuracy = (correctNum / total) * 100;
+                const warningContainer = document.getElementById('accuracy-warning');
+                
+                if (accuracy < 50 && warningContainer) {
+                    warningContainer.innerHTML = `
+                        <div class="accuracy-warning-message">
+                            ⚠️ Low accuracy detected (${accuracy.toFixed(1)}%). Consider reviewing common errors.
+                        </div>
+                    `;
+                    warningContainer.classList.remove('hidden');
+                } else if (warningContainer) {
+                    warningContainer.innerHTML = '';
+                    warningContainer.classList.add('hidden');
+                }
             }
         }
         

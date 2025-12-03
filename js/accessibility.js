@@ -400,6 +400,21 @@ class AccessibilityManager {
         }, 3000);
     }
 
+    // Announce accuracy with contextual information
+    announceAccuracy(accuracy, scoreData) {
+        const accuracyLevel = window.scoringEngine?.getAccuracyLevel(accuracy);
+        const message = `Accuracy: ${accuracy} percent. ${scoreData.display}. ${accuracyLevel?.label || ''}`;
+        this.announce(message, 'polite');
+    }
+
+    // Announce accuracy changes in real-time
+    announceAccuracyChange(accuracy, level) {
+        if (accuracy > 0) {
+            const message = `Current accuracy: ${accuracy.toFixed(1)} percent. ${level}`;
+            this.announce(message, 'polite');
+        }
+    }
+
     // Add skip links
     addSkipLinks() {
         const skipLinks = document.createElement('div');
