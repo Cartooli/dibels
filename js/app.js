@@ -492,8 +492,13 @@ class DIBELSApp {
             window.accessibilityManager.announceAccuracy(parseFloat(scoreData.accuracy), scoreData);
         } else {
             const accuracyLevel = window.scoringEngine.getAccuracyLevel(parseFloat(scoreData.accuracy));
+            // Safely format display text
+            const displayText = (scoreData && typeof scoreData.display === 'string') 
+                ? scoreData.display 
+                : 'Score calculated';
+            const accuracyText = scoreData?.accuracy ?? '0';
             window.accessibilityManager?.announce(
-                `Practice completed. ${scoreData.display}. Accuracy: ${scoreData.accuracy} percent. ${accuracyLevel.label}.`
+                `Practice completed. ${displayText}. Accuracy: ${accuracyText} percent. ${accuracyLevel.label}.`
             );
         }
     }

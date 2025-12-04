@@ -402,9 +402,40 @@ class AccessibilityManager {
 
     // Announce accuracy with contextual information
     announceAccuracy(accuracy, scoreData) {
+        if (!scoreData || typeof scoreData !== 'object') {
+            console.warn('Invalid scoreData provided to announceAccuracy');
+            return;
+        }
+        
         const accuracyLevel = window.scoringEngine?.getAccuracyLevel(accuracy);
-        const message = `Accuracy: ${accuracy} percent. ${scoreData.display}. ${accuracyLevel?.label || ''}`;
+        // Safely format display text - handle objects, undefined, null
+        const displayText = this.formatValueForDisplay(scoreData.display, 'Score calculated');
+        const message = `Accuracy: ${accuracy} percent. ${displayText}. ${accuracyLevel?.label || ''}`;
         this.announce(message, 'polite');
+    }
+
+    // Format value for display - handles objects, arrays, null, undefined
+    formatValueForDisplay(value, fallback = 'N/A') {
+        if (value === null || value === undefined) {
+            return fallback;
+        }
+        
+        // Handle objects
+        if (typeof value === 'object') {
+            // If it's an array, join it
+            if (Array.isArray(value)) {
+                return value.length > 0 ? value.join(', ') : fallback;
+            }
+            // If it's a Date, format it
+            if (value instanceof Date) {
+                return value.toLocaleDateString();
+            }
+            // For other objects, return fallback to avoid [object Object]
+            return fallback;
+        }
+        
+        // Convert to string for primitive values
+        return String(value);
     }
 
     // Announce accuracy changes in real-time
