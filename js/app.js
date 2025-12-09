@@ -17,6 +17,11 @@ class DIBELSApp {
         this.setupPracticeControls();
         this.setupEducatorMode();
         this.setupFooterLinks();
+        this.setupTutorial();
+        this.setupKeyboardShortcuts();
+        this.setupBottomNavigation();
+        this.updateGradeButtonsWithCounts();
+        this.checkFirstTimeUser();
     }
 
     // Setup event listeners
@@ -190,6 +195,17 @@ class DIBELSApp {
             subtestButtons.appendChild(button);
         });
         
+        // Setup previous button
+        const previousBtn = document.getElementById('previous-grade-btn');
+        if (previousBtn) {
+            previousBtn.onclick = () => {
+                subtestSelection.classList.add('hidden');
+                document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('selected'));
+                this.currentGrade = null;
+                this.currentSubtest = null;
+            };
+        }
+        
         // Show subtest selection
         subtestSelection.classList.remove('hidden');
         
@@ -288,42 +304,59 @@ class DIBELSApp {
             return;
         }
         
-        // Show loading
-        this.showLoading('Preparing practice session...');
-        
-        this.updatePracticeOptions();
-        
-        // Small delay to show loading animation
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Initialize subtest
-        const success = window.subtestManager.initSubtest(
-            this.currentSubtest,
-            this.currentGrade,
-            this.practiceOptions
-        );
-        
-        if (!success) {
+        // Add loading spinner to button
+        const startBtn = document.getElementById('start-practice');
+        if (startBtn) {
+            const originalText = startBtn.innerHTML;
+            startBtn.classList.add('loading');
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<span class="button-spinner"></span> Starting...';
+            
+            // Show loading
+            this.showLoading('Preparing practice session...');
+            
+            this.updatePracticeOptions();
+            
+            // Small delay to show loading animation
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Initialize subtest
+            const success = window.subtestManager.initSubtest(
+                this.currentSubtest,
+                this.currentGrade,
+                this.practiceOptions
+            );
+            
+            if (!success) {
+                this.hideLoading();
+                startBtn.classList.remove('loading');
+                startBtn.disabled = false;
+                startBtn.innerHTML = originalText;
+                this.showToast('Failed to initialize practice session.', 'error');
+                return;
+            }
+            
+            // Show practice interface
+            this.showPracticeInterface();
+            
+            // Start practice
+            window.subtestManager.startPractice();
+            
+            this.isPracticeActive = true;
+            
+            // Hide loading and restore button
             this.hideLoading();
-            this.showToast('Failed to initialize practice session.', 'error');
-            return;
+            startBtn.classList.remove('loading');
+            startBtn.disabled = false;
+            startBtn.innerHTML = originalText;
+            
+            // Show success animation
+            this.showToast('Practice session started!', 'success', 3000);
+            
+            // Update accessibility
+            window.accessibilityManager.setupPracticeAccessibility();
+            window.accessibilityManager.updateFocusableElements();
         }
-        
-        // Show practice interface
-        this.showPracticeInterface();
-        
-        // Start practice
-        window.subtestManager.startPractice();
-        
-        this.isPracticeActive = true;
-        
-        // Hide loading and show success
-        this.hideLoading();
-        this.showToast('Practice session started!', 'success', 3000);
-        
-        // Update accessibility
-        window.accessibilityManager.setupPracticeAccessibility();
-        window.accessibilityManager.updateFocusableElements();
     }
 
     // Show practice interface
@@ -388,9 +421,15 @@ class DIBELSApp {
 
     // Reset practice
     resetPractice() {
-        window.practiceTimer.reset();
-        window.subtestManager.reset();
-        this.startPractice();
+        this.showConfirmationDialog(
+            'Reset Practice Session',
+            'Are you sure you want to reset? This will restart your practice session and clear your progress.',
+            () => {
+                window.practiceTimer.reset();
+                window.subtestManager.reset();
+                this.startPractice();
+            }
+        );
     }
 
     // New practice set
@@ -412,6 +451,11 @@ class DIBELSApp {
         // Hide practice section
         document.getElementById('practice-section').classList.add('hidden');
         
+        // Hide other sections
+        document.getElementById('educator-section')?.classList.add('hidden');
+        document.getElementById('settings-section')?.classList.add('hidden');
+        document.getElementById('progress-section')?.classList.add('hidden');
+        
         // Show welcome section
         document.getElementById('welcome-section').classList.remove('hidden');
         
@@ -420,6 +464,9 @@ class DIBELSApp {
         document.querySelectorAll('.subtest-btn').forEach(btn => btn.classList.remove('selected'));
         document.getElementById('subtest-selection').classList.add('hidden');
         document.getElementById('practice-options').classList.add('hidden');
+        
+        // Update bottom nav
+        this.updateBottomNavActive('home');
     }
 
     // End practice
@@ -429,8 +476,19 @@ class DIBELSApp {
         // Get results
         const results = window.subtestManager.getResults();
         
-        // Show scoring panel
-        document.getElementById('scoring-panel').classList.remove('hidden');
+        // Show scoring panel with animation
+        const scoringPanel = document.getElementById('scoring-panel');
+        scoringPanel.classList.remove('hidden');
+        // Trigger animation
+        setTimeout(() => {
+            scoringPanel.classList.add('show');
+        }, 10);
+        
+        // Add success celebration
+        scoringPanel.classList.add('success-celebration');
+        setTimeout(() => {
+            scoringPanel.classList.remove('success-celebration');
+        }, 600);
         
         // Update accessibility
         window.accessibilityManager.setupScoringAccessibility();
@@ -481,11 +539,18 @@ class DIBELSApp {
         );
         
         // Display formatted score with benchmark comparison
-        scoreResult.innerHTML = window.scoringEngine.formatScoreDisplay(
+        const scoreHTML = window.scoringEngine.formatScoreDisplay(
             scoreData,
             this.currentSubtest,
             this.currentGrade
         );
+        scoreResult.innerHTML = scoreHTML + '<span class="success-checkmark">✓</span>';
+        
+        // Add success animation to result
+        scoreResult.classList.add('success-celebration');
+        setTimeout(() => {
+            scoreResult.classList.remove('success-celebration');
+        }, 600);
         
         // Enhanced accessibility announcement
         if (window.accessibilityManager && window.accessibilityManager.announceAccuracy) {
@@ -1199,10 +1264,16 @@ class DIBELSApp {
     }
 
     clearAllData() {
-        window.progressTracker.clearAllData();
-        alert('All data cleared successfully!');
-        this.loadSettings();
-        this.loadProgressData();
+        this.showConfirmationDialog(
+            'Clear All Data',
+            'Are you sure you want to clear all data? This will permanently delete all progress, sessions, and settings. This action cannot be undone.',
+            () => {
+                window.progressTracker.clearAllData();
+                this.showToast('All data cleared successfully!', 'success');
+                this.loadSettings();
+                this.loadProgressData();
+            }
+        );
     }
 
     // Progress methods
@@ -1390,6 +1461,305 @@ class DIBELSApp {
         `;
         
         this.showEducatorModal(about);
+    }
+
+    // Setup tutorial system
+    setupTutorial() {
+        const tutorialBtn = document.getElementById('show-tutorial-btn');
+        const tutorialOverlay = document.getElementById('tutorial-overlay');
+        const tutorialContent = document.getElementById('tutorial-content');
+        const tutorialPrev = document.getElementById('tutorial-prev');
+        const tutorialNext = document.getElementById('tutorial-next');
+        const tutorialClose = document.getElementById('tutorial-close');
+        
+        if (!tutorialOverlay) return;
+        
+        const tutorialSteps = [
+            {
+                title: 'Welcome!',
+                content: '<p>DIBELS Practice Lab helps you practice early literacy assessments. Let\'s take a quick tour!</p>'
+            },
+            {
+                title: 'Step 1: Select Grade',
+                content: '<p>Start by selecting a grade level (K-8). Each grade has different subtests available.</p>'
+            },
+            {
+                title: 'Step 2: Choose Subtest',
+                content: '<p>After selecting a grade, choose a subtest to practice. Each subtest measures different literacy skills.</p>'
+            },
+            {
+                title: 'Step 3: Configure Options',
+                content: '<p>Customize your practice with options like timed practice, timer display, and audio modeling (where available).</p>'
+            },
+            {
+                title: 'Step 4: Start Practice',
+                content: '<p>Click "Start Practice" to begin. Use the controls to pause, reset, or generate new practice sets.</p>'
+            },
+            {
+                title: 'Step 5: Score & Track',
+                content: '<p>After practice, enter your scores to see accuracy and benchmark comparisons. Track your progress over time!</p>'
+            }
+        ];
+        
+        let currentStep = 0;
+        
+        const showTutorialStep = (step) => {
+            if (step < 0 || step >= tutorialSteps.length) return;
+            currentStep = step;
+            
+            const stepData = tutorialSteps[step];
+            tutorialContent.innerHTML = `
+                <div class="tutorial-step">
+                    <h3>${stepData.title}</h3>
+                    ${stepData.content}
+                </div>
+            `;
+            
+            tutorialPrev.style.display = step > 0 ? 'inline-block' : 'none';
+            tutorialNext.style.display = step < tutorialSteps.length - 1 ? 'inline-block' : 'none';
+            tutorialClose.style.display = step === tutorialSteps.length - 1 ? 'inline-block' : 'none';
+        };
+        
+        if (tutorialBtn) {
+            tutorialBtn.addEventListener('click', () => {
+                tutorialOverlay.classList.remove('hidden');
+                showTutorialStep(0);
+            });
+        }
+        
+        if (tutorialPrev) {
+            tutorialPrev.addEventListener('click', () => showTutorialStep(currentStep - 1));
+        }
+        
+        if (tutorialNext) {
+            tutorialNext.addEventListener('click', () => showTutorialStep(currentStep + 1));
+        }
+        
+        if (tutorialClose) {
+            tutorialClose.addEventListener('click', () => {
+                tutorialOverlay.classList.add('hidden');
+                localStorage.setItem('dibels-tutorial-completed', 'true');
+            });
+        }
+        
+        // Close on overlay click
+        tutorialOverlay.addEventListener('click', (e) => {
+            if (e.target === tutorialOverlay) {
+                tutorialOverlay.classList.add('hidden');
+                localStorage.setItem('dibels-tutorial-completed', 'true');
+            }
+        });
+    }
+
+    // Check if first-time user
+    checkFirstTimeUser() {
+        const tutorialCompleted = localStorage.getItem('dibels-tutorial-completed');
+        if (!tutorialCompleted) {
+            // Show tutorial after a short delay
+            setTimeout(() => {
+                const tutorialBtn = document.getElementById('show-tutorial-btn');
+                if (tutorialBtn) {
+                    tutorialBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 1000);
+        }
+    }
+
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                if (e.key === '?') {
+                    this.showKeyboardHelp();
+                }
+                return;
+            }
+            
+            // ? key - Show keyboard help
+            if (e.key === '?') {
+                e.preventDefault();
+                this.showKeyboardHelp();
+                return;
+            }
+            
+            // Only in practice mode
+            if (this.isPracticeActive) {
+                // Space - Pause/Resume
+                if (e.key === ' ' && !e.target.tagName.match(/INPUT|TEXTAREA|BUTTON/)) {
+                    e.preventDefault();
+                    this.pausePractice();
+                    return;
+                }
+                
+                // R - Reset
+                if (e.key === 'r' || e.key === 'R') {
+                    e.preventDefault();
+                    this.resetPractice();
+                    return;
+                }
+                
+                // N - New Set
+                if (e.key === 'n' || e.key === 'N') {
+                    e.preventDefault();
+                    this.newPracticeSet();
+                    return;
+                }
+                
+                // M - Back to Menu
+                if (e.key === 'm' || e.key === 'M') {
+                    e.preventDefault();
+                    this.backToMenu();
+                    return;
+                }
+            }
+            
+            // Esc - Close modals
+            if (e.key === 'Escape') {
+                const tutorialOverlay = document.getElementById('tutorial-overlay');
+                const keyboardHelpOverlay = document.getElementById('keyboard-help-overlay');
+                if (tutorialOverlay && !tutorialOverlay.classList.contains('hidden')) {
+                    tutorialOverlay.classList.add('hidden');
+                }
+                if (keyboardHelpOverlay && !keyboardHelpOverlay.classList.contains('hidden')) {
+                    keyboardHelpOverlay.classList.add('hidden');
+                }
+            }
+        });
+    }
+
+    // Show keyboard shortcuts help
+    showKeyboardHelp() {
+        const overlay = document.getElementById('keyboard-help-overlay');
+        const closeBtn = document.getElementById('keyboard-help-close');
+        
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
+        
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                overlay.classList.add('hidden');
+            };
+        }
+        
+        // Close on overlay click
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.add('hidden');
+                }
+            });
+        }
+    }
+
+    // Setup bottom navigation
+    setupBottomNavigation() {
+        const homeBtn = document.getElementById('bottom-nav-home');
+        const educatorBtn = document.getElementById('bottom-nav-educator');
+        const progressBtn = document.getElementById('bottom-nav-progress');
+        const settingsBtn = document.getElementById('bottom-nav-settings');
+        
+        if (homeBtn) {
+            homeBtn.addEventListener('click', () => {
+                this.backToMenu();
+                this.updateBottomNavActive('home');
+            });
+        }
+        
+        if (educatorBtn) {
+            educatorBtn.addEventListener('click', () => {
+                this.showEducatorMode();
+                this.updateBottomNavActive('educator');
+            });
+        }
+        
+        if (progressBtn) {
+            progressBtn.addEventListener('click', () => {
+                this.showProgress();
+                this.updateBottomNavActive('progress');
+            });
+        }
+        
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                this.showSettings();
+                this.updateBottomNavActive('settings');
+            });
+        }
+    }
+
+    // Update bottom nav active state
+    updateBottomNavActive(active) {
+        document.querySelectorAll('.bottom-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const activeMap = {
+            'home': 'bottom-nav-home',
+            'educator': 'bottom-nav-educator',
+            'progress': 'bottom-nav-progress',
+            'settings': 'bottom-nav-settings'
+        };
+        
+        const activeBtn = document.getElementById(activeMap[active]);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+
+    // Update grade buttons with subtest counts
+    updateGradeButtonsWithCounts() {
+        document.querySelectorAll('.grade-btn').forEach(btn => {
+            const grade = btn.dataset.grade;
+            const subtests = DIBELS_CONTENT.gradeSubtests[grade] || [];
+            const count = subtests.length;
+            
+            if (count > 0) {
+                const countSpan = document.createElement('span');
+                countSpan.className = 'subtest-count';
+                countSpan.textContent = `(${count} ${count === 1 ? 'subtest' : 'subtests'})`;
+                btn.appendChild(countSpan);
+            }
+        });
+    }
+
+    // Show confirmation dialog
+    showConfirmationDialog(title, message, onConfirm) {
+        const dialog = document.createElement('div');
+        dialog.className = 'confirmation-dialog';
+        dialog.innerHTML = `
+            <div class="confirmation-content">
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <div class="confirmation-actions">
+                    <button class="control-btn" id="confirm-cancel">Cancel</button>
+                    <button class="control-btn primary" id="confirm-ok">Confirm</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(dialog);
+        
+        const cancelBtn = dialog.querySelector('#confirm-cancel');
+        const okBtn = dialog.querySelector('#confirm-ok');
+        
+        const close = () => {
+            dialog.remove();
+        };
+        
+        cancelBtn.addEventListener('click', close);
+        okBtn.addEventListener('click', () => {
+            close();
+            if (onConfirm) onConfirm();
+        });
+        
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) close();
+        });
+        
+        // Focus on cancel button
+        cancelBtn.focus();
     }
 }
 
