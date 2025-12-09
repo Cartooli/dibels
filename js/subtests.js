@@ -971,7 +971,10 @@ class SubtestManager {
             }
         }
         
-        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+        // Maze accuracy is calculated based on attempted items only (correct + incorrect)
+        // This matches the scoring logic in scoring.js
+        const attempted = correct + incorrect;
+        const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
         
         resultsContainer.innerHTML = `
             <div class="result-header">

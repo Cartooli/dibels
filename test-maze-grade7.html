@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Grade 7 Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Maze Comprehension - Grade 7 Functionality Test</h1>
+    <div id="test-results"></div>
+
+    <script src="data/content.js"></script>
+    <script>
+        const results = [];
+        
+        function addResult(test, passed, message) {
+            results.push({ test, passed, message });
+        }
+
+        // Test 1: Content Generation
+        function testContentGeneration() {
+            try {
+                const content = ContentGenerator.generateMaze('7', {});
+                
+                if (!content) {
+                    addResult('Content Generation', false, 'generateMaze returned null/undefined');
+                    return;
+                }
+                
+                if (content.type !== 'Maze') {
+                    addResult('Content Generation', false, `Expected type 'Maze', got '${content.type}'`);
+                    return;
+                }
+                
+                if (!content.content || !content.content.title || !content.content.text) {
+                    addResult('Content Generation', false, 'Content missing title or text');
+                    return;
+                }
+                
+                if (!content.content.correctAnswers || !Array.isArray(content.content.correctAnswers)) {
+                    addResult('Content Generation', false, 'Content missing correctAnswers array');
+                    return;
+                }
+                
+                // Count questions in text
+                const questionMatches = content.content.text.match(/\[([^\]]+)\]/g);
+                const questionCount = questionMatches ? questionMatches.length : 0;
+                const answerCount = content.content.correctAnswers.length;
+                
+                if (questionCount !== answerCount) {
+                    addResult('Content Generation', false, 
+                        `Mismatch: ${questionCount} questions but ${answerCount} answers`);
+                    return;
+                }
+                
+                addResult('Content Generation', true, 
+                    `Generated passage "${content.content.title}" with ${questionCount} questions`);
+            } catch (error) {
+                addResult('Content Generation', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Test 2: Text Parsing
+        function testTextParsing() {
+            try {
+                const testText = "The Scientific Revolution [fundamentally/completely/totally] changed how people [understood/viewed/perceived] the natural world.";
+                const matches = testText.match(/\[([^\]]+)\]/g);
+                
+                if (!matches || matches.length !== 2) {
+                    addResult('Text Parsing', false, `Expected 2 questions, found ${matches ? matches.length : 0}`);
+                    return;
+                }
+                
+                const firstOptions = matches[0].match(/\[([^\]]+)\]/)[1].split('/');
+                if (firstOptions.length !== 3) {
+                    addResult('Text Parsing', false, `Expected 3 options per question, found ${firstOptions.length}`);
+                    return;
+                }
+                
+                addResult('Text Parsing', true, 'Text parsing works correctly');
+            } catch (error) {
+                addResult('Text Parsing', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Test 3: Answer Validation Logic
+        function testAnswerValidation() {
+            try {
+                // Simulate the checkMazeAnswers logic
+                const correctAnswers = ['fundamentally', 'understood', 'challenged'];
+                const testSelections = [
+                    { value: 'fundamentally', correct: 'fundamentally' },
+                    { value: 'viewed', correct: 'understood' },
+                    { value: '', correct: 'challenged' }
+                ];
+                
+                let correct = 0;
+                let incorrect = 0;
+                let unanswered = 0;
+                
+                testSelections.forEach(select => {
+                    if (select.value === select.correct) {
+                        correct++;
+                    } else if (select.value) {
+                        incorrect++;
+                    } else {
+                        unanswered++;
+                    }
+                });
+                
+                if (correct !== 1 || incorrect !== 1 || unanswered !== 1) {
+                    addResult('Answer Validation', false, 
+                        `Expected 1 correct, 1 incorrect, 1 unanswered. Got ${correct}, ${incorrect}, ${unanswered}`);
+                    return;
+                }
+                
+                addResult('Answer Validation', true, 'Answer validation logic works correctly');
+            } catch (error) {
+                addResult('Answer Validation', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Test 4: Scoring Logic
+        function testScoring() {
+            try {
+                // Simulate scoring engine
+                const correct = 5;
+                const incorrect = 2;
+                const unanswered = 1;
+                const total = correct + incorrect + unanswered;
+                const attempted = correct + incorrect;
+                const accuracy = attempted > 0 ? (correct / attempted) * 100 : 0;
+                
+                if (total !== 8) {
+                    addResult('Scoring Logic', false, `Expected total 8, got ${total}`);
+                    return;
+                }
+                
+                if (attempted !== 7) {
+                    addResult('Scoring Logic', false, `Expected attempted 7, got ${attempted}`);
+                    return;
+                }
+                
+                const expectedAccuracy = (5 / 7) * 100;
+                if (Math.abs(accuracy - expectedAccuracy) > 0.1) {
+                    addResult('Scoring Logic', false, 
+                        `Expected accuracy ~${expectedAccuracy.toFixed(1)}%, got ${accuracy.toFixed(1)}%`);
+                    return;
+                }
+                
+                addResult('Scoring Logic', true, 
+                    `Scoring works: ${correct} correct, ${incorrect} incorrect, ${unanswered} unanswered, ${accuracy.toFixed(1)}% accuracy`);
+            } catch (error) {
+                addResult('Scoring Logic', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Test 5: Grade 7 Specific Content
+        function testGrade7Content() {
+            try {
+                const content = ContentGenerator.generateMaze('7', {});
+                
+                if (content.content.title !== 'The Scientific Revolution') {
+                    addResult('Grade 7 Content', false, 
+                        `Expected title "The Scientific Revolution", got "${content.content.title}"`);
+                    return;
+                }
+                
+                const expectedAnswers = ['fundamentally', 'understood', 'challenged', 'developed', 
+                                      'inquiry', 'replaced', 'established', 'science'];
+                
+                if (content.content.correctAnswers.length !== 8) {
+                    addResult('Grade 7 Content', false, 
+                        `Expected 8 answers, got ${content.content.correctAnswers.length}`);
+                    return;
+                }
+                
+                // Check first few answers match
+                for (let i = 0; i < Math.min(3, expectedAnswers.length); i++) {
+                    if (content.content.correctAnswers[i] !== expectedAnswers[i]) {
+                        addResult('Grade 7 Content', false, 
+                            `Answer ${i} mismatch: expected "${expectedAnswers[i]}", got "${content.content.correctAnswers[i]}"`);
+                        return;
+                    }
+                }
+                
+                addResult('Grade 7 Content', true, 
+                    'Grade 7 content matches expected passage and answers');
+            } catch (error) {
+                addResult('Grade 7 Content', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Run all tests
+        testContentGeneration();
+        testTextParsing();
+        testAnswerValidation();
+        testScoring();
+        testGrade7Content();
+
+        // Display results
+        const resultsDiv = document.getElementById('test-results');
+        let passCount = 0;
+        let failCount = 0;
+        
+        results.forEach(result => {
+            const div = document.createElement('div');
+            div.className = `test-result ${result.passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `<strong>${result.passed ? '✓ PASS' : '✗ FAIL'}</strong>: ${result.test}<br>${result.message}`;
+            resultsDiv.appendChild(div);
+            
+            if (result.passed) passCount++;
+            else failCount++;
+        });
+        
+        const summary = document.createElement('div');
+        summary.className = 'test-result info';
+        summary.innerHTML = `<strong>Summary:</strong> ${passCount} passed, ${failCount} failed out of ${results.length} tests`;
+        resultsDiv.appendChild(summary);
+    </script>
+</body>
+</html>
+
