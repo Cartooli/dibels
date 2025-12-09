@@ -618,10 +618,14 @@ class SubtestManager {
             const mazeMatch = part.match(/\[([^\]]+)\]/);
             if (mazeMatch) {
                 const options = mazeMatch[1].split('/');
-                const correctAnswer = content.correctAnswers[questionIndex];
+                const correctAnswer = content.correctAnswers && content.correctAnswers[questionIndex];
+                
+                if (!correctAnswer) {
+                    console.warn(`Maze: Missing correct answer for question ${questionIndex}`);
+                }
                 
                 result += `<span class="maze-blank">
-                    <select class="maze-select" data-position="${questionIndex}" data-correct="${correctAnswer}">
+                    <select class="maze-select" data-position="${questionIndex}" data-correct="${correctAnswer || ''}">
                         <option value="">Choose...</option>
                         ${options.map(option => 
                             `<option value="${option.trim()}">${option.trim()}</option>`
@@ -933,6 +937,12 @@ class SubtestManager {
         selects.forEach(select => {
             const correctAnswer = select.dataset.correct;
             const selectedValue = select.value;
+            
+            // Skip if correct answer is not set (data issue)
+            if (!correctAnswer) {
+                console.warn('Maze: Select element missing correct answer');
+                return;
+            }
             
             if (selectedValue === correctAnswer) {
                 correct++;
