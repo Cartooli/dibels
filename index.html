@@ -68,6 +68,9 @@
                 <section class="welcome-section" id="welcome-section">
                     <h2>Welcome to DIBELS Practice Lab</h2>
                     <p>Practice DIBELS 8 subtests with students in grades K-8. Choose your grade level and subtest to begin.</p>
+                    <button class="control-btn" id="show-tutorial-btn" style="margin: var(--space-4) 0; background: var(--primary-color); color: white;">
+                        First time? Take a tour
+                    </button>
                     
                     <!-- Grade Selection -->
                     <div class="grade-selection">
@@ -87,7 +90,11 @@
 
                     <!-- Subtest Selection -->
                     <div class="subtest-selection hidden" id="subtest-selection">
+                        <button class="previous-btn" id="previous-grade-btn" aria-label="Go back to grade selection">
+                            ← Previous
+                        </button>
                         <h3>Select Subtest</h3>
+                        <p class="subtest-instruction" style="color: var(--text-secondary); margin-bottom: var(--space-4);">Now select a subtest below</p>
                         <div class="subtest-buttons" id="subtest-buttons">
                             <!-- Dynamically populated based on grade -->
                         </div>
@@ -101,21 +108,37 @@
                                 <input type="checkbox" id="timed-mode" checked>
                                 <span class="checkmark"></span>
                                 <span class="option-text">Timed Practice (60 seconds)</span>
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon" aria-label="Help">?</span>
+                                    <span class="tooltip">Practice with a 60-second time limit, similar to official DIBELS assessments</span>
+                                </span>
                             </label>
                             <label class="option-item">
                                 <input type="checkbox" id="show-timer">
                                 <span class="checkmark"></span>
                                 <span class="option-text">Show Timer</span>
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon" aria-label="Help">?</span>
+                                    <span class="tooltip">Display a visible countdown timer during practice</span>
+                                </span>
                             </label>
                             <label class="option-item">
                                 <input type="checkbox" id="reveal-answers">
                                 <span class="checkmark"></span>
                                 <span class="option-text">Reveal Answers</span>
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon" aria-label="Help">?</span>
+                                    <span class="tooltip">Show correct answers after practice. Only available for PSF and NWF subtests</span>
+                                </span>
                             </label>
                             <label class="option-item">
                                 <input type="checkbox" id="audio-modeling">
                                 <span class="checkmark"></span>
                                 <span class="option-text">Audio Modeling</span>
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon" aria-label="Help">?</span>
+                                    <span class="tooltip">Hear audio examples of fluent reading. Only available for ORF and WRF subtests</span>
+                                </span>
                             </label>
                         </div>
                         <button class="start-practice-btn" id="start-practice">Start Practice</button>
@@ -325,6 +348,79 @@
                 </div>
             </div>
         </footer>
+        
+        <!-- Bottom Navigation Bar (Mobile) -->
+        <nav class="bottom-nav" id="bottom-nav" aria-label="Main navigation">
+            <button class="bottom-nav-item" id="bottom-nav-home" aria-label="Home">
+                <span>🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="bottom-nav-item" id="bottom-nav-educator" aria-label="Educator Mode">
+                <span>👩‍🏫</span>
+                <span>Educator</span>
+            </button>
+            <button class="bottom-nav-item" id="bottom-nav-progress" aria-label="Progress">
+                <span>📊</span>
+                <span>Progress</span>
+            </button>
+            <button class="bottom-nav-item" id="bottom-nav-settings" aria-label="Settings">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Tutorial/Onboarding Modal -->
+    <div class="tutorial-overlay hidden" id="tutorial-overlay" role="dialog" aria-labelledby="tutorial-title" aria-modal="true">
+        <div class="tutorial-modal">
+            <h2 id="tutorial-title">Welcome to DIBELS Practice Lab!</h2>
+            <div id="tutorial-content">
+                <!-- Tutorial steps will be populated by JavaScript -->
+            </div>
+            <div class="tutorial-navigation">
+                <button class="control-btn" id="tutorial-prev" style="display: none;">Previous</button>
+                <button class="control-btn" id="tutorial-next">Next</button>
+                <button class="control-btn" id="tutorial-close" style="display: none;">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Help Modal -->
+    <div class="tutorial-overlay hidden" id="keyboard-help-overlay" role="dialog" aria-labelledby="keyboard-help-title" aria-modal="true">
+        <div class="tutorial-modal">
+            <h2 id="keyboard-help-title">Keyboard Shortcuts</h2>
+            <div id="keyboard-help-content">
+                <div class="tutorial-step">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><strong>Tab / Shift+Tab:</strong> Navigate between elements</li>
+                        <li><strong>Arrow Keys:</strong> Navigate within practice content</li>
+                        <li><strong>Enter / Space:</strong> Activate buttons</li>
+                        <li><strong>Esc:</strong> Close modals</li>
+                    </ul>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Practice Controls</h3>
+                    <ul>
+                        <li><strong>Space:</strong> Pause/Resume timer</li>
+                        <li><strong>R:</strong> Reset practice</li>
+                        <li><strong>N:</strong> New practice set</li>
+                        <li><strong>M:</strong> Back to menu</li>
+                    </ul>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Quick Access</h3>
+                    <ul>
+                        <li><strong>?</strong> Show this help</li>
+                        <li><strong>Alt+T:</strong> Toggle theme</li>
+                        <li><strong>Alt+H:</strong> Toggle high contrast</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tutorial-navigation">
+                <button class="control-btn" id="keyboard-help-close">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- Audio Elements -->

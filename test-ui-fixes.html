@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI/UX Fixes Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .test-pass {
+            color: green;
+            font-weight: bold;
+        }
+        .test-fail {
+            color: red;
+            font-weight: bold;
+        }
+        .test-info {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>UI/UX Fixes Test Suite</h1>
+    <div id="test-results"></div>
+
+    <script>
+        const results = [];
+        
+        function addResult(testName, passed, message) {
+            results.push({ testName, passed, message });
+        }
+
+        // Test 1: Verify updatePracticeOptionsForSubtest exists
+        function test1() {
+            const script = document.createElement('script');
+            script.src = 'js/app.js';
+            script.onload = () => {
+                const passed = typeof DIBELSApp !== 'undefined';
+                addResult('Test 1: DIBELSApp class exists', passed, 
+                    passed ? 'DIBELSApp class is defined' : 'DIBELSApp class not found');
+            };
+            document.head.appendChild(script);
+        }
+
+        // Test 2: Verify HTML structure for validation elements
+        function test2() {
+            fetch('index.html')
+                .then(res => res.text())
+                .then(html => {
+                    const hasCorrectError = html.includes('correct-responses-error');
+                    const hasErrorsError = html.includes('errors-error');
+                    const hasMaxAttr = html.includes('max="1000"');
+                    const hasAriaInvalid = html.includes('aria-invalid="false"');
+                    
+                    const passed = hasCorrectError && hasErrorsError && hasMaxAttr && hasAriaInvalid;
+                    addResult('Test 2: HTML validation elements', passed, 
+                        passed ? 'All validation elements present' : 'Some validation elements missing');
+                    
+                    displayResults();
+                });
+        }
+
+        // Test 3: Verify CSS rules exist
+        function test3() {
+            fetch('styles.css')
+                .then(res => res.text())
+                .then(css => {
+                    const hasDisabledStyle = css.includes('.option-item:has(input[disabled])');
+                    const hasInputError = css.includes('.input-error');
+                    const hasErrorMessage = css.includes('.error-message');
+                    const hasAriaInvalid = css.includes('input[aria-invalid="true"]');
+                    
+                    const passed = hasDisabledStyle && hasInputError && hasErrorMessage && hasAriaInvalid;
+                    addResult('Test 3: CSS styling rules', passed, 
+                        passed ? 'All CSS rules present' : 'Some CSS rules missing');
+                    
+                    displayResults();
+                });
+        }
+
+        // Test 4: Verify JavaScript validation method
+        function test4() {
+            fetch('js/app.js')
+                .then(res => res.text())
+                .then(js => {
+                    const hasValidateMethod = js.includes('validateScoreInputs');
+                    const hasTooltipLogic = js.includes('setAttribute(\'title\'');
+                    const hasDisabledClass = js.includes('classList.add(\'disabled\')');
+                    const hasInputListener = js.includes('e.target.id === \'correct-responses\'');
+                    
+                    const passed = hasValidateMethod && hasTooltipLogic && hasDisabledClass && hasInputListener;
+                    addResult('Test 4: JavaScript validation logic', passed, 
+                        passed ? 'All JavaScript logic present' : 'Some JavaScript logic missing');
+                    
+                    displayResults();
+                });
+        }
+
+        function displayResults() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '<h2>Test Results:</h2>';
+            
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = 'test-section';
+                div.innerHTML = `
+                    <strong class="${result.passed ? 'test-pass' : 'test-fail'}">
+                        ${result.passed ? '✓' : '✗'} ${result.testName}
+                    </strong>
+                    <p class="test-info">${result.message}</p>
+                `;
+                container.appendChild(div);
+            });
+
+            const allPassed = results.every(r => r.passed);
+            const summary = document.createElement('div');
+            summary.className = 'test-section';
+            summary.innerHTML = `
+                <h3 class="${allPassed ? 'test-pass' : 'test-fail'}">
+                    ${allPassed ? '✓ All tests passed!' : '✗ Some tests failed'}
+                </h3>
+                <p>${results.filter(r => r.passed).length} / ${results.length} tests passed</p>
+            `;
+            container.appendChild(summary);
+        }
+
+        // Run tests
+        test1();
+        test2();
+        test3();
+        test4();
+    </script>
+</body>
+</html>
+
