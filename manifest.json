@@ -65,41 +65,13 @@
       "name": "Start Practice",
       "short_name": "Practice",
       "description": "Start a new DIBELS practice session",
-      "url": "/?action=practice",
-      "icons": [
-        {
-          "src": "icons/shortcut-practice.png",
-          "sizes": "96x96"
-        }
-      ]
+      "url": "/?action=practice"
     },
     {
       "name": "Educator Mode",
       "short_name": "Educator",
       "description": "Access educator training modules",
-      "url": "/?action=educator",
-      "icons": [
-        {
-          "src": "icons/shortcut-educator.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshots/desktop-practice.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "DIBELS Practice Session"
-    },
-    {
-      "src": "screenshots/mobile-practice.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile Practice Interface"
+      "url": "/?action=educator"
     }
   ]
 }

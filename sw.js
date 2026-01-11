@@ -11,13 +11,16 @@ const STATIC_FILES = [
   '/js/app.js',
   '/js/theme.js',
   '/js/timer.js',
+  '/js/scoring.js',
   '/js/subtests.js',
   '/js/audio.js',
   '/js/print.js',
   '/js/accessibility.js',
+  '/js/keyboard.js',
+  '/js/progress.js',
   '/data/content.js',
   '/manifest.json',
-  // Add icon files when they're created
+  // Icon files
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
 ];
