@@ -191,6 +191,9 @@ class SubtestManager {
     renderPSF(container) {
         const { content, instructions } = this.currentContent;
         
+        // Get the first word (handle both string and object formats)
+        const firstWord = typeof content[0] === 'string' ? content[0] : content[0].word;
+        
         container.innerHTML = `
             <div class="subtest-instructions">
                 <h3>Phonemic Segmentation Fluency</h3>
@@ -198,7 +201,7 @@ class SubtestManager {
             </div>
             <div class="psf-content">
                 <div class="word-display">
-                    <div class="current-word" id="current-word">${content[0]}</div>
+                    <div class="current-word" id="current-word">${firstWord}</div>
                     <div class="word-progress">
                         <span id="word-number">1</span> of ${content.length}
                     </div>
@@ -824,7 +827,10 @@ class SubtestManager {
         const answerDisplay = document.getElementById('answer-display');
         
         if (this.currentWordIndex < this.currentContent.content.length) {
-            currentWordElement.textContent = this.currentContent.content[this.currentWordIndex];
+            const wordData = this.currentContent.content[this.currentWordIndex];
+            // Handle both string and object formats
+            const word = typeof wordData === 'string' ? wordData : wordData.word;
+            currentWordElement.textContent = word;
             wordNumberElement.textContent = this.currentWordIndex + 1;
             answerDisplay.style.display = 'none';
         } else {
@@ -838,10 +844,10 @@ class SubtestManager {
         const answerDisplay = document.getElementById('answer-display');
         const phonemeBreakdown = document.getElementById('phoneme-breakdown');
         
-        // Simple phoneme breakdown (in real implementation, would use more sophisticated analysis)
-        const phonemes = this.breakIntoPhonemes(currentWord);
+        // Use stored phonemes from content data instead of calculating
+        const phonemes = currentWord.phonemes || this.breakIntoPhonemes(currentWord.word);
         phonemeBreakdown.innerHTML = phonemes.map(phoneme => 
-            `<span class="phoneme">/${phoneme}/</span>`
+            `<span class="phoneme">${phoneme}</span>`
         ).join(' ');
         
         answerDisplay.style.display = 'block';

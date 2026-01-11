@@ -73,9 +73,10 @@ const DIBELS_CONTENT = {
     },
 
     // Grade-specific subtest availability (DIBELS 8 Standards)
+    // Note: ORF in Grade 1 is typically administered during Winter/Spring benchmarks
     gradeSubtests: {
         'K': ['LNF', 'PSF', 'NWF'],
-        '1': ['PSF', 'NWF', 'WRF', 'ORF'],
+        '1': ['PSF', 'NWF', 'WRF', 'ORF'], // ORF for Winter/Spring benchmarks
         '2': ['NWF', 'WRF', 'ORF', 'Maze'],
         '3': ['WRF', 'ORF', 'Maze'],
         '4': ['ORF', 'Maze'],
