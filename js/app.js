@@ -1567,6 +1567,9 @@ class DIBELSApp {
 
     // Setup keyboard shortcuts
     setupKeyboardShortcuts() {
+        // Set up keyboard help modal close handlers once
+        this.setupKeyboardHelpModal();
+        
         document.addEventListener('keydown', (e) => {
             // Don't trigger shortcuts when typing in inputs
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -1628,28 +1631,33 @@ class DIBELSApp {
         });
     }
 
-    // Show keyboard shortcuts help
-    showKeyboardHelp() {
+    // Setup keyboard help modal close handlers (called once during initialization)
+    setupKeyboardHelpModal() {
         const overlay = document.getElementById('keyboard-help-overlay');
         const closeBtn = document.getElementById('keyboard-help-close');
         
+        if (!overlay) return;
+        
+        // Set up close button handler
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.add('hidden');
+            });
+        }
+        
+        // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.classList.add('hidden');
+            }
+        });
+    }
+
+    // Show keyboard shortcuts help
+    showKeyboardHelp() {
+        const overlay = document.getElementById('keyboard-help-overlay');
         if (overlay) {
             overlay.classList.remove('hidden');
-        }
-        
-        if (closeBtn) {
-            closeBtn.onclick = () => {
-                overlay.classList.add('hidden');
-            };
-        }
-        
-        // Close on overlay click
-        if (overlay) {
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    overlay.classList.add('hidden');
-                }
-            });
         }
     }
 
