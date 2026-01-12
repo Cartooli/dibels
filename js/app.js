@@ -21,7 +21,6 @@ class DIBELSApp {
         this.setupKeyboardShortcuts();
         this.setupBottomNavigation();
         this.updateGradeButtonsWithCounts();
-        this.checkFirstTimeUser();
     }
 
     // Setup event listeners
@@ -1563,19 +1562,6 @@ class DIBELSApp {
         });
     }
 
-    // Check if first-time user
-    checkFirstTimeUser() {
-        const tutorialCompleted = localStorage.getItem('dibels-tutorial-completed');
-        if (!tutorialCompleted) {
-            // Show tutorial after a short delay
-            setTimeout(() => {
-                const tutorialBtn = document.getElementById('show-tutorial-btn');
-                if (tutorialBtn) {
-                    tutorialBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 1000);
-        }
-    }
 
     // Setup keyboard shortcuts
     setupKeyboardShortcuts() {
