@@ -1650,7 +1650,13 @@ class DIBELSApp {
         if (!overlay) return;
         
         // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
+        // Check if click is on close button first to avoid conflicts
         overlay.addEventListener('click', (e) => {
+            // Don't close if clicking the close button (handled by event delegation)
+            if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
+                return;
+            }
+            // Only close if clicking the overlay itself, not the modal content
             if (e.target === overlay) {
                 overlay.classList.add('hidden');
             }
