@@ -1,7 +1,7 @@
 // DIBELS Practice Lab Service Worker
-const CACHE_NAME = 'dibels-practice-lab-v1.0.1';
-const STATIC_CACHE_NAME = 'dibels-static-v1.0.1';
-const DYNAMIC_CACHE_NAME = 'dibels-dynamic-v1.0.1';
+const CACHE_NAME = 'dibels-practice-lab-v1.0.2';
+const STATIC_CACHE_NAME = 'dibels-static-v1.0.2';
+const DYNAMIC_CACHE_NAME = 'dibels-dynamic-v1.0.2';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [
