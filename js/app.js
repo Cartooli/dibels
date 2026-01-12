@@ -68,6 +68,18 @@ class DIBELSApp {
             }
         });
 
+        // Keyboard help modal close button
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const overlay = document.getElementById('keyboard-help-overlay');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
+            }
+        });
+
         // Scoring input validation and real-time accuracy
         document.addEventListener('input', (e) => {
             if (e.target.id === 'correct-responses' || e.target.id === 'errors') {
@@ -1634,16 +1646,8 @@ class DIBELSApp {
     // Setup keyboard help modal close handlers (called once during initialization)
     setupKeyboardHelpModal() {
         const overlay = document.getElementById('keyboard-help-overlay');
-        const closeBtn = document.getElementById('keyboard-help-close');
         
         if (!overlay) return;
-        
-        // Set up close button handler
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                overlay.classList.add('hidden');
-            });
-        }
         
         // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
         overlay.addEventListener('click', (e) => {
