@@ -1635,6 +1635,9 @@ class DIBELSApp {
         
         if (!overlay) return;
         
+        // Ensure modal is hidden on initialization (defensive check)
+        overlay.classList.add('hidden');
+        
         // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
         // Check if click is on close button first to avoid conflicts
         overlay.addEventListener('click', (e) => {
