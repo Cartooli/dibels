@@ -1638,10 +1638,19 @@ class DIBELSApp {
         // Ensure modal is hidden on initialization (defensive check)
         overlay.classList.add('hidden');
         
+        // Set up close button handler directly
+        const closeButton = document.getElementById('keyboard-help-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                overlay.classList.add('hidden');
+            });
+        }
+        
         // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
-        // Check if click is on close button first to avoid conflicts
         overlay.addEventListener('click', (e) => {
-            // Don't close if clicking the close button (handled by event delegation)
+            // Don't close if clicking the close button (handled by direct handler above)
             if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
                 return;
             }
