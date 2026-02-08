@@ -67,7 +67,7 @@ class DIBELSApp {
             }
         });
 
-        // Keyboard help modal close button
+        // Keyboard help modal close button (delegated so it works even if direct handlers miss)
         document.addEventListener('click', (e) => {
             if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
                 e.preventDefault();
@@ -75,6 +75,7 @@ class DIBELSApp {
                 const overlay = document.getElementById('keyboard-help-overlay');
                 if (overlay) {
                     overlay.classList.add('hidden');
+                    overlay.setAttribute('aria-hidden', 'true');
                 }
             }
         });
@@ -1647,7 +1648,6 @@ class DIBELSApp {
     // Setup keyboard help modal close handlers (called once during initialization)
     setupKeyboardHelpModal() {
         const overlay = document.getElementById('keyboard-help-overlay');
-        
         if (!overlay) return;
         
         // Ensure modal is hidden on initialization (defensive check)
