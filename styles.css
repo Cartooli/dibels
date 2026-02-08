@@ -1626,13 +1626,13 @@ input[aria-invalid="true"]:focus {
     border: 0;
 }
 
-/* Focus styles */
+/* Focus styles - Enhanced for better visibility */
 button:focus,
 input:focus,
 select:focus,
 textarea:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    outline: 3px solid var(--primary-color);
+    outline-offset: 3px;
 }
 
 /* Cross-browser button reset */

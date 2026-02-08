@@ -1560,6 +1560,19 @@ class DIBELSApp {
                 localStorage.setItem('dibels-tutorial-completed', 'true');
             }
         });
+        
+        // Auto-show tutorial on first visit (check URL parameter to skip)
+        const urlParams = new URLSearchParams(window.location.search);
+        const skipTutorial = urlParams.has('skip-tutorial');
+        const tutorialCompleted = localStorage.getItem('dibels-tutorial-completed');
+        
+        if (!tutorialCompleted && !skipTutorial) {
+            // Show tutorial for first-time visitors after a brief delay
+            setTimeout(() => {
+                tutorialOverlay.classList.remove('hidden');
+                showTutorialStep(0);
+            }, 500);
+        }
     }
 
 
@@ -1621,9 +1634,11 @@ class DIBELSApp {
                 const keyboardHelpOverlay = document.getElementById('keyboard-help-overlay');
                 if (tutorialOverlay && !tutorialOverlay.classList.contains('hidden')) {
                     tutorialOverlay.classList.add('hidden');
+                    tutorialOverlay.setAttribute('aria-hidden', 'true');
                 }
                 if (keyboardHelpOverlay && !keyboardHelpOverlay.classList.contains('hidden')) {
                     keyboardHelpOverlay.classList.add('hidden');
+                    keyboardHelpOverlay.setAttribute('aria-hidden', 'true');
                 }
             }
         });
@@ -1637,6 +1652,7 @@ class DIBELSApp {
         
         // Ensure modal is hidden on initialization (defensive check)
         overlay.classList.add('hidden');
+        overlay.setAttribute('aria-hidden', 'true');
         
         // Set up close button handler directly
         const closeButton = document.getElementById('keyboard-help-close');
@@ -1645,6 +1661,7 @@ class DIBELSApp {
                 e.preventDefault();
                 e.stopPropagation();
                 overlay.classList.add('hidden');
+                overlay.setAttribute('aria-hidden', 'true');
             });
         }
         
@@ -1657,6 +1674,7 @@ class DIBELSApp {
             // Only close if clicking the overlay itself, not the modal content
             if (e.target === overlay) {
                 overlay.classList.add('hidden');
+                overlay.setAttribute('aria-hidden', 'true');
             }
         });
     }
@@ -1666,6 +1684,12 @@ class DIBELSApp {
         const overlay = document.getElementById('keyboard-help-overlay');
         if (overlay) {
             overlay.classList.remove('hidden');
+            overlay.setAttribute('aria-hidden', 'false');
+            // Focus the close button for accessibility
+            const closeButton = document.getElementById('keyboard-help-close');
+            if (closeButton) {
+                setTimeout(() => closeButton.focus(), 100);
+            }
         }
     }
 
