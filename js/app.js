@@ -65,15 +65,18 @@ class DIBELSApp {
             }
         });
 
-        // Keyboard help modal close button (delegated so it works even if direct handlers miss)
+        // Keyboard help modal close button (delegated handler)
         document.addEventListener('click', (e) => {
-            if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
+            const closeBtn = e.target.closest('#keyboard-help-close');
+            if (closeBtn) {
+                console.log('Close button clicked - delegated handler');
                 e.preventDefault();
                 e.stopPropagation();
                 const overlay = document.getElementById('keyboard-help-overlay');
                 if (overlay) {
                     overlay.classList.add('hidden');
                     overlay.setAttribute('aria-hidden', 'true');
+                    console.log('Modal closed successfully');
                 }
             }
         });
@@ -1681,31 +1684,44 @@ class DIBELSApp {
     // Setup keyboard help modal close handlers (called once during initialization)
     setupKeyboardHelpModal() {
         const overlay = document.getElementById('keyboard-help-overlay');
-        if (!overlay) return;
+        if (!overlay) {
+            console.warn('Keyboard help overlay not found');
+            return;
+        }
         
         // Ensure modal is hidden on initialization (defensive check)
         overlay.classList.add('hidden');
         overlay.setAttribute('aria-hidden', 'true');
         
-        // Set up close button handler directly
+        // Direct click handler on the close button - SIMPLIFIED
         const closeButton = document.getElementById('keyboard-help-close');
         if (closeButton) {
-            closeButton.addEventListener('click', (e) => {
+            console.log('Setting up keyboard help close button handler');
+            // Remove any existing listeners by cloning
+            const newCloseButton = closeButton.cloneNode(true);
+            closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+            
+            // Add fresh click handler
+            newCloseButton.addEventListener('click', function(e) {
+                console.log('Close button clicked - direct handler');
                 e.preventDefault();
                 e.stopPropagation();
-                overlay.classList.add('hidden');
-                overlay.setAttribute('aria-hidden', 'true');
-            });
+                const modal = document.getElementById('keyboard-help-overlay');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.setAttribute('aria-hidden', 'true');
+                    console.log('Modal hidden');
+                }
+            }, {capture: false});
+        } else {
+            console.warn('Close button not found');
         }
         
-        // Set up overlay click handler (only close if clicking the overlay itself, not the modal content)
+        // Set up overlay click handler (click outside to close)
         overlay.addEventListener('click', (e) => {
-            // Don't close if clicking the close button (handled by direct handler above)
-            if (e.target.id === 'keyboard-help-close' || e.target.closest('#keyboard-help-close')) {
-                return;
-            }
             // Only close if clicking the overlay itself, not the modal content
             if (e.target === overlay) {
+                console.log('Clicked overlay background, closing');
                 overlay.classList.add('hidden');
                 overlay.setAttribute('aria-hidden', 'true');
             }
