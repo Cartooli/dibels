@@ -89,6 +89,14 @@
                         <span class="tutorial-text">Take a tour</span>
                     </button>
                     
+                    <!-- Step Indicator -->
+                    <div class="step-indicator" id="step-indicator" aria-live="polite" aria-label="Progress step">
+                        <span class="step-pip active" id="step-pip-1" aria-hidden="true"></span>
+                        <span class="step-pip" id="step-pip-2" aria-hidden="true"></span>
+                        <span class="step-pip" id="step-pip-3" aria-hidden="true"></span>
+                        <span class="step-text" id="step-text">Step 1 of 3 — Choose a grade</span>
+                    </div>
+
                     <!-- Grade Selection -->
                     <div class="grade-selection">
                         <h3>Select Grade Level</h3>
@@ -191,16 +199,18 @@
                         <div class="score-inputs">
                             <label for="correct-responses">
                                 Correct Responses: 
-                                <input type="number" id="correct-responses" min="0" max="1000" value="0" 
-                                       aria-label="Number of correct responses" 
+                                <input type="number" id="correct-responses" min="0" max="1000" value="0"
+                                       placeholder="e.g. 42"
+                                       aria-label="Number of correct responses (0–1000)" 
                                        aria-describedby="score-result correct-responses-error"
                                        aria-invalid="false">
                                 <span class="input-error" id="correct-responses-error" role="alert" aria-live="polite"></span>
                             </label>
                             <label for="errors">
                                 Errors: 
-                                <input type="number" id="errors" min="0" max="1000" value="0" 
-                                       aria-label="Number of errors" 
+                                <input type="number" id="errors" min="0" max="1000" value="0"
+                                       placeholder="e.g. 5"
+                                       aria-label="Number of errors (0–1000)" 
                                        aria-describedby="score-result errors-error"
                                        aria-invalid="false">
                                 <span class="input-error" id="errors-error" role="alert" aria-live="polite"></span>

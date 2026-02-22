@@ -167,6 +167,25 @@ class DIBELSApp {
         }
     }
 
+    // Update the step indicator (steps: 1 = grade, 2 = subtest, 3 = options/start)
+    updateStepIndicator(currentStep) {
+        const stepText = document.getElementById('step-text');
+        const labels = [
+            'Step 1 of 3 — Choose a grade',
+            'Step 2 of 3 — Choose a subtest',
+            'Step 3 of 3 — Configure & start'
+        ];
+        if (stepText) stepText.textContent = labels[currentStep - 1] || labels[0];
+
+        for (let i = 1; i <= 3; i++) {
+            const pip = document.getElementById(`step-pip-${i}`);
+            if (!pip) continue;
+            pip.classList.remove('active', 'done');
+            if (i < currentStep) pip.classList.add('done');
+            else if (i === currentStep) pip.classList.add('active');
+        }
+    }
+
     // Select grade
     selectGrade(grade) {
         this.currentGrade = grade;
@@ -179,6 +198,7 @@ class DIBELSApp {
         
         // Show subtest selection
         this.showSubtestSelection(grade);
+        this.updateStepIndicator(2);
     }
 
     // Show subtest selection for grade
@@ -212,9 +232,11 @@ class DIBELSApp {
         if (previousBtn) {
             previousBtn.onclick = () => {
                 subtestSelection.classList.add('hidden');
+                document.getElementById('practice-options')?.classList.add('hidden');
                 document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('selected'));
                 this.currentGrade = null;
                 this.currentSubtest = null;
+                this.updateStepIndicator(1);
             };
         }
         
@@ -241,7 +263,8 @@ class DIBELSApp {
         
         // Update practice options based on subtest
         this.updatePracticeOptionsForSubtest(subtest);
-        
+        this.updateStepIndicator(3);
+
         console.log('Current grade:', this.currentGrade, 'Current subtest:', this.currentSubtest);
     }
 
@@ -425,10 +448,36 @@ class DIBELSApp {
         if (window.practiceTimer.getIsRunning()) {
             window.practiceTimer.pause();
             document.getElementById('pause-btn').textContent = 'Resume';
+            this.showPausedOverlay();
         } else {
             window.practiceTimer.start();
             document.getElementById('pause-btn').textContent = 'Pause';
+            this.hidePausedOverlay();
         }
+    }
+
+    // Show PAUSED overlay inside the practice content area
+    showPausedOverlay() {
+        const practiceContent = document.getElementById('practice-content');
+        if (!practiceContent || practiceContent.querySelector('.paused-overlay')) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'paused-overlay';
+        overlay.setAttribute('role', 'status');
+        overlay.setAttribute('aria-live', 'assertive');
+        overlay.innerHTML = `
+            <span class="paused-label">Paused</span>
+            <span class="paused-hint">Press Resume or Space to continue</span>
+        `;
+        practiceContent.appendChild(overlay);
+        window.accessibilityManager?.announce('Practice paused. Press Resume or Space to continue.');
+    }
+
+    // Remove PAUSED overlay
+    hidePausedOverlay() {
+        const overlay = document.getElementById('practice-content')?.querySelector('.paused-overlay');
+        if (overlay) overlay.remove();
+        window.accessibilityManager?.announce('Practice resumed.');
     }
 
     // Reset practice
@@ -454,6 +503,7 @@ class DIBELSApp {
         // Stop any ongoing practice
         window.practiceTimer.stop();
         window.audioManager.stop();
+        this.hidePausedOverlay();
         
         // Reset state
         this.currentGrade = null;
@@ -479,6 +529,7 @@ class DIBELSApp {
         
         // Update bottom nav
         this.updateBottomNavActive('home');
+        this.updateStepIndicator(1);
     }
 
     // End practice
@@ -488,19 +539,18 @@ class DIBELSApp {
         // Get results
         const results = window.subtestManager.getResults();
         
-        // Show scoring panel with animation
+        // Show scoring panel with animation (skip if reduced motion preferred)
         const scoringPanel = document.getElementById('scoring-panel');
         scoringPanel.classList.remove('hidden');
-        // Trigger animation
-        setTimeout(() => {
+        const reducedMotion = document.body.classList.contains('reduced-motion') ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion) {
             scoringPanel.classList.add('show');
-        }, 10);
-        
-        // Add success celebration
-        scoringPanel.classList.add('success-celebration');
-        setTimeout(() => {
-            scoringPanel.classList.remove('success-celebration');
-        }, 600);
+        } else {
+            setTimeout(() => scoringPanel.classList.add('show'), 10);
+            scoringPanel.classList.add('success-celebration');
+            setTimeout(() => scoringPanel.classList.remove('success-celebration'), 600);
+        }
         
         // Update accessibility
         window.accessibilityManager.setupScoringAccessibility();
@@ -558,11 +608,13 @@ class DIBELSApp {
         );
         scoreResult.innerHTML = scoreHTML + '<span class="success-checkmark">✓</span>';
         
-        // Add success animation to result
-        scoreResult.classList.add('success-celebration');
-        setTimeout(() => {
-            scoreResult.classList.remove('success-celebration');
-        }, 600);
+        // Add success animation to result (skip if reduced motion preferred)
+        const reduceMotion = document.body.classList.contains('reduced-motion') ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduceMotion) {
+            scoreResult.classList.add('success-celebration');
+            setTimeout(() => scoreResult.classList.remove('success-celebration'), 600);
+        }
         
         // Enhanced accessibility announcement
         if (window.accessibilityManager && window.accessibilityManager.announceAccuracy) {
@@ -670,37 +722,37 @@ class DIBELSApp {
         if (correct !== '') {
             const correctNum = parseInt(correct);
             if (isNaN(correctNum)) {
-                if (correctError) correctError.textContent = 'Please enter a valid number.';
+                if (correctError) correctError.textContent = 'Enter a whole number (e.g. 42).';
                 correctInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Invalid input for correct responses.' };
             }
             if (correctNum < 0) {
-                if (correctError) correctError.textContent = 'Value cannot be negative.';
+                if (correctError) correctError.textContent = 'Must be 0 or more — enter 0 if none were correct.';
                 correctInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Correct responses cannot be negative.' };
             }
             if (correctNum > 1000) {
-                if (correctError) correctError.textContent = 'Value is too large (max: 1000).';
+                if (correctError) correctError.textContent = 'Too large — enter a number between 0 and 1000.';
                 correctInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Value exceeds maximum (1000).' };
             }
         }
-        
+
         // Validate errors
         if (errors !== '') {
             const errorsNum = parseInt(errors);
             if (isNaN(errorsNum)) {
-                if (errorsError) errorsError.textContent = 'Please enter a valid number.';
+                if (errorsError) errorsError.textContent = 'Enter a whole number (e.g. 5).';
                 errorsInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Invalid input for errors.' };
             }
             if (errorsNum < 0) {
-                if (errorsError) errorsError.textContent = 'Value cannot be negative.';
+                if (errorsError) errorsError.textContent = 'Must be 0 or more — enter 0 if there were no errors.';
                 errorsInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Errors cannot be negative.' };
             }
             if (errorsNum > 1000) {
-                if (errorsError) errorsError.textContent = 'Value is too large (max: 1000).';
+                if (errorsError) errorsError.textContent = 'Too large — enter a number between 0 and 1000.';
                 errorsInput.setAttribute('aria-invalid', 'true');
                 return { isValid: false, message: 'Value exceeds maximum (1000).' };
             }
