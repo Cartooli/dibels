@@ -12,9 +12,7 @@ class DIBELSApp {
     init() {
         this.setupEventListeners();
         this.setupGradeSelection();
-        this.setupSubtestSelection();
         this.setupPracticeOptions();
-        this.setupPracticeControls();
         this.setupEducatorMode();
         this.setupFooterLinks();
         this.setupTutorial();
@@ -112,11 +110,6 @@ class DIBELSApp {
         });
     }
 
-    // Setup subtest selection
-    setupSubtestSelection() {
-        // This will be populated dynamically based on grade selection
-    }
-
     // Setup practice options
     setupPracticeOptions() {
         const optionInputs = document.querySelectorAll('.option-item input');
@@ -125,11 +118,6 @@ class DIBELSApp {
                 this.updatePracticeOptions();
             });
         });
-    }
-
-    // Setup practice controls
-    setupPracticeControls() {
-        // Practice controls are set up in event listeners
     }
 
     // Setup educator mode
@@ -249,7 +237,6 @@ class DIBELSApp {
 
     // Select subtest
     selectSubtest(subtest) {
-        console.log('Selecting subtest:', subtest);
         this.currentSubtest = subtest;
         
         // Update UI
@@ -264,8 +251,6 @@ class DIBELSApp {
         // Update practice options based on subtest
         this.updatePracticeOptionsForSubtest(subtest);
         this.updateStepIndicator(3);
-
-        console.log('Current grade:', this.currentGrade, 'Current subtest:', this.currentSubtest);
     }
 
     // Show practice options
@@ -332,9 +317,7 @@ class DIBELSApp {
 
     // Start practice
     async startPractice() {
-        console.log('Starting practice - Grade:', this.currentGrade, 'Subtest:', this.currentSubtest);
         if (!this.currentGrade || !this.currentSubtest) {
-            console.log('Missing grade or subtest selection');
             this.showToast('Please select a grade and subtest first.', 'warning');
             return;
         }
@@ -1223,9 +1206,7 @@ class DIBELSApp {
 
         if (clearDataBtn) {
             clearDataBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-                    this.clearAllData();
-                }
+                this.clearAllData();
             });
         }
 
@@ -1319,11 +1300,11 @@ class DIBELSApp {
     async importData(file) {
         try {
             await window.progressTracker.importData(file);
-            alert('Data imported successfully!');
+            this.showToast('Data imported successfully!', 'success');
             this.loadSettings();
             this.loadProgressData();
         } catch (error) {
-            alert('Error importing data: ' + error.message);
+            this.showToast('Error importing data: ' + error.message, 'error');
         }
     }
 

@@ -1,0 +1,16 @@
+{
+  "name": "dibels",
+  "version": "1.0.0",
+  "description": "Free, open-source DIBELS 8 practice lab for grades K-8",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint js/**/*.js data/content.js sw.js",
+    "lint:fix": "eslint js/**/*.js data/content.js sw.js --fix",
+    "format": "prettier --write js/**/*.js data/content.js sw.js styles.css"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3"
+  }
+}

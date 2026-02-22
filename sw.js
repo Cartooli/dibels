@@ -27,17 +27,10 @@ const STATIC_FILES = [
 
 // Install event - cache static files
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME)
-      .then((cache) => {
-        console.log('Caching static files...');
-        return cache.addAll(STATIC_FILES);
-      })
-      .then(() => {
-        console.log('Static files cached successfully');
-        return self.skipWaiting();
-      })
+      .then((cache) => cache.addAll(STATIC_FILES))
+      .then(() => self.skipWaiting())
       .catch((error) => {
         console.error('Error caching static files:', error);
       })
@@ -46,23 +39,18 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== STATIC_CACHE_NAME && cacheName !== DYNAMIC_CACHE_NAME) {
-              console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
-      .then(() => {
-        console.log('Service Worker activated');
-        return self.clients.claim();
-      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -86,7 +74,6 @@ self.addEventListener('fetch', (event) => {
       .then((cachedResponse) => {
         // Return cached version if available
         if (cachedResponse) {
-          console.log('Serving from cache:', request.url);
           return cachedResponse;
         }
 
@@ -109,9 +96,7 @@ self.addEventListener('fetch', (event) => {
 
             return response;
           })
-          .catch((error) => {
-            console.log('Network request failed:', error);
-            
+          .catch(() => {
             // Return offline page for navigation requests
             if (request.mode === 'navigate') {
               return caches.match('/index.html');
@@ -133,7 +118,6 @@ self.addEventListener('fetch', (event) => {
 // Background sync for practice data
 self.addEventListener('sync', (event) => {
   if (event.tag === 'practice-data-sync') {
-    console.log('Syncing practice data...');
     event.waitUntil(syncPracticeData());
   }
 });
@@ -189,10 +173,6 @@ async function syncPracticeData() {
     const practiceData = await getPracticeDataFromIndexedDB();
     
     if (practiceData && practiceData.length > 0) {
-      // In a real app, you would sync with a server here
-      console.log('Practice data synced:', practiceData);
-      
-      // Clear synced data from local storage
       await clearSyncedPracticeData();
     }
   } catch (error) {
@@ -251,4 +231,3 @@ self.addEventListener('message', (event) => {
   }
 });
 
-console.log('Service Worker loaded successfully');

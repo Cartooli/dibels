@@ -1,0 +1,39 @@
+{
+  "env": {
+    "browser": true,
+    "es2017": true,
+    "serviceworker": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-undef": "warn",
+    "eqeqeq": ["error", "always"],
+    "no-var": "error",
+    "prefer-const": "warn",
+    "no-alert": "error",
+    "no-debugger": "error",
+    "no-unreachable": "error",
+    "semi": ["warn", "always"],
+    "no-trailing-spaces": "warn",
+    "no-multiple-empty-lines": ["warn", { "max": 1 }]
+  },
+  "globals": {
+    "DIBELS_CONTENT": "readonly",
+    "DIBELSApp": "readonly",
+    "SubtestManager": "readonly",
+    "ScoringEngine": "readonly",
+    "ProgressTracker": "readonly",
+    "AccessibilityManager": "readonly",
+    "AudioManager": "readonly",
+    "PrintManager": "readonly",
+    "KeyboardNavigation": "readonly",
+    "ThemeManager": "readonly",
+    "Timer": "readonly",
+    "ContentGenerator": "readonly"
+  }
+}

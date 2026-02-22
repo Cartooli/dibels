@@ -62,12 +62,43 @@
     <meta name="application-name" content="DIBELS Lab">
     <meta name="msapplication-TileColor" content="#6366f1">
     <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DIBELS Practice Lab",
+      "url": "https://dibels.boredgames.site",
+      "description": "Unlimited, open-access practice and training for fluency-based early literacy. Practice DIBELS 8 subtests for grades K-8.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "teacher"
+      },
+      "educationalLevel": "K-8",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT"
+    }
+    </script>
 </head>
 <body>
+    <!-- Offline Banner -->
+    <div id="offline-banner" class="offline-banner hidden" role="status" aria-live="polite">
+        <span>You are offline. Practice continues to work — data saves locally.</span>
+    </div>
+
     <div id="app">
         <!-- Header -->
         <header class="header">
-            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
                 <span class="icon" id="theme-icon">🌙</span>
                 <span id="theme-text">Dark</span>
             </button>
@@ -476,24 +507,25 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then((registration) => {
-                        console.log('Service Worker registered successfully:', registration.scope);
-                        
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New content is available, show update notification
-                                    if (confirm('New version available! Reload to update?')) {
+                                    if (window.dibelsApp) {
+                                        window.dibelsApp.showConfirmationDialog(
+                                            'Update Available',
+                                            'A new version of DIBELS Practice Lab is available. Reload to update?',
+                                            () => window.location.reload()
+                                        );
+                                    } else {
                                         window.location.reload();
                                     }
                                 }
                             });
                         });
                     })
-                    .catch((error) => {
-                        console.log('Service Worker registration failed:', error);
-                    });
+                    .catch(() => {});
             });
         }
         
@@ -524,10 +556,7 @@
             
             installButton.addEventListener('click', () => {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
+                deferredPrompt.userChoice.then(() => {
                     deferredPrompt = null;
                     installButton.remove();
                 });
@@ -537,9 +566,23 @@
         });
         
         // Handle app installed
-        window.addEventListener('appinstalled', () => {
-            console.log('PWA was installed');
-        });
+        window.addEventListener('appinstalled', () => {});
+        
+        // Offline / online banner
+        (function() {
+            const banner = document.getElementById('offline-banner');
+            if (!banner) return;
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    banner.classList.add('hidden');
+                } else {
+                    banner.classList.remove('hidden');
+                }
+            }
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+        })();
     </script>
 </body>
 </html>

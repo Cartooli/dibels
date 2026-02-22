@@ -45,13 +45,10 @@ class ProgressTracker {
         request.onerror = (event) => {
             console.error('IndexedDB failed to open:', event.target.error);
             this.db = null;
-            // Fallback to localStorage
-            console.log('Using localStorage fallback');
         };
         
         request.onsuccess = () => {
             this.db = request.result;
-            console.log('IndexedDB opened successfully');
             
             // Handle database errors during operation
             this.db.onerror = (event) => {
@@ -83,8 +80,7 @@ class ProgressTracker {
         };
         
         request.onblocked = () => {
-            console.warn('IndexedDB open request blocked');
-            alert('Please close other tabs with this application to enable full functionality.');
+            console.warn('IndexedDB open request blocked. Please close other tabs with this application to enable full functionality.');
         };
     }
 
@@ -160,7 +156,7 @@ class ProgressTracker {
         } catch (error) {
             console.error('Error saving session to localStorage:', error);
             if (error.name === 'QuotaExceededError') {
-                alert('Storage quota exceeded. Some data may not be saved.');
+                console.error('Storage quota exceeded. Some data may not be saved. Consider clearing old sessions in Settings.');
             }
         }
     }
@@ -420,9 +416,10 @@ class ProgressTracker {
     }
 
     // Data Export/Import
-    exportData() {
+    async exportData() {
+        const sessions = await this.getSessions();
         const data = {
-            sessions: this.getSessions(),
+            sessions,
             progress: this.getProgress(),
             settings: this.getSettings(),
             exportDate: new Date().toISOString(),
@@ -446,6 +443,19 @@ class ProgressTracker {
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
+                    
+                    if (typeof data !== 'object' || data === null) {
+                        throw new Error('Invalid file format: expected a JSON object.');
+                    }
+                    if (data.sessions !== undefined && !Array.isArray(data.sessions)) {
+                        throw new Error('Invalid file format: sessions must be an array.');
+                    }
+                    if (data.progress !== undefined && (typeof data.progress !== 'object' || Array.isArray(data.progress))) {
+                        throw new Error('Invalid file format: progress must be an object.');
+                    }
+                    if (data.settings !== undefined && (typeof data.settings !== 'object' || Array.isArray(data.settings))) {
+                        throw new Error('Invalid file format: settings must be an object.');
+                    }
                     
                     if (data.sessions) {
                         localStorage.setItem(this.sessionsKey, JSON.stringify(data.sessions));

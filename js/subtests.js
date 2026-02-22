@@ -737,7 +737,7 @@ class SubtestManager {
             const actualWCPM = Math.round((correctWords / duration) * 60);
             
             // Show results
-            alert(`Words read: ${wordsRead}\nTime: ${duration.toFixed(1)}s\nWCPM: ${actualWCPM}`);
+            window.dibelsApp?.showToast(`Words read: ${wordsRead} | Time: ${duration.toFixed(1)}s | WCPM: ${actualWCPM}`, 'info', 6000);
         }
     }
     

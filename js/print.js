@@ -321,7 +321,7 @@ class PrintManager {
     printCurrentContent() {
         const subtestManager = window.subtestManager;
         if (!subtestManager.currentSubtest) {
-            alert('No practice session active');
+            window.dibelsApp?.showToast('No practice session active.', 'warning');
             return;
         }
 
@@ -392,7 +392,7 @@ class PrintManager {
     printPracticeSheet(subtest, grade, options = {}) {
         const content = ContentGenerator.generateContent(subtest, grade, options);
         if (!content) {
-            alert('Failed to generate content for printing');
+            window.dibelsApp?.showToast('Failed to generate content for printing.', 'error');
             return;
         }
 

@@ -39,9 +39,11 @@ class ThemeManager {
         if (theme === 'dark') {
             this.themeIcon.textContent = '☀️';
             this.themeText.textContent = 'Light';
+            this.themeToggle.setAttribute('aria-pressed', 'true');
         } else {
             this.themeIcon.textContent = '🌙';
             this.themeText.textContent = 'Dark';
+            this.themeToggle.setAttribute('aria-pressed', 'false');
         }
     }
 
