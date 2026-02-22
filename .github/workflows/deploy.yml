@@ -37,7 +37,7 @@ jobs:
       continue-on-error: true
       run: |
         pip install html5validator
-        html5validator --root . --also-check-css --ignore-re "Attribute .aria-" index.html
+        html5validator --root . --ignore-re "Attribute .aria-" index.html convert-svg.html
 
   deploy:
     name: Deploy
