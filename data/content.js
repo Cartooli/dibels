@@ -10,19 +10,19 @@ const DIBELS_CONTENT = {
     // Source: Based on DIBELS 8th Edition general guidance
     benchmarks: {
         'K': {
-            'LNF': { 
-                wellAboveAverage: 40, 
-                aboveAverage: 29, 
-                average: 18, 
-                belowAverage: 8, 
+            'LNF': {
+                wellAboveAverage: 40,
+                aboveAverage: 29,
+                average: 18,
+                belowAverage: 8,
                 wellBelowAverage: 0,
                 note: 'End of Year benchmark; letters per minute'
             },
-            'PSF': { 
-                wellAboveAverage: 45, 
-                aboveAverage: 35, 
-                average: 24, 
-                belowAverage: 10, 
+            'PSF': {
+                wellAboveAverage: 45,
+                aboveAverage: 35,
+                average: 24,
+                belowAverage: 10,
                 wellBelowAverage: 0,
                 note: 'End of Year benchmark; phonemes per minute'
             },

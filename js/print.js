@@ -330,7 +330,9 @@ class PrintManager {
             subtestManager.currentGrade,
             subtestManager.currentContent.content,
             {
+                // eslint-disable-next-line no-alert
                 studentName: prompt('Enter student name (optional):') || 'Student Name',
+                // eslint-disable-next-line no-alert
                 examinerName: prompt('Enter examiner name (optional):') || 'Examiner Name'
             }
         );
