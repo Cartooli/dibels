@@ -67,17 +67,10 @@ class DIBELSApp {
 
         // Keyboard help modal close button (delegated handler)
         document.addEventListener('click', (e) => {
-            const closeBtn = e.target.closest('#keyboard-help-close');
-            if (closeBtn) {
-                console.log('Close button clicked - delegated handler');
+            if (e.target.closest('#keyboard-help-close')) {
                 e.preventDefault();
                 e.stopPropagation();
-                const overlay = document.getElementById('keyboard-help-overlay');
-                if (overlay) {
-                    overlay.classList.add('hidden');
-                    overlay.setAttribute('aria-hidden', 'true');
-                    console.log('Modal closed successfully');
-                }
+                this.closeKeyboardHelp();
             }
         });
 
@@ -1668,63 +1661,43 @@ class DIBELSApp {
             // Esc - Close modals
             if (e.key === 'Escape') {
                 const tutorialOverlay = document.getElementById('tutorial-overlay');
-                const keyboardHelpOverlay = document.getElementById('keyboard-help-overlay');
                 if (tutorialOverlay && !tutorialOverlay.classList.contains('hidden')) {
                     tutorialOverlay.classList.add('hidden');
                     tutorialOverlay.setAttribute('aria-hidden', 'true');
                 }
-                if (keyboardHelpOverlay && !keyboardHelpOverlay.classList.contains('hidden')) {
-                    keyboardHelpOverlay.classList.add('hidden');
-                    keyboardHelpOverlay.setAttribute('aria-hidden', 'true');
-                }
+                this.closeKeyboardHelp();
             }
         });
+    }
+
+    // Close the keyboard shortcuts modal (used by Close button and Escape)
+    closeKeyboardHelp() {
+        const overlay = document.getElementById('keyboard-help-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            overlay.setAttribute('aria-hidden', 'true');
+        }
     }
 
     // Setup keyboard help modal close handlers (called once during initialization)
     setupKeyboardHelpModal() {
         const overlay = document.getElementById('keyboard-help-overlay');
-        if (!overlay) {
-            console.warn('Keyboard help overlay not found');
-            return;
-        }
-        
-        // Ensure modal is hidden on initialization (defensive check)
+        if (!overlay) return;
+
         overlay.classList.add('hidden');
         overlay.setAttribute('aria-hidden', 'true');
-        
-        // Direct click handler on the close button - SIMPLIFIED
+
         const closeButton = document.getElementById('keyboard-help-close');
         if (closeButton) {
-            console.log('Setting up keyboard help close button handler');
-            // Remove any existing listeners by cloning
-            const newCloseButton = closeButton.cloneNode(true);
-            closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-            
-            // Add fresh click handler
-            newCloseButton.addEventListener('click', function(e) {
-                console.log('Close button clicked - direct handler');
+            closeButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const modal = document.getElementById('keyboard-help-overlay');
-                if (modal) {
-                    modal.classList.add('hidden');
-                    modal.setAttribute('aria-hidden', 'true');
-                    console.log('Modal hidden');
-                }
-            }, {capture: false});
-        } else {
-            console.warn('Close button not found');
+                this.closeKeyboardHelp();
+            });
         }
-        
-        // Set up overlay click handler (click outside to close)
+
         overlay.addEventListener('click', (e) => {
-            // Only close if clicking the overlay itself, not the modal content
-            if (e.target === overlay) {
-                console.log('Clicked overlay background, closing');
-                overlay.classList.add('hidden');
-                overlay.setAttribute('aria-hidden', 'true');
-            }
+            if (e.target === overlay) this.closeKeyboardHelp();
         });
     }
 

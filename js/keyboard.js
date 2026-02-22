@@ -229,7 +229,20 @@ class KeyboardNavigation {
 
     // Action handlers
     handleEscape() {
-        // Close any open modals or return to main menu
+        // Close keyboard shortcuts and tutorial overlays first
+        const keyboardHelp = document.getElementById('keyboard-help-overlay');
+        if (keyboardHelp && !keyboardHelp.classList.contains('hidden')) {
+            keyboardHelp.classList.add('hidden');
+            keyboardHelp.setAttribute('aria-hidden', 'true');
+            return;
+        }
+        const tutorialOverlay = document.getElementById('tutorial-overlay');
+        if (tutorialOverlay && !tutorialOverlay.classList.contains('hidden')) {
+            tutorialOverlay.classList.add('hidden');
+            tutorialOverlay.setAttribute('aria-hidden', 'true');
+            return;
+        }
+        // Close educator modals or return to main menu
         const modals = document.querySelectorAll('.educator-modal');
         if (modals.length > 0) {
             modals[modals.length - 1].remove();
