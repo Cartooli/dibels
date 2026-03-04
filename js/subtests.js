@@ -102,6 +102,35 @@ class SubtestManager {
                 this.renderMaze(contentElement);
                 break;
         }
+
+        // Show guided practice tip if enabled
+        if (this.options.guided) {
+            this.showGuidedTip(contentElement);
+        }
+    }
+
+    showGuidedTip(container) {
+        const tips = {
+            LNF: 'Say the name of each letter as quickly as you can. Click each letter after naming it.',
+            PSF: 'Break each word into its individual sounds (phonemes). For example, "cat" becomes /k/ /a/ /t/.',
+            NWF: 'Sound out each nonsense word. Try to read the whole word, not just individual sounds.',
+            WRF: 'Read each word as quickly and accurately as you can. Click words as you read them.',
+            ORF: 'Read the passage aloud smoothly and accurately. Click each word as you read it.',
+            Maze: 'Read the passage and choose the word that makes the most sense for each blank.'
+        };
+        const tip = tips[this.currentSubtest];
+        if (!tip) return;
+
+        const tipEl = document.createElement('div');
+        tipEl.className = 'guided-tip';
+        tipEl.setAttribute('role', 'note');
+        tipEl.innerHTML = `<button class="guided-tip-dismiss" aria-label="Dismiss tip">&times;</button><strong>Tip:</strong> ${tip}`;
+        container.insertBefore(tipEl, container.firstChild);
+
+        tipEl.querySelector('.guided-tip-dismiss').addEventListener('click', () => {
+            tipEl.style.opacity = '0';
+            setTimeout(() => tipEl.remove(), 200);
+        });
     }
 
     // Render Letter Naming Fluency
@@ -790,19 +819,29 @@ class SubtestManager {
 
     // Handle letter click (LNF)
     handleLetterClick(element) {
-        if (element.classList.contains('correct') || 
-            element.classList.contains('incorrect') || 
+        if (element.classList.contains('correct') ||
+            element.classList.contains('incorrect') ||
             element.classList.contains('skipped')) {
             return;
         }
-        
-        // For now, mark as correct (in real implementation, would check against expected response)
+
+        // Visual press feedback
+        element.classList.add('item-active');
+        setTimeout(() => element.classList.remove('item-active'), 100);
+
+        // Mark as correct
         element.classList.add('correct');
+        element.classList.add('item-marked');
         this.responses.push({
             letter: element.textContent,
             response: 'correct',
             timestamp: Date.now()
         });
+
+        // Play subtle feedback sound if available
+        if (window.audioManager && window.audioManager.playCorrectSound) {
+            try { window.audioManager.playCorrectSound(); } catch (e) { /* silent */ }
+        }
     }
 
     // Handle word click (NWF, WRF)
@@ -810,8 +849,13 @@ class SubtestManager {
         if (element.classList.contains('read')) {
             return;
         }
-        
+
+        // Visual press feedback
+        element.classList.add('item-active');
+        setTimeout(() => element.classList.remove('item-active'), 100);
+
         element.classList.add('read');
+        element.classList.add('item-marked');
         this.responses.push({
             word: element.textContent,
             response: 'read',

@@ -360,6 +360,13 @@ class KeyboardNavigation {
     }
 
     showKeyboardShortcuts() {
+        // Prevent duplicate modals
+        const existing = document.querySelector('.educator-modal');
+        if (existing) {
+            existing.remove();
+            return;
+        }
+
         const shortcuts = [
             { key: 'F1', description: 'Show keyboard shortcuts' },
             { key: 'Tab', description: 'Navigate to next element' },
@@ -379,8 +386,11 @@ class KeyboardNavigation {
             { key: '=', description: 'Toggle timer display' }
         ];
 
+        const previousFocus = document.activeElement;
         const modal = document.createElement('div');
         modal.className = 'educator-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-label', 'Keyboard shortcuts');
         modal.innerHTML = `
             <div class="modal-content">
                 <h3>Keyboard Shortcuts</h3>
@@ -392,11 +402,27 @@ class KeyboardNavigation {
                         </div>
                     `).join('')}
                 </div>
-                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
+                <button class="close-modal">Close</button>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
+
+        // Proper event listener for close button
+        const closeBtn = modal.querySelector('.close-modal');
+        const closeModal = () => {
+            modal.remove();
+            if (previousFocus) previousFocus.focus();
+        };
+        closeBtn.addEventListener('click', closeModal);
+
+        // Also close when clicking the overlay background
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Focus the close button for keyboard accessibility
+        closeBtn.focus();
         
         // Add styles for shortcuts modal
         const style = document.createElement('style');
