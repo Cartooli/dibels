@@ -115,6 +115,10 @@
                 <section class="welcome-section" id="welcome-section">
                     <h2>Welcome to DIBELS Practice Lab</h2>
                     <p>Practice DIBELS 8 subtests with students in grades K-8. Choose your grade level and subtest to begin.</p>
+                    <div id="streak-display" class="streak-badge hidden" aria-label="Practice streak">
+                        <span class="streak-icon" aria-hidden="true"></span>
+                        <span class="streak-text"></span>
+                    </div>
                     <button class="tutorial-link-btn" id="show-tutorial-btn" aria-label="Show tutorial">
                         <span class="tutorial-icon">ℹ️</span>
                         <span class="tutorial-text">Take a tour</span>
@@ -196,6 +200,15 @@
                                     <span class="tooltip">Hear audio examples of fluent reading. Only available for ORF and WRF subtests</span>
                                 </span>
                             </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="guided-mode">
+                                <span class="checkmark"></span>
+                                <span class="option-text">Guided Practice</span>
+                                <span class="tooltip-container">
+                                    <span class="tooltip-icon" aria-label="Help">?</span>
+                                    <span class="tooltip">Shows helpful tips and instructions during practice to guide new learners</span>
+                                </span>
+                            </label>
                         </div>
                         <button class="start-practice-btn" id="start-practice">Start Practice</button>
                     </div>
@@ -203,6 +216,13 @@
 
                 <!-- Practice Interface -->
                 <section class="practice-section hidden" id="practice-section">
+                    <nav class="breadcrumb-nav" aria-label="Practice navigation">
+                        <button class="breadcrumb-link" id="breadcrumb-home" aria-label="Return to grade selection">Home</button>
+                        <span class="breadcrumb-sep" aria-hidden="true">›</span>
+                        <button class="breadcrumb-link" id="breadcrumb-grade" aria-label="Return to subtest selection">Grade K</button>
+                        <span class="breadcrumb-sep" aria-hidden="true">›</span>
+                        <span class="breadcrumb-current" id="breadcrumb-subtest" aria-current="page">Letter Naming Fluency</span>
+                    </nav>
                     <div class="practice-header">
                         <div class="practice-info">
                             <h2 id="practice-title">Practice Session</h2>
@@ -357,14 +377,44 @@
                                 <p>Average Accuracy: <span id="average-accuracy">0%</span></p>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
-                            <h3>Recent Sessions</h3>
-                            <div id="recent-sessions">
-                                <p>No sessions yet. Start practicing to see your progress!</p>
+                            <h3>Score Trend</h3>
+                            <div class="progress-chart" id="score-trend-chart">
+                                <p>Complete a few sessions to see your score trend.</p>
                             </div>
                         </div>
-                        
+
+                        <div class="stat-card">
+                            <h3>Session History</h3>
+                            <div class="session-filters">
+                                <select class="session-filter-select" id="history-grade-filter" aria-label="Filter by grade">
+                                    <option value="">All Grades</option>
+                                    <option value="K">Grade K</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                </select>
+                                <select class="session-filter-select" id="history-subtest-filter" aria-label="Filter by subtest">
+                                    <option value="">All Subtests</option>
+                                    <option value="LNF">LNF</option>
+                                    <option value="PSF">PSF</option>
+                                    <option value="NWF">NWF</option>
+                                    <option value="WRF">WRF</option>
+                                    <option value="ORF">ORF</option>
+                                    <option value="Maze">Maze</option>
+                                </select>
+                            </div>
+                            <div class="session-history-list" id="session-history-list">
+                                <p>No sessions yet. Start practicing to see your history!</p>
+                            </div>
+                        </div>
+
                         <div class="stat-card">
                             <h3>Grade Performance</h3>
                             <div id="grade-stats">
@@ -372,10 +422,22 @@
                             </div>
                         </div>
                     </div>
-                    <button class="control-btn" id="close-progress-btn">Close Progress</button>
+                    <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4);">
+                        <button class="control-btn" id="print-progress-btn">Print Report</button>
+                        <button class="control-btn" id="close-progress-btn">Close Progress</button>
+                    </div>
                 </section>
             </div>
         </main>
+
+        <!-- Celebration Overlay -->
+        <div class="celebration-overlay hidden" id="celebration-overlay" role="status" aria-live="polite">
+            <div class="celebration-content">
+                <div class="celebration-emoji" aria-hidden="true"></div>
+                <h2 class="celebration-message"></h2>
+                <p class="celebration-detail"></p>
+            </div>
+        </div>
 
         <!-- Footer -->
         <footer class="footer">
@@ -439,44 +501,6 @@
                 <button class="control-btn" id="tutorial-prev" style="display: none;">Previous</button>
                 <button class="control-btn" id="tutorial-next">Next</button>
                 <button class="control-btn" id="tutorial-close" style="display: none;">Got it!</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Keyboard Shortcuts Help Modal -->
-    <div class="tutorial-overlay hidden" id="keyboard-help-overlay" role="dialog" aria-labelledby="keyboard-help-title" aria-modal="true">
-        <div class="tutorial-modal">
-            <h2 id="keyboard-help-title">Keyboard Shortcuts</h2>
-            <div id="keyboard-help-content">
-                <div class="tutorial-step">
-                    <h3>Navigation</h3>
-                    <ul>
-                        <li><strong>Tab / Shift+Tab:</strong> Navigate between elements</li>
-                        <li><strong>Arrow Keys:</strong> Navigate within practice content</li>
-                        <li><strong>Enter / Space:</strong> Activate buttons</li>
-                        <li><strong>Esc:</strong> Close modals</li>
-                    </ul>
-                </div>
-                <div class="tutorial-step">
-                    <h3>Practice Controls</h3>
-                    <ul>
-                        <li><strong>Space:</strong> Pause/Resume timer</li>
-                        <li><strong>R:</strong> Reset practice</li>
-                        <li><strong>N:</strong> New practice set</li>
-                        <li><strong>M:</strong> Back to menu</li>
-                    </ul>
-                </div>
-                <div class="tutorial-step">
-                    <h3>Quick Access</h3>
-                    <ul>
-                        <li><strong>?</strong> Show this help</li>
-                        <li><strong>Alt+T:</strong> Toggle theme</li>
-                        <li><strong>Alt+H:</strong> Toggle high contrast</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="tutorial-navigation">
-                <button class="control-btn" id="keyboard-help-close" type="button">Close</button>
             </div>
         </div>
     </div>

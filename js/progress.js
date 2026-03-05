@@ -114,9 +114,10 @@ class ProgressTracker {
             session.score = score;
             session.accuracy = accuracy;
             session.status = 'completed';
-            
+
             this.saveSession(session);
             this.updateProgress(session);
+            this.updateStreak();
         }
     }
 
@@ -489,6 +490,77 @@ class ProgressTracker {
             transaction.objectStore('practiceSessions').clear();
             transaction.objectStore('progressData').clear();
         }
+    }
+
+    // Streak tracking
+    getStreakData() {
+        try {
+            const data = localStorage.getItem('dibels-streak');
+            return data ? JSON.parse(data) : { currentStreak: 0, bestStreak: 0, lastPracticeDate: null };
+        } catch (e) {
+            return { currentStreak: 0, bestStreak: 0, lastPracticeDate: null };
+        }
+    }
+
+    updateStreak() {
+        const streak = this.getStreakData();
+        const today = new Date().toISOString().split('T')[0];
+
+        if (streak.lastPracticeDate === today) {
+            // Already practiced today, no change
+            return streak;
+        }
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        if (streak.lastPracticeDate === yesterdayStr) {
+            // Consecutive day — extend streak
+            streak.currentStreak += 1;
+        } else if (streak.lastPracticeDate) {
+            // Streak broken — reset
+            streak.currentStreak = 1;
+        } else {
+            // First ever session
+            streak.currentStreak = 1;
+        }
+
+        streak.bestStreak = Math.max(streak.bestStreak, streak.currentStreak);
+        streak.lastPracticeDate = today;
+
+        try {
+            localStorage.setItem('dibels-streak', JSON.stringify(streak));
+        } catch (e) {
+            console.warn('Failed to save streak data:', e);
+        }
+        return streak;
+    }
+
+    // Session history with filtering
+    async getFilteredSessions(filters = {}) {
+        const sessions = await this.getSessions();
+        return sessions.filter(s => {
+            if (filters.grade && s.grade !== filters.grade) return false;
+            if (filters.subtest && s.subtest !== filters.subtest) return false;
+            if (filters.startDate && new Date(s.date) < new Date(filters.startDate)) return false;
+            if (filters.endDate && new Date(s.date) > new Date(filters.endDate)) return false;
+            return true;
+        }).sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    // Calculate trend (improving, stable, declining) from recent sessions
+    calculateTrend(sessions) {
+        if (!sessions || sessions.length < 3) return 'stable';
+        const recent = sessions.slice(0, 5).map(s => s.score || 0);
+        const older = sessions.slice(5, 10).map(s => s.score || 0);
+        if (older.length === 0) return 'stable';
+        const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+        const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
+        const diff = recentAvg - olderAvg;
+        if (diff > 2) return 'improving';
+        if (diff < -2) return 'declining';
+        return 'stable';
     }
 
     async clearOldSessions(daysToKeep = 90) {

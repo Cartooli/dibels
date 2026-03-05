@@ -449,6 +449,35 @@ class ScoringEngine {
             `;
         }
 
+        // Benchmark visualization bar
+        if (benchmark && benchmark.benchmarks) {
+            const bm = benchmark.benchmarks;
+            const maxScore = (bm.wellAboveAverage || 100) * 1.3;
+            const rawScore = scoreData.score || scoreData.wcpm || 0;
+            const pct = Math.min((rawScore / maxScore) * 100, 100);
+            let levelClass = 'level-below';
+            if (rawScore >= (bm.wellAboveAverage || Infinity)) levelClass = 'level-above';
+            else if (rawScore >= (bm.aboveAverage || Infinity)) levelClass = 'level-above';
+            else if (rawScore >= (bm.average || Infinity)) levelClass = 'level-at';
+            else if (rawScore >= (bm.belowAverage || 0)) levelClass = 'level-approaching';
+
+            const avgPct = bm.average ? Math.min((bm.average / maxScore) * 100, 100) : 50;
+
+            html += `
+                <div class="benchmark-bar-container" role="img" aria-label="Score ${rawScore} compared to benchmark average of ${bm.average || 'N/A'}">
+                    <div class="benchmark-bar">
+                        <div class="benchmark-fill ${levelClass}" style="width: ${pct}%;"></div>
+                        ${bm.average ? `<div class="benchmark-marker" style="left: ${avgPct}%;" title="Benchmark: ${bm.average}"></div>` : ''}
+                    </div>
+                    <div class="benchmark-labels">
+                        <span>0</span>
+                        ${bm.average ? `<span>Benchmark: ${bm.average}</span>` : ''}
+                        <span>${Math.round(maxScore)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
         if (benchmark && benchmark.note) {
             html += `
                 <div class="score-note">

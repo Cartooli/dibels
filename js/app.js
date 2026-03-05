@@ -19,6 +19,7 @@ class DIBELSApp {
         this.setupKeyboardShortcuts();
         this.setupBottomNavigation();
         this.updateGradeButtonsWithCounts();
+        this.updateStreakDisplay();
     }
 
     // Setup event listeners
@@ -65,12 +66,18 @@ class DIBELSApp {
             }
         });
 
-        // Keyboard help modal close button (delegated handler)
+        // Breadcrumb navigation
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#keyboard-help-close')) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.closeKeyboardHelp();
+            if (e.target.id === 'breadcrumb-home') {
+                // eslint-disable-next-line no-alert
+                if (!this.isPracticeActive || confirm('Leave practice and return to grade selection?')) {
+                    this.backToMenu();
+                }
+            } else if (e.target.id === 'breadcrumb-grade') {
+                // eslint-disable-next-line no-alert
+                if (!this.isPracticeActive || confirm('Leave practice and choose a different subtest?')) {
+                    this.backToSubtestSelection();
+                }
             }
         });
 
@@ -307,7 +314,8 @@ class DIBELSApp {
             timed: document.getElementById('timed-mode')?.checked || false,
             showTimer: document.getElementById('show-timer')?.checked || false,
             revealAnswers: document.getElementById('reveal-answers')?.checked || false,
-            audioModeling: document.getElementById('audio-modeling')?.checked || false
+            audioModeling: document.getElementById('audio-modeling')?.checked || false,
+            guided: document.getElementById('guided-mode')?.checked || false
         };
     }
 
@@ -377,21 +385,31 @@ class DIBELSApp {
     showPracticeInterface() {
         // Hide welcome section
         document.getElementById('welcome-section').classList.add('hidden');
-        
+
         // Show practice section
         const practiceSection = document.getElementById('practice-section');
         practiceSection.classList.remove('hidden');
-        
+
         // Update practice title
         const practiceTitle = document.getElementById('practice-title');
         const practiceSubtitle = document.getElementById('practice-subtitle');
         const description = DIBELS_CONTENT.subtestDescriptions[this.currentSubtest];
-        
+
         if (practiceTitle) {
             practiceTitle.textContent = description.name;
         }
         if (practiceSubtitle) {
             practiceSubtitle.textContent = `Grade ${this.currentGrade} - ${description.description}`;
+        }
+
+        // Update breadcrumb navigation
+        const breadcrumbGrade = document.getElementById('breadcrumb-grade');
+        const breadcrumbSubtest = document.getElementById('breadcrumb-subtest');
+        if (breadcrumbGrade) {
+            breadcrumbGrade.textContent = `Grade ${this.currentGrade}`;
+        }
+        if (breadcrumbSubtest) {
+            breadcrumbSubtest.textContent = description.name;
         }
         
         // Show/hide timer based on options
@@ -511,6 +529,28 @@ class DIBELSApp {
         this.updateStepIndicator(1);
     }
 
+    backToSubtestSelection() {
+        // Stop any ongoing practice
+        window.practiceTimer.stop();
+        window.audioManager.stop();
+        this.hidePausedOverlay();
+
+        // Keep current grade, clear subtest
+        this.currentSubtest = null;
+        this.isPracticeActive = false;
+
+        // Hide practice section
+        document.getElementById('practice-section').classList.add('hidden');
+
+        // Show welcome section with subtest selection visible
+        document.getElementById('welcome-section').classList.remove('hidden');
+        document.getElementById('subtest-selection').classList.remove('hidden');
+        document.getElementById('practice-options').classList.add('hidden');
+
+        // Update step indicator
+        this.updateStepIndicator(2);
+    }
+
     // End practice
     endPractice() {
         this.isPracticeActive = false;
@@ -531,6 +571,11 @@ class DIBELSApp {
             setTimeout(() => scoringPanel.classList.remove('success-celebration'), 600);
         }
         
+        // Auto-scroll scoring panel into view
+        setTimeout(() => {
+            scoringPanel.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
+        }, reducedMotion ? 0 : 450);
+
         // Update accessibility
         window.accessibilityManager.setupScoringAccessibility();
         
@@ -539,6 +584,39 @@ class DIBELSApp {
         
         // Play completion sound
         window.audioManager.playCorrectSound();
+
+        // Show celebration overlay
+        this.showCelebration();
+    }
+
+    showCelebration() {
+        const overlay = document.getElementById('celebration-overlay');
+        if (!overlay) return;
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const emoji = overlay.querySelector('.celebration-emoji');
+        const message = overlay.querySelector('.celebration-message');
+        const detail = overlay.querySelector('.celebration-detail');
+
+        // Randomize encouraging messages
+        const celebrations = [
+            { emoji: '\u2B50', msg: 'Great Work!', detail: 'Keep practicing to build fluency!' },
+            { emoji: '\uD83C\uDF1F', msg: 'Well Done!', detail: 'You\'re making great progress!' },
+            { emoji: '\uD83C\uDF89', msg: 'Awesome!', detail: 'Practice makes perfect!' },
+            { emoji: '\uD83D\uDCAA', msg: 'Nice Effort!', detail: 'Every session helps you grow!' }
+        ];
+        const pick = celebrations[Math.floor(Math.random() * celebrations.length)];
+
+        if (emoji) emoji.textContent = pick.emoji;
+        if (message) message.textContent = pick.msg;
+        if (detail) detail.textContent = pick.detail;
+
+        overlay.classList.remove('hidden');
+
+        // Auto-dismiss after 2.5 seconds
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+        }, reducedMotion ? 1500 : 2500);
     }
 
     // Calculate score
@@ -585,7 +663,30 @@ class DIBELSApp {
             this.currentSubtest,
             this.currentGrade
         );
-        scoreResult.innerHTML = scoreHTML + '<span class="success-checkmark">✓</span>';
+
+        // Build error feedback section
+        let feedbackHTML = '';
+        const accuracy = parseFloat(scoreData.accuracy) || 0;
+        if (errors > 0) {
+            let suggestion = '';
+            if (accuracy >= 95) {
+                suggestion = 'Excellent accuracy! A few minor errors — keep up the great work.';
+            } else if (accuracy >= 85) {
+                suggestion = 'Strong performance! Focus on the tricky items to push even higher.';
+            } else if (accuracy >= 70) {
+                suggestion = 'Good effort! Consider using Guided Practice mode to build confidence on challenging items.';
+            } else {
+                suggestion = 'Keep practicing! Try a slower, untimed session with Guided Practice enabled to strengthen foundational skills.';
+            }
+            feedbackHTML = `<div style="margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--bg-tertiary);border-radius:var(--radius-md);font-size:var(--font-size-sm);">
+                <strong>Feedback:</strong> ${errors} error${errors !== 1 ? 's' : ''} out of ${total} items. ${suggestion}
+                <div style="margin-top:var(--space-2);">
+                    <button class="control-btn" style="font-size:var(--font-size-sm);padding:var(--space-1) var(--space-3);" onclick="window.dibelsApp.newPracticeSet()">Practice Again</button>
+                </div>
+            </div>`;
+        }
+
+        scoreResult.innerHTML = scoreHTML + '<span class="success-checkmark">✓</span>' + feedbackHTML;
         
         // Add success animation to result (skip if reduced motion preferred)
         const reduceMotion = document.body.classList.contains('reduced-motion') ||
@@ -1320,7 +1421,7 @@ class DIBELSApp {
     // Progress methods
     async loadProgressData() {
         const analytics = await window.progressTracker.getAnalytics();
-        
+
         // Overall stats
         document.getElementById('total-sessions').textContent = analytics.totalSessions;
         document.getElementById('total-time').textContent = Math.round(analytics.totalTime / 60000) + ' minutes';
@@ -1332,6 +1433,24 @@ class DIBELSApp {
 
         // Grade stats
         this.displayGradeStats(analytics.byGrade);
+
+        // Score trend chart (SVG)
+        this.renderScoreTrendChart(analytics.recentSessions);
+
+        // Session history with filters
+        this.renderSessionHistory();
+
+        // Setup filter listeners
+        const gradeFilter = document.getElementById('history-grade-filter');
+        const subtestFilter = document.getElementById('history-subtest-filter');
+        if (gradeFilter) gradeFilter.onchange = () => this.renderSessionHistory();
+        if (subtestFilter) subtestFilter.onchange = () => this.renderSessionHistory();
+
+        // Print report button
+        const printBtn = document.getElementById('print-progress-btn');
+        if (printBtn) {
+            printBtn.onclick = () => this.printProgressReport(analytics);
+        }
     }
 
     displayRecentSessions(sessions) {
@@ -1518,27 +1637,23 @@ class DIBELSApp {
         const tutorialSteps = [
             {
                 title: 'Welcome!',
-                content: '<p>DIBELS Practice Lab helps you practice early literacy assessments. Let\'s take a quick tour!</p>'
+                content: '<p>DIBELS Practice Lab is your free tool for building reading fluency. Whether you\'re a teacher, parent, or interventionist — let\'s get you started in under a minute!</p>'
             },
             {
-                title: 'Step 1: Select Grade',
-                content: '<p>Start by selecting a grade level (K-8). Each grade has different subtests available.</p>'
+                title: 'Pick a Grade Level',
+                content: '<p>Tap a grade button (K through 8) to see which subtests are available. Each grade focuses on age-appropriate literacy skills.</p>'
             },
             {
-                title: 'Step 2: Choose Subtest',
-                content: '<p>After selecting a grade, choose a subtest to practice. Each subtest measures different literacy skills.</p>'
+                title: 'Choose Your Subtest',
+                content: '<p>Select from subtests like <strong>Letter Naming</strong>, <strong>Phonemic Segmentation</strong>, <strong>Nonsense Words</strong>, <strong>Word Reading</strong>, <strong>Oral Reading</strong>, or <strong>Maze Comprehension</strong>.</p>'
             },
             {
-                title: 'Step 3: Configure Options',
-                content: '<p>Customize your practice with options like timed practice, timer display, and audio modeling (where available).</p>'
+                title: 'Set Your Options',
+                content: '<p>Enable <strong>timed practice</strong> (60 seconds, like the real assessment), show or hide the timer, turn on <strong>audio models</strong> for listening support, or reveal answers for learning mode.</p>'
             },
             {
-                title: 'Step 4: Start Practice',
-                content: '<p>Click "Start Practice" to begin. Use the controls to pause, reset, or generate new practice sets.</p>'
-            },
-            {
-                title: 'Step 5: Score & Track',
-                content: '<p>After practice, enter your scores to see accuracy and benchmark comparisons. Track your progress over time!</p>'
+                title: 'Practice & Score',
+                content: '<p>Click items during practice, then enter your scores when done. You\'ll see accuracy, benchmark comparisons, and your progress over time. Keep your streak going!</p>'
             }
         ];
         
@@ -1549,10 +1664,14 @@ class DIBELSApp {
             currentStep = step;
             
             const stepData = tutorialSteps[step];
+            const dots = tutorialSteps.map((_, i) =>
+                `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 3px;background:${i === step ? 'var(--primary-color)' : 'var(--border-color)'};transition:background 0.2s;"></span>`
+            ).join('');
             tutorialContent.innerHTML = `
                 <div class="tutorial-step">
                     <h3>${stepData.title}</h3>
                     ${stepData.content}
+                    <div style="text-align:center;margin-top:var(--space-3);" aria-label="Step ${step + 1} of ${tutorialSteps.length}">${dots}</div>
                 </div>
             `;
             
@@ -1608,9 +1727,6 @@ class DIBELSApp {
 
     // Setup keyboard shortcuts
     setupKeyboardShortcuts() {
-        // Set up keyboard help modal close handlers once
-        this.setupKeyboardHelpModal();
-        
         document.addEventListener('keydown', (e) => {
             // Don't trigger shortcuts when typing in inputs
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -1665,53 +1781,16 @@ class DIBELSApp {
                     tutorialOverlay.classList.add('hidden');
                     tutorialOverlay.setAttribute('aria-hidden', 'true');
                 }
-                this.closeKeyboardHelp();
+                // Close any dynamic keyboard shortcuts modal
+                document.querySelectorAll('.educator-modal').forEach((el) => el.remove());
             }
         });
     }
 
-    // Close the keyboard shortcuts modal (used by Close button and Escape)
-    closeKeyboardHelp() {
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (overlay) {
-            overlay.classList.add('hidden');
-            overlay.setAttribute('aria-hidden', 'true');
-        }
-    }
-
-    // Setup keyboard help modal close handlers (called once during initialization)
-    setupKeyboardHelpModal() {
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (!overlay) return;
-
-        overlay.classList.add('hidden');
-        overlay.setAttribute('aria-hidden', 'true');
-
-        const closeButton = document.getElementById('keyboard-help-close');
-        if (closeButton) {
-            closeButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.closeKeyboardHelp();
-            });
-        }
-
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) this.closeKeyboardHelp();
-        });
-    }
-
-    // Show keyboard shortcuts help
+    // Show keyboard shortcuts help — delegates to the dynamic modal in keyboard.js
     showKeyboardHelp() {
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (overlay) {
-            overlay.classList.remove('hidden');
-            overlay.setAttribute('aria-hidden', 'false');
-            // Focus the close button for accessibility
-            const closeButton = document.getElementById('keyboard-help-close');
-            if (closeButton) {
-                setTimeout(() => closeButton.focus(), 100);
-            }
+        if (window.keyboardNavigation) {
+            window.keyboardNavigation.showKeyboardShortcuts();
         }
     }
 
@@ -1822,6 +1901,169 @@ class DIBELSApp {
         
         // Focus on cancel button
         cancelBtn.focus();
+    }
+
+    renderScoreTrendChart(sessions) {
+        const container = document.getElementById('score-trend-chart');
+        if (!container) return;
+        if (!sessions || sessions.length < 2) {
+            container.innerHTML = '<p>Complete a few sessions to see your score trend.</p>';
+            return;
+        }
+
+        const data = sessions.slice(0, 10).reverse();
+        const width = 500;
+        const height = 200;
+        const padding = { top: 20, right: 20, bottom: 30, left: 40 };
+        const chartW = width - padding.left - padding.right;
+        const chartH = height - padding.top - padding.bottom;
+
+        const scores = data.map(s => s.score || 0);
+        const maxScore = Math.max(...scores, 1);
+        const minScore = Math.min(...scores, 0);
+        const range = maxScore - minScore || 1;
+
+        const points = data.map((s, i) => {
+            const x = padding.left + (i / (data.length - 1)) * chartW;
+            const y = padding.top + chartH - ((scores[i] - minScore) / range) * chartH;
+            return { x, y, score: scores[i], date: new Date(s.date).toLocaleDateString() };
+        });
+
+        const polyline = points.map(p => `${p.x},${p.y}`).join(' ');
+        const dots = points.map(p =>
+            `<circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--primary-color)"><title>${p.date}: ${p.score}</title></circle>`
+        ).join('');
+
+        container.innerHTML = `
+            <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Score trend chart showing last ${data.length} sessions" style="width:100%;max-width:${width}px;">
+                <line x1="${padding.left}" y1="${padding.top + chartH}" x2="${padding.left + chartW}" y2="${padding.top + chartH}" stroke="var(--border-color)" stroke-width="1"/>
+                <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartH}" stroke="var(--border-color)" stroke-width="1"/>
+                <polyline points="${polyline}" fill="none" stroke="var(--primary-color)" stroke-width="2.5" stroke-linejoin="round"/>
+                ${dots}
+                <text x="${padding.left - 5}" y="${padding.top + 5}" text-anchor="end" font-size="11" fill="var(--text-tertiary)">${maxScore}</text>
+                <text x="${padding.left - 5}" y="${padding.top + chartH + 4}" text-anchor="end" font-size="11" fill="var(--text-tertiary)">${minScore}</text>
+                <text x="${padding.left}" y="${padding.top + chartH + 20}" font-size="10" fill="var(--text-tertiary)">${points[0]?.date || ''}</text>
+                <text x="${padding.left + chartW}" y="${padding.top + chartH + 20}" text-anchor="end" font-size="10" fill="var(--text-tertiary)">${points[points.length - 1]?.date || ''}</text>
+            </svg>
+        `;
+    }
+
+    async renderSessionHistory() {
+        const container = document.getElementById('session-history-list');
+        if (!container) return;
+
+        const gradeFilter = document.getElementById('history-grade-filter')?.value || '';
+        const subtestFilter = document.getElementById('history-subtest-filter')?.value || '';
+
+        const filters = {};
+        if (gradeFilter) filters.grade = gradeFilter;
+        if (subtestFilter) filters.subtest = subtestFilter;
+
+        const sessions = await window.progressTracker.getFilteredSessions(filters);
+        const trend = window.progressTracker.calculateTrend(sessions);
+
+        if (!sessions.length) {
+            container.innerHTML = '<p>No sessions match your filters.</p>';
+            return;
+        }
+
+        const trendIcon = trend === 'improving' ? '\u2191' : trend === 'declining' ? '\u2193' : '\u2192';
+        const trendClass = `session-trend-${trend === 'improving' ? 'up' : trend === 'declining' ? 'down' : 'stable'}`;
+
+        container.innerHTML = `
+            <div style="margin-bottom:var(--space-2);font-size:var(--font-size-sm);">
+                <span class="${trendClass}"><strong>${trendIcon} Trend: ${trend.charAt(0).toUpperCase() + trend.slice(1)}</strong></span>
+                <span style="color:var(--text-tertiary);margin-left:var(--space-2);">${sessions.length} session${sessions.length !== 1 ? 's' : ''}</span>
+            </div>
+            ${sessions.slice(0, 20).map(s => `
+                <div class="session-history-item">
+                    <div>
+                        <strong>Grade ${s.grade}</strong> - ${s.subtest}
+                        <br><span style="color:var(--text-tertiary);font-size:var(--font-size-xs);">${new Date(s.date).toLocaleDateString()}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <strong>${s.score || 0}</strong>
+                        <br><span style="color:var(--text-tertiary);font-size:var(--font-size-xs);">${Math.round(s.accuracy || 0)}%</span>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    printProgressReport(analytics) {
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            this.showToast('Popup blocked. Please allow popups to print reports.', 'warning');
+            return;
+        }
+
+        const streak = window.progressTracker.getStreakData();
+        const dateStr = new Date().toLocaleDateString();
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html><head><title>DIBELS Practice Lab - Progress Report</title>
+            <style>
+                body { font-family: 'Inter', Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+                h1 { color: #6366f1; border-bottom: 2px solid #6366f1; padding-bottom: 10px; }
+                h2 { color: #444; margin-top: 24px; }
+                .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 16px 0; }
+                .stat-box { background: #f5f5f5; padding: 12px; border-radius: 8px; }
+                .stat-box strong { display: block; font-size: 24px; color: #6366f1; }
+                table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background: #6366f1; color: white; }
+                .footer { margin-top: 40px; font-size: 12px; color: #999; border-top: 1px solid #ddd; padding-top: 10px; }
+                @media print { body { padding: 0; } }
+            </style></head><body>
+            <h1>DIBELS Practice Lab - Progress Report</h1>
+            <p>Generated: ${dateStr}${streak.currentStreak > 0 ? ` | Current Streak: ${streak.currentStreak} days` : ''}</p>
+
+            <h2>Summary</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><strong>${analytics.totalSessions}</strong>Total Sessions</div>
+                <div class="stat-box"><strong>${Math.round(analytics.totalTime / 60000)} min</strong>Total Practice Time</div>
+                <div class="stat-box"><strong>${Math.round(analytics.averageScore)}</strong>Average Score</div>
+                <div class="stat-box"><strong>${Math.round(analytics.averageAccuracy)}%</strong>Average Accuracy</div>
+            </div>
+
+            <h2>Grade Performance</h2>
+            <table>
+                <tr><th>Grade</th><th>Sessions</th><th>Avg Score</th><th>Avg Accuracy</th></tr>
+                ${Object.entries(analytics.byGrade || {}).map(([grade, stats]) =>
+                    `<tr><td>Grade ${grade}</td><td>${stats.sessions}</td><td>${Math.round(stats.averageScore)}</td><td>${Math.round(stats.averageAccuracy)}%</td></tr>`
+                ).join('')}
+            </table>
+
+            <h2>Recent Sessions</h2>
+            <table>
+                <tr><th>Date</th><th>Grade</th><th>Subtest</th><th>Score</th><th>Accuracy</th></tr>
+                ${(analytics.recentSessions || []).slice(0, 15).map(s =>
+                    `<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>${s.grade}</td><td>${s.subtest}</td><td>${s.score || 0}</td><td>${Math.round(s.accuracy || 0)}%</td></tr>`
+                ).join('')}
+            </table>
+
+            <div class="footer">DIBELS Practice Lab | Free, open-source early literacy practice | ${dateStr}</div>
+            </body></html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    }
+
+    updateStreakDisplay() {
+        const display = document.getElementById('streak-display');
+        if (!display || !window.progressTracker) return;
+        const streak = window.progressTracker.getStreakData();
+        if (streak.currentStreak > 0) {
+            const icon = display.querySelector('.streak-icon');
+            const text = display.querySelector('.streak-text');
+            if (icon) icon.textContent = '\uD83D\uDD25';
+            if (text) text.textContent = `${streak.currentStreak}-day streak${streak.bestStreak > streak.currentStreak ? ` (Best: ${streak.bestStreak})` : ''}`;
+            display.classList.remove('hidden');
+        } else {
+            display.classList.add('hidden');
+        }
     }
 }
 
