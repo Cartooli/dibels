@@ -1837,6 +1837,8 @@ class DIBELSApp {
 
     // Show keyboard shortcuts help
     showKeyboardHelp() {
+        // If the dynamic (F1) modal is open, close it so we don't have two modals
+        document.querySelectorAll('.educator-modal').forEach((el) => el.remove());
         const overlay = document.getElementById('keyboard-help-overlay');
         if (overlay) {
             overlay.classList.remove('hidden');

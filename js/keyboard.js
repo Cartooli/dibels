@@ -366,6 +366,12 @@ class KeyboardNavigation {
             existing.remove();
             return;
         }
+        // Hide the static HTML keyboard help overlay if open so we don't stack
+        const htmlOverlay = document.getElementById('keyboard-help-overlay');
+        if (htmlOverlay && !htmlOverlay.classList.contains('hidden')) {
+            htmlOverlay.classList.add('hidden');
+            htmlOverlay.setAttribute('aria-hidden', 'true');
+        }
 
         const shortcuts = [
             { key: 'F1', description: 'Show keyboard shortcuts' },
@@ -416,9 +422,22 @@ class KeyboardNavigation {
         };
         closeBtn.addEventListener('click', closeModal);
 
+        // Close on Escape so modal is always dismissible
+        const onKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal();
+                document.removeEventListener('keydown', onKeyDown);
+            }
+        };
+        document.addEventListener('keydown', onKeyDown);
+
         // Also close when clicking the overlay background
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+            if (e.target === modal) {
+                closeModal();
+                document.removeEventListener('keydown', onKeyDown);
+            }
         });
 
         // Focus the close button for keyboard accessibility
