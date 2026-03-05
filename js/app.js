@@ -66,31 +66,16 @@ class DIBELSApp {
             }
         });
 
-        // Keyboard help modal close button (delegated handler)
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('#keyboard-help-close')) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.closeKeyboardHelp();
-            }
-        });
-
         // Breadcrumb navigation
         document.addEventListener('click', (e) => {
             if (e.target.id === 'breadcrumb-home') {
-                if (this.isPracticeActive) {
-                    if (confirm('Leave practice and return to grade selection?')) {
-                        this.backToMenu();
-                    }
-                } else {
+                // eslint-disable-next-line no-alert
+                if (!this.isPracticeActive || confirm('Leave practice and return to grade selection?')) {
                     this.backToMenu();
                 }
             } else if (e.target.id === 'breadcrumb-grade') {
-                if (this.isPracticeActive) {
-                    if (confirm('Leave practice and choose a different subtest?')) {
-                        this.backToSubtestSelection();
-                    }
-                } else {
+                // eslint-disable-next-line no-alert
+                if (!this.isPracticeActive || confirm('Leave practice and choose a different subtest?')) {
                     this.backToSubtestSelection();
                 }
             }
@@ -1742,9 +1727,6 @@ class DIBELSApp {
 
     // Setup keyboard shortcuts
     setupKeyboardShortcuts() {
-        // Set up keyboard help modal close handlers once
-        this.setupKeyboardHelpModal();
-        
         document.addEventListener('keydown', (e) => {
             // Don't trigger shortcuts when typing in inputs
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -1799,55 +1781,16 @@ class DIBELSApp {
                     tutorialOverlay.classList.add('hidden');
                     tutorialOverlay.setAttribute('aria-hidden', 'true');
                 }
-                this.closeKeyboardHelp();
+                // Close any dynamic keyboard shortcuts modal
+                document.querySelectorAll('.educator-modal').forEach((el) => el.remove());
             }
         });
     }
 
-    // Close the keyboard shortcuts modal (used by Close button and Escape)
-    closeKeyboardHelp() {
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (overlay) {
-            overlay.classList.add('hidden');
-            overlay.setAttribute('aria-hidden', 'true');
-        }
-    }
-
-    // Setup keyboard help modal close handlers (called once during initialization)
-    setupKeyboardHelpModal() {
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (!overlay) return;
-
-        overlay.classList.add('hidden');
-        overlay.setAttribute('aria-hidden', 'true');
-
-        const closeButton = document.getElementById('keyboard-help-close');
-        if (closeButton) {
-            closeButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.closeKeyboardHelp();
-            });
-        }
-
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) this.closeKeyboardHelp();
-        });
-    }
-
-    // Show keyboard shortcuts help
+    // Show keyboard shortcuts help — delegates to the dynamic modal in keyboard.js
     showKeyboardHelp() {
-        // If the dynamic (F1) modal is open, close it so we don't have two modals
-        document.querySelectorAll('.educator-modal').forEach((el) => el.remove());
-        const overlay = document.getElementById('keyboard-help-overlay');
-        if (overlay) {
-            overlay.classList.remove('hidden');
-            overlay.setAttribute('aria-hidden', 'false');
-            // Focus the close button for accessibility
-            const closeButton = document.getElementById('keyboard-help-close');
-            if (closeButton) {
-                setTimeout(() => closeButton.focus(), 100);
-            }
+        if (window.keyboardNavigation) {
+            window.keyboardNavigation.showKeyboardShortcuts();
         }
     }
 
