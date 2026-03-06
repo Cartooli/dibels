@@ -458,7 +458,7 @@
                     </div>
                 </div>
                 
-                <p>&copy; 2025 DIBELS Practice Lab. Open source educational resource.</p>
+                <p>&copy; 2025 DIBELS Practice Lab. Open source educational resource. <span class="build-id" aria-hidden="true">Build 1.0.6</span></p>
                 <div class="footer-links">
                     <button class="footer-link" id="educator-mode-btn">Educator Mode</button>
                     <button class="footer-link" id="settings-btn">Settings</button>
@@ -524,12 +524,13 @@
     <script src="js/progress.js"></script>
     <script src="js/app.js"></script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration (version in URL forces fresh fetch after deploy) -->
     <script>
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+        (function() {
+            var SW_VERSION = '1.0.6';
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js?v=' + SW_VERSION)
                     .then((registration) => {
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
@@ -549,9 +550,10 @@
                             });
                         });
                     })
-                    .catch(() => {});
+                    .catch(function() {});
             });
-        }
+            }
+        })();
         
         // Handle PWA install prompt
         let deferredPrompt;

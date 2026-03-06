@@ -1417,6 +1417,12 @@ input[aria-invalid="true"]:focus {
     font-weight: var(--font-weight-medium);
 }
 
+.build-id {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-left: 0.5rem;
+}
+
 .footer-links {
     display: flex;
     gap: var(--space-4);
