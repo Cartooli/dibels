@@ -1631,8 +1631,15 @@ class DIBELSApp {
         const tutorialPrev = document.getElementById('tutorial-prev');
         const tutorialNext = document.getElementById('tutorial-next');
         const tutorialClose = document.getElementById('tutorial-close');
+        const tutorialCloseX = document.getElementById('tutorial-close-x');
         
         if (!tutorialOverlay) return;
+        
+        const closeTutorial = () => {
+            tutorialOverlay.classList.add('hidden');
+            tutorialOverlay.setAttribute('aria-hidden', 'true');
+            localStorage.setItem('dibels-tutorial-completed', 'true');
+        };
         
         const tutorialSteps = [
             {
@@ -1683,6 +1690,7 @@ class DIBELSApp {
         if (tutorialBtn) {
             tutorialBtn.addEventListener('click', () => {
                 tutorialOverlay.classList.remove('hidden');
+                tutorialOverlay.setAttribute('aria-hidden', 'false');
                 showTutorialStep(0);
             });
         }
@@ -1696,17 +1704,17 @@ class DIBELSApp {
         }
         
         if (tutorialClose) {
-            tutorialClose.addEventListener('click', () => {
-                tutorialOverlay.classList.add('hidden');
-                localStorage.setItem('dibels-tutorial-completed', 'true');
-            });
+            tutorialClose.addEventListener('click', closeTutorial);
+        }
+        
+        if (tutorialCloseX) {
+            tutorialCloseX.addEventListener('click', closeTutorial);
         }
         
         // Close on overlay click
         tutorialOverlay.addEventListener('click', (e) => {
             if (e.target === tutorialOverlay) {
-                tutorialOverlay.classList.add('hidden');
-                localStorage.setItem('dibels-tutorial-completed', 'true');
+                closeTutorial();
             }
         });
         
@@ -1719,6 +1727,7 @@ class DIBELSApp {
             // Show tutorial for first-time visitors after a brief delay
             setTimeout(() => {
                 tutorialOverlay.classList.remove('hidden');
+                tutorialOverlay.setAttribute('aria-hidden', 'false');
                 showTutorialStep(0);
             }, 500);
         }
