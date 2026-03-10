@@ -1478,7 +1478,7 @@ class DIBELSApp {
     }
 
     displayRecentSessions(sessions) {
-        const container = document.getElementById('recent-sessions');
+        const container = document.getElementById('session-history-list');
         if (!container) return;
         if (sessions.length === 0) {
             container.innerHTML = '<p>No sessions yet. Start practicing to see your progress!</p>';

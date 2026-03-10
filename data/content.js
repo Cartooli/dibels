@@ -292,21 +292,21 @@ const DIBELS_CONTENT = {
         ],
         // CVCC patterns - ending blends (all true nonsense words)
         cvcc: [
-            'baft', 'bamp', 'bant', 'bask', 'bept',
-            'besk', 'daft', 'damp', 'dint', 'filt',
-            'gaft', 'gamp', 'gelt', 'gept', 'gusk',
-            'haft', 'hamp', 'hept', 'hift', 'husk',
+            'baft', 'bamp', 'bant', 'basp', 'bept',
+            'besk', 'dafp', 'dapt', 'dimp', 'filt',
+            'gaft', 'gamp', 'gelp', 'gept', 'gusk',
+            'hafp', 'hamp', 'hept', 'hift', 'husp',
             'jaft', 'jamp', 'jelt', 'jept', 'jusk',
             'kaft', 'kamp', 'kelt', 'kift', 'kusk',
             'laft', 'lask', 'lept', 'lisk', 'lusk',
             'maft', 'mamp', 'melk', 'mept', 'mift',
             'naft', 'namp', 'nelt', 'nept', 'nift',
             'paft', 'pamp', 'pelk', 'pept', 'pift',
-            'rask', 'remp', 'rept', 'rusk', 'rusk',
-            'saft', 'samp', 'selt', 'susk', 'susk',
-            'taft', 'tamp', 'tept', 'tift', 'tusk',
-            'vaft', 'vamp', 'vept', 'vift', 'vusk',
-            'welk', 'wamp', 'wept', 'wift', 'wusk'
+            'rask', 'remp', 'rept', 'rusp', 'rulk',
+            'saft', 'sapt', 'selt', 'sulp', 'susk',
+            'taft', 'tapt', 'tept', 'tift', 'tusp',
+            'vaft', 'vapt', 'vept', 'vift', 'vusk',
+            'welb', 'wamp', 'wesp', 'wift', 'wusk'
         ]
     },
 
@@ -587,6 +587,12 @@ const DIBELS_CONTENT = {
                 text: "Our solar system [consists/contains/includes] of eight planets that [orbit/circle/revolve] around the Sun. Each planet has [unique/special/different] characteristics and features. Mercury is the [closest/nearest/first] planet to the Sun, while Neptune is the [farthest/last/distant]. Earth is the [only/single/one] planet known to [support/have/contain] life. Scientists [continue/keep/try] to study the other planets to [learn/discover/find] more about our [universe/galaxy/system].",
                 wordCount: 54,
                 correctAnswers: ['consists', 'orbit', 'unique', 'closest', 'farthest', 'only', 'support', 'continue', 'learn', 'universe']
+            },
+            {
+                title: "Animal Migration",
+                text: "Many animals [travel/migrate/wander] long distances each [year/month/season] in search of food and warmer [weather/climates/places]. This journey is called [migration/travel/movement]. Some birds fly [thousands/hundreds/millions] of miles between their [summer/winter/spring] breeding grounds and winter homes. Monarch butterflies [migrate/fly/journey] from Canada all the way to [Mexico/California/Florida]. Scientists study these [journeys/trips/patterns] to better [understand/learn/observe] how animals [survive/live/adapt] in changing environments.",
+                wordCount: 52,
+                correctAnswers: ['travel', 'year', 'weather', 'migration', 'thousands', 'summer', 'migrate', 'Mexico', 'journeys', 'understand', 'survive']
             }
         ],
         fifth: [
@@ -595,6 +601,12 @@ const DIBELS_CONTENT = {
                 text: "Photosynthesis is the [process/way/method] by which plants [make/create/produce] their own food. Plants [use/need/take] sunlight, water, and carbon dioxide for this [important/vital/necessary] process. Chlorophyll, the [substance/material/chemical] that makes plants green, [captures/absorbs/takes] sunlight. The plant then [converts/changes/transforms] this energy into [sugar/food/glucose] that it can use to [grow/live/survive].",
                 wordCount: 45,
                 correctAnswers: ['process', 'make', 'use', 'important', 'substance', 'captures', 'converts', 'sugar', 'grow']
+            },
+            {
+                title: "The Water Cycle",
+                text: "The water cycle [describes/explains/shows] how water moves [continuously/constantly/slowly] through Earth's [environment/atmosphere/system]. Water [evaporates/rises/escapes] from oceans, lakes, and rivers when [heated/warmed/dried] by the sun. This water vapor [rises/moves/floats] into the atmosphere and [cools/freezes/condenses] to form clouds. When clouds collect enough moisture, [precipitation/rain/water] falls back to Earth as rain or snow. This cycle [sustains/supports/provides] all life on our planet.",
+                wordCount: 50,
+                correctAnswers: ['describes', 'continuously', 'environment', 'evaporates', 'heated', 'rises', 'cools', 'precipitation', 'sustains']
             }
         ],
         sixth: [
@@ -603,6 +615,12 @@ const DIBELS_CONTENT = {
                 text: "The Renaissance was a [period/time/era] of great cultural and [intellectual/mental/artistic] change that began in [Italy/Europe/Rome] during the 14th century. This era [marked/showed/indicated] the transition from [medieval/ancient/old] to modern times. Artists like Leonardo da Vinci and Michelangelo [created/made/painted] masterpieces that are still [admired/appreciated/valued] today. The invention of the [printing/writing/copying] press made books more [accessible/available/common] to people.",
                 wordCount: 55,
                 correctAnswers: ['period', 'intellectual', 'Italy', 'marked', 'medieval', 'created', 'admired', 'printing', 'accessible']
+            },
+            {
+                title: "The American Revolution",
+                text: "The American Revolution [began/started/occurred] in 1775 when [colonists/settlers/citizens] in the thirteen colonies [rebelled/fought/rose] against British [rule/control/power]. Colonists were [angry/upset/frustrated] about being taxed without [representation/permission/consent] in Parliament. Leaders like George Washington and Benjamin Franklin [guided/led/directed] the revolutionary [effort/cause/struggle]. The Declaration of [Independence/Freedom/Liberty] formally announced the colonies' [separation/break/distance] from Britain in 1776, creating a new nation.",
+                wordCount: 55,
+                correctAnswers: ['began', 'colonists', 'rebelled', 'rule', 'angry', 'representation', 'guided', 'effort', 'Independence', 'separation']
             }
         ],
         seventh: [
@@ -611,6 +629,12 @@ const DIBELS_CONTENT = {
                 text: "The Scientific Revolution [fundamentally/completely/totally] changed how people [understood/viewed/perceived] the natural world. Scientists like Copernicus, Galileo, and Newton [challenged/questioned/disputed] traditional beliefs and [developed/created/invented] new methods of [inquiry/investigation/research]. The heliocentric model of the solar system [replaced/changed/altered] the geocentric view. This period [established/founded/created] the foundation for modern [science/knowledge/understanding] and technology.",
                 wordCount: 47,
                 correctAnswers: ['fundamentally', 'understood', 'challenged', 'developed', 'inquiry', 'replaced', 'established', 'science']
+            },
+            {
+                title: "The Industrial Revolution",
+                text: "The Industrial Revolution [transformed/changed/reshaped] Western society during the [late/early/mid] 18th and 19th centuries. New machines [powered/driven/fueled] by steam [revolutionized/changed/improved] manufacturing and [transportation/travel/movement]. Workers [migrated/moved/traveled] from rural areas to cities to [work/labor/toil] in factories. While industrialization [created/brought/produced] economic growth, it also [introduced/caused/generated] problems such as [poor/dangerous/harsh] working conditions and [environmental/ecological/industrial] pollution.",
+                wordCount: 50,
+                correctAnswers: ['transformed', 'late', 'powered', 'revolutionized', 'transportation', 'migrated', 'work', 'created', 'introduced', 'poor', 'environmental']
             }
         ],
         eighth: [
@@ -619,6 +643,12 @@ const DIBELS_CONTENT = {
                 text: "Climate change [represents/shows/indicates] one of the most [significant/important/serious] challenges facing our [planet/world/Earth] today. Human [activities/actions/behaviors] such as burning fossil [fuels/resources/materials] have increased greenhouse gas [emissions/releases/outputs]. These gases [trap/capture/hold] heat in the atmosphere, causing global [temperatures/climates/conditions] to rise. Scientists [warn/caution/alert] that without immediate [action/response/intervention], the consequences could be [catastrophic/devastating/severe] for future generations.",
                 wordCount: 51,
                 correctAnswers: ['represents', 'significant', 'planet', 'activities', 'fuels', 'emissions', 'trap', 'temperatures', 'warn', 'action', 'catastrophic']
+            },
+            {
+                title: "Genetic Inheritance",
+                text: "Genetic inheritance [determines/controls/influences] how traits are [passed/transmitted/carried] from parents to offspring. Gregor Mendel, a 19th-century [scientist/monk/botanist], [pioneered/began/started] the study of genetics through [experiments/studies/work] with pea plants. He [discovered/found/showed] that certain traits are [dominant/stronger/primary] while others are [recessive/weaker/secondary]. Modern scientists have [expanded/extended/built] upon Mendel's [findings/work/discoveries] to understand how DNA [carries/stores/contains] the genetic [information/data/code] that shapes living organisms.",
+                wordCount: 56,
+                correctAnswers: ['determines', 'passed', 'scientist', 'pioneered', 'experiments', 'discovered', 'dominant', 'recessive', 'expanded', 'findings', 'carries', 'information']
             }
         ]
     }
