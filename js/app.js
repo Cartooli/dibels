@@ -1627,6 +1627,7 @@ class DIBELSApp {
     setupTutorial() {
         const tutorialBtn = document.getElementById('show-tutorial-btn');
         const tutorialOverlay = document.getElementById('tutorial-overlay');
+        const tutorialModal = document.querySelector('.tutorial-modal');
         const tutorialContent = document.getElementById('tutorial-content');
         const tutorialPrev = document.getElementById('tutorial-prev');
         const tutorialNext = document.getElementById('tutorial-next');
@@ -1711,12 +1712,15 @@ class DIBELSApp {
             tutorialCloseX.addEventListener('click', closeTutorial);
         }
         
-        // Close on overlay click
+        // Close on overlay click (backdrop only)
         tutorialOverlay.addEventListener('click', (e) => {
             if (e.target === tutorialOverlay) {
                 closeTutorial();
             }
         });
+        if (tutorialModal) {
+            tutorialModal.addEventListener('click', (e) => e.stopPropagation());
+        }
         
         // Auto-show tutorial on first visit (check URL parameter to skip)
         const urlParams = new URLSearchParams(window.location.search);

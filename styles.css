@@ -2915,6 +2915,7 @@ textarea:focus-visible {
 
 .tutorial-modal {
     position: relative;
+    z-index: 1;
     background: var(--bg-secondary);
     border-radius: var(--radius-2xl);
     padding: var(--space-8);
@@ -2976,6 +2977,11 @@ textarea:focus-visible {
     gap: var(--space-4);
     justify-content: space-between;
     margin-top: var(--space-6);
+}
+
+.tutorial-navigation .control-btn {
+    min-height: 44px;
+    min-width: 44px;
 }
 
 /* Confirmation Dialog */
