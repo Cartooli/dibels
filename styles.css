@@ -2908,6 +2908,12 @@ textarea:focus-visible {
     animation: fadeIn 0.3s ease-out;
 }
 
+.tutorial-overlay.hidden {
+    display: none !important;
+    pointer-events: none;
+    visibility: hidden;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

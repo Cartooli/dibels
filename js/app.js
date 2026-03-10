@@ -18,6 +18,7 @@ class DIBELSApp {
         this.setupTutorial();
         this.setupKeyboardShortcuts();
         this.setupBottomNavigation();
+        this.setupHashRouting();
         this.updateGradeButtonsWithCounts();
         this.updateStreakDisplay();
     }
@@ -63,6 +64,21 @@ class DIBELSApp {
         document.addEventListener('click', (e) => {
             if (e.target.id === 'calculate-score') {
                 this.calculateScore();
+            }
+        });
+
+        // Educator modal close and action buttons (delegation)
+        document.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('.close-modal, [data-close="modal"]');
+            if (closeBtn) {
+                const modal = closeBtn.closest('.educator-modal');
+                if (modal) {
+                    modal.remove();
+                    return;
+                }
+            }
+            if (e.target.closest('[data-action="new-practice-set"]')) {
+                this.newPracticeSet();
             }
         });
 
@@ -496,7 +512,7 @@ class DIBELSApp {
     }
 
     // Back to menu
-    backToMenu() {
+    backToMenu(skipHashUpdate) {
         // Stop any ongoing practice
         window.practiceTimer.stop();
         window.audioManager.stop();
@@ -527,7 +543,9 @@ class DIBELSApp {
         // Update bottom nav
         this.updateBottomNavActive('home');
         this.updateStepIndicator(1);
+        if (!skipHashUpdate) this.replaceHash('home');
     }
+
 
     backToSubtestSelection() {
         // Stop any ongoing practice
@@ -681,7 +699,7 @@ class DIBELSApp {
             feedbackHTML = `<div style="margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--bg-tertiary);border-radius:var(--radius-md);font-size:var(--font-size-sm);">
                 <strong>Feedback:</strong> ${errors} error${errors !== 1 ? 's' : ''} out of ${total} items. ${suggestion}
                 <div style="margin-top:var(--space-2);">
-                    <button class="control-btn" style="font-size:var(--font-size-sm);padding:var(--space-1) var(--space-3);" onclick="window.dibelsApp.newPracticeSet()">Practice Again</button>
+                    <button class="control-btn" style="font-size:var(--font-size-sm);padding:var(--space-1) var(--space-3);" data-action="new-practice-set">Practice Again</button>
                 </div>
             </div>`;
         }
@@ -899,7 +917,7 @@ class DIBELSApp {
     }
 
     // Show educator mode
-    showEducatorMode() {
+    showEducatorMode(skipHashUpdate) {
         // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
@@ -909,6 +927,8 @@ class DIBELSApp {
         
         // Setup educator modules
         this.setupEducatorModules();
+        this.updateBottomNavActive('educator');
+        if (!skipHashUpdate) this.replaceHash('educator');
     }
 
     // Setup educator modules
@@ -988,7 +1008,7 @@ class DIBELSApp {
                         <li>Rushing through directions</li>
                     </ul>
                 </div>
-                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
+                <button class="close-modal">Close</button>
             </div>
         `;
         
@@ -1052,7 +1072,7 @@ class DIBELSApp {
                     </ul>
                 </div>
                 
-                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
+                <button class="close-modal">Close</button>
             </div>
         `;
         
@@ -1107,7 +1127,7 @@ class DIBELSApp {
                         <li>Share findings with intervention teams</li>
                     </ul>
                 </div>
-                <button class="close-modal" onclick="this.closest('.educator-modal').remove()">Close</button>
+                <button class="close-modal">Close</button>
             </div>
         `;
         
@@ -1194,7 +1214,7 @@ class DIBELSApp {
     }
 
     // Show settings
-    showSettings() {
+    showSettings(skipHashUpdate) {
         // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
@@ -1209,10 +1229,12 @@ class DIBELSApp {
         
         // Load current settings
         this.loadSettings();
+        this.updateBottomNavActive('settings');
+        if (!skipHashUpdate) this.replaceHash('settings');
     }
 
     // Show progress
-    showProgress() {
+    showProgress(skipHashUpdate) {
         // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
@@ -1224,6 +1246,8 @@ class DIBELSApp {
         
         // Load progress data
         this.loadProgressData();
+        this.updateBottomNavActive('progress');
+        if (!skipHashUpdate) this.replaceHash('progress');
     }
 
     // Setup settings event listeners
@@ -1455,6 +1479,7 @@ class DIBELSApp {
 
     displayRecentSessions(sessions) {
         const container = document.getElementById('recent-sessions');
+        if (!container) return;
         if (sessions.length === 0) {
             container.innerHTML = '<p>No sessions yet. Start practicing to see your progress!</p>';
             return;
@@ -1616,7 +1641,7 @@ class DIBELSApp {
                 <h4>No Data Collection</h4>
                 <p>This application does not collect, store, or transmit any personal data. All practice is conducted locally in your browser.</p>
                 
-                <button class="control-btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+                <button class="control-btn close-modal">Close</button>
             </div>
         `;
         
@@ -1640,7 +1665,15 @@ class DIBELSApp {
             tutorialOverlay.classList.add('hidden');
             tutorialOverlay.setAttribute('aria-hidden', 'true');
             localStorage.setItem('dibels-tutorial-completed', 'true');
+            // Restore focus for accessibility
+            if (tutorialBtn && tutorialBtn.offsetParent !== null) {
+                tutorialBtn.focus();
+            } else {
+                const firstGrade = document.querySelector('.grade-btn');
+                if (firstGrade) firstGrade.focus();
+            }
         };
+        this.closeTutorial = closeTutorial;
         
         const tutorialSteps = [
             {
@@ -1787,14 +1820,19 @@ class DIBELSApp {
                 }
             }
             
-            // Esc - Close modals
+            // Esc - Close modals (tutorial first, then educator modals)
             if (e.key === 'Escape') {
-                const tutorialOverlay = document.getElementById('tutorial-overlay');
-                if (tutorialOverlay && !tutorialOverlay.classList.contains('hidden')) {
-                    tutorialOverlay.classList.add('hidden');
-                    tutorialOverlay.setAttribute('aria-hidden', 'true');
+                const tutorialOverlayEl = document.getElementById('tutorial-overlay');
+                if (tutorialOverlayEl && !tutorialOverlayEl.classList.contains('hidden')) {
+                    if (typeof this.closeTutorial === 'function') {
+                        this.closeTutorial();
+                    } else {
+                        tutorialOverlayEl.classList.add('hidden');
+                        tutorialOverlayEl.setAttribute('aria-hidden', 'true');
+                    }
+                    e.preventDefault();
+                    return;
                 }
-                // Close any dynamic keyboard shortcuts modal
                 document.querySelectorAll('.educator-modal').forEach((el) => el.remove());
             }
         });
@@ -1860,6 +1898,33 @@ class DIBELSApp {
         if (activeBtn) {
             activeBtn.classList.add('active');
         }
+    }
+
+    // Hash-based section routing (#home, #settings, #progress, #educator)
+    replaceHash(section) {
+        const hash = section === 'home' ? '' : section;
+        const url = window.location.pathname + window.location.search + (hash ? '#' + hash : '');
+        if (window.location.hash !== (hash ? '#' + hash : '')) {
+            window.history.replaceState(undefined, '', url);
+        }
+    }
+
+    applySectionFromHash() {
+        const hash = (window.location.hash || '').replace(/^#/, '') || 'home';
+        if (hash === 'settings') {
+            this.showSettings(true);
+        } else if (hash === 'progress') {
+            this.showProgress(true);
+        } else if (hash === 'educator') {
+            this.showEducatorMode(true);
+        } else {
+            this.backToMenu(true);
+        }
+    }
+
+    setupHashRouting() {
+        this.applySectionFromHash();
+        window.addEventListener('popstate', () => this.applySectionFromHash());
     }
 
     // Update grade buttons with subtest counts
