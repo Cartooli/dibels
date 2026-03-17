@@ -8,7 +8,7 @@ Thank you for your interest in contributing to DIBELS Practice Lab! This project
 
 If you find a bug or have a feature request, please:
 
-1. Check if the issue already exists in the [Issues](https://github.com/yourusername/dibels-practice-lab/issues) page
+1. Check if the issue already exists in the [Issues](https://github.com/Cartooli/dibels/issues) page
 2. Create a new issue with:
    - Clear description of the problem or feature request
    - Steps to reproduce (for bugs)
@@ -110,7 +110,7 @@ When adding new content:
 
 If you need help or have questions:
 
-1. Check the [Issues](https://github.com/yourusername/dibels-practice-lab/issues) page
+1. Check the [Issues](https://github.com/Cartooli/dibels/issues) page
 2. Create a new issue with the "question" label
 3. Join our community discussions
 

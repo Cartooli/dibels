@@ -1,8 +1,10 @@
 # DIBELS Practice Lab
 
-📚 **Unlimited, open-access practice and training for fluency-based early literacy**
+📚 **DIBELS practice. No sign-up. No paywall. K–8.**
 
 DIBELS Practice Lab is a free, open-source web application designed to help educators, interventionists, and families practice DIBELS 8 subtests with students in grades K-8.
+
+Use this when you want unlimited DIBELS-style practice with no account, optional offline use, and a built-in timer.
 
 ## Features
 
@@ -22,7 +24,7 @@ DIBELS Practice Lab is a free, open-source web application designed to help educ
 - Built-in 60-second timer
 - Option to hide/show timer
 - Live word counter / error tracker
-- Optional self-scoring mode for manual score entry
+- **Scoring is manual:** you enter scores; the app provides the timer and optional score entry.
 
 ### 🎧 Read-Aloud + Audio Modeling
 - Audio models of fluent readers for ORF and WRF
@@ -56,23 +58,23 @@ DIBELS Practice Lab is a free, open-source web application designed to help educ
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/dibels-practice-lab.git
-cd dibels-practice-lab
+git clone https://github.com/Cartooli/dibels.git
+cd dibels
 ```
 
-2. Open `index.html` in your web browser or use a local server:
+2. Run a local server (recommended; some features may not work when opening `index.html` directly):
 ```bash
-# Using Python
-python -m http.server 8000
-
 # Using Node.js
 npx serve .
+
+# Using Python
+python -m http.server 8000
 
 # Using PHP
 php -S localhost:8000
 ```
 
-3. Navigate to `http://localhost:8000` in your browser
+3. Open `http://localhost:8000` in your browser.
 
 ### GitHub Pages Deployment
 
@@ -81,7 +83,9 @@ php -S localhost:8000
 3. Select "Deploy from a branch"
 4. Choose "main" branch and "/ (root)" folder
 5. Click "Save"
-6. Your site will be available at `https://yourusername.github.io/dibels-practice-lab`
+6. Your site will be available at `https://Cartooli.github.io/dibels`
+
+If your school or network blocks this site, you can self-host: fork the repo, enable GitHub Pages on your fork (Settings → Pages → main branch, root folder), or deploy the repo to any static host.
 
 ## Usage
 
@@ -98,7 +102,7 @@ php -S localhost:8000
 2. Choose a subtest to practice
 3. Enable audio modeling for better learning
 4. Practice together with your child
-5. Use the scoring feature to track progress
+5. Use the timer and scoring panel to record scores.
 
 ### For Interventionists
 1. Use the educator mode for training
@@ -106,21 +110,30 @@ php -S localhost:8000
 3. Learn about common error patterns
 4. Generate printable materials for sessions
 
-## Accessibility Features
+## Accessibility
 
-- **Keyboard Navigation**: Full keyboard support for all features
-- **Screen Reader Support**: ARIA labels and live regions
-- **High Contrast Mode**: Toggle for better visibility
-- **Font Size Controls**: Adjustable text size
-- **Skip Links**: Quick navigation to main content
-- **Reduced Motion**: Respects user preferences
+We aim for WCAG 2.1 AA where applicable. Features include:
+- **Keyboard**: Full keyboard support for all features
+- **Screen readers**: ARIA labels and live regions
+- **High contrast**: Toggle for better visibility
+- **Font size**: Adjustable text size
+- **Skip links**: Quick navigation to main content
+- **Reduced motion**: Respects `prefers-reduced-motion`
+If you run into an accessibility barrier, please open an issue.
 
 ## Content Sources
 
 This application uses:
 - Public DIBELS 8 test structure and approximate formats
-- Generated randomized practice content using open phoneme, grapheme, and vocabulary datasets
-- Practice content structured to reflect real DIBELS patterns
+- Randomized practice content generated from built-in word lists and phonics patterns (see `data/content.js`). Content is structured to reflect DIBELS-style tasks and is not from official DIBELS materials.
+
+## Privacy & Data
+
+This app does not require an account. No personal data is sent to any server. Optional data (e.g. progress, settings) is stored only in your browser (localStorage). We do not collect or store PII.
+
+## Disclaimer
+
+This is a practice tool only. It is not the official DIBELS assessment and is not affiliated with or endorsed by the rightsholders of DIBELS. Use official DIBELS materials for formal assessment.
 
 ## Contributing
 
@@ -140,28 +153,27 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- DIBELS 8th Edition for assessment framework
+- DIBELS 8th Edition for the assessment framework (this app is practice only, not official DIBELS).
 - Open educational resources community
 - Contributors and testers
 
 ## Support
 
-For questions, issues, or feature requests, please:
-1. Check the [Issues](https://github.com/yourusername/dibels-practice-lab/issues) page
-2. Create a new issue if needed
-3. Join our community discussions
+For questions, issues, or feature requests, please check the [Issues](https://github.com/Cartooli/dibels/issues) page and open a new issue if needed. You can also star the repo to show support.
 
 ## Roadmap
 
-### Future Features
+### Next
 - Progress tracking (with optional anonymous local storage)
+- Spanish language support
+
+### Later
 - Error pattern analytics (manual input for review)
 - Custom practice list generator (teacher-facing)
 - Video library for training new educators
 - Volunteer "scorer" simulator for ed-prep programs
-- Spanish language support
-- Additional assessment tools
+- Additional practice tools
 
 ---
 
-**DIBELS Practice Lab** - Making early literacy assessment accessible to all educators and families.
+**DIBELS Practice Lab** — Free practice for early literacy. No account required; works offline; keyboard and screen reader friendly.

@@ -1004,7 +1004,7 @@ class DIBELSApp {
                         <li>Allowing extra time beyond specified limits</li>
                         <li>Incorrectly pronouncing test items</li>
                         <li>Recording responses inaccurately</li>
-                        <li>Providing feedback during the assessment</li>
+                        <li>Providing feedback during the official assessment</li>
                         <li>Rushing through directions</li>
                     </ul>
                 </div>
@@ -1121,7 +1121,7 @@ class DIBELSApp {
                     <h4>Recording and Tracking Errors</h4>
                     <ul>
                         <li>Record exact student responses during testing</li>
-                        <li>Note patterns across multiple assessments</li>
+                        <li>Note patterns across multiple testing sessions</li>
                         <li>Track progress over time</li>
                         <li>Use error analysis to inform instruction</li>
                         <li>Share findings with intervention teams</li>
@@ -1690,7 +1690,7 @@ class DIBELSApp {
             },
             {
                 title: 'Set Your Options',
-                content: '<p>Enable <strong>timed practice</strong> (60 seconds, like the real assessment), show or hide the timer, turn on <strong>audio models</strong> for listening support, or reveal answers for learning mode.</p>'
+                content: '<p>Enable <strong>timed practice</strong> (60 seconds, like official DIBELS timing), show or hide the timer, turn on <strong>audio models</strong> for listening support, or reveal answers for learning mode.</p>'
             },
             {
                 title: 'Practice & Score',
