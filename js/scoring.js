@@ -1,17 +1,13 @@
-// DIBELS Scoring Engine - Comprehensive scoring system
 class ScoringEngine {
     constructor() {
         this.mode = 'detailed'; // 'detailed' or 'simplified'
     }
 
-    // Set scoring mode
     setMode(mode) {
         this.mode = mode;
     }
 
-    // Main scoring method - routes to subtest-specific scoring
     calculateScore(subtest, data, options = {}) {
-        // Validate inputs
         if (!subtest || typeof subtest !== 'string') {
             console.error('Invalid subtest provided to calculateScore');
             return this.scoreGeneric(data || {}, options.mode || this.mode);
@@ -47,9 +43,7 @@ class ScoringEngine {
         }
     }
 
-    // Letter Naming Fluency (LNF) scoring
     scoreLNF(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         const timeInSeconds = Math.max(0, parseFloat(data?.timeInSeconds) || 60);
@@ -57,7 +51,6 @@ class ScoringEngine {
         const total = correct + errors;
         const accuracy = this.calculateAccuracy(correct, total, 'LNF');
         
-        // LNF score is correct letters per minute
         const score = correct;
         const rate = timeInSeconds > 0 ? (correct / timeInSeconds) * 60 : 0;
 
@@ -85,9 +78,7 @@ class ScoringEngine {
         };
     }
 
-    // Phonemic Segmentation Fluency (PSF) scoring
     scorePSF(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         const timeInSeconds = Math.max(0, parseFloat(data?.timeInSeconds) || 60);
@@ -95,7 +86,6 @@ class ScoringEngine {
         const total = correct + errors;
         const accuracy = this.calculateAccuracy(correct, total, 'PSF');
         
-        // PSF score is correct phonemes per minute
         const score = correct;
         const rate = timeInSeconds > 0 ? (correct / timeInSeconds) * 60 : 0;
 
@@ -123,15 +113,12 @@ class ScoringEngine {
         };
     }
 
-    // Nonsense Word Fluency (NWF) scoring
     scoreNWF(data, mode) {
-        // Validate and sanitize inputs
         const correctLetterSounds = Math.max(0, Math.floor(parseFloat(data?.correctLetterSounds) || 0));
         const correctWholeWords = Math.max(0, Math.floor(parseFloat(data?.correctWholeWords) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         const timeInSeconds = Math.max(0, parseFloat(data?.timeInSeconds) || 60);
         
-        // NWF has two scores: CLS (Correct Letter Sounds) and WRC (Whole Words Read Correctly)
         const cls = correctLetterSounds;
         const wrc = correctWholeWords;
         const total = cls + errors;
@@ -166,9 +153,7 @@ class ScoringEngine {
         };
     }
 
-    // Word Reading Fluency (WRF) scoring
     scoreWRF(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         const timeInSeconds = Math.max(0, parseFloat(data?.timeInSeconds) || 60);
@@ -176,7 +161,6 @@ class ScoringEngine {
         const total = correct + errors;
         const accuracy = this.calculateAccuracy(correct, total, 'WRF');
         
-        // WRF score is correct words per minute
         const score = correct;
         const rate = timeInSeconds > 0 ? (correct / timeInSeconds) * 60 : 0;
 
@@ -204,9 +188,7 @@ class ScoringEngine {
         };
     }
 
-    // Oral Reading Fluency (ORF) scoring
     scoreORF(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         const timeInSeconds = Math.max(0, parseFloat(data?.timeInSeconds) || 60);
@@ -214,10 +196,8 @@ class ScoringEngine {
         const total = correct + errors;
         const accuracy = this.calculateAccuracy(correct, total, 'ORF');
         
-        // ORF uses Words Correct Per Minute (WCPM)
         const wcpm = timeInSeconds > 0 ? Math.round((correct / timeInSeconds) * 60) : 0;
         
-        // Also calculate Words Per Minute (WPM) including errors
         const wpm = timeInSeconds > 0 ? Math.round((total / timeInSeconds) * 60) : 0;
 
         if (mode === 'simplified') {
@@ -248,9 +228,7 @@ class ScoringEngine {
         };
     }
 
-    // Maze Comprehension scoring
     scoreMaze(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const incorrect = Math.max(0, Math.floor(parseFloat(data?.incorrect) || 0));
         const unanswered = Math.max(0, Math.floor(parseFloat(data?.unanswered) || 0));
@@ -260,7 +238,6 @@ class ScoringEngine {
         const attempted = correct + incorrect;
         const accuracy = this.calculateAccuracy(correct, attempted, 'Maze');
         
-        // Maze score is number of correct selections
         const score = correct;
         const rate = timeInSeconds > 0 ? (correct / timeInSeconds) * 60 : 0;
 
@@ -294,9 +271,7 @@ class ScoringEngine {
         };
     }
 
-    // Generic scoring (fallback)
     scoreGeneric(data, mode) {
-        // Validate and sanitize inputs
         const correct = Math.max(0, Math.floor(parseFloat(data?.correct) || 0));
         const errors = Math.max(0, Math.floor(parseFloat(data?.errors) || 0));
         
@@ -328,9 +303,7 @@ class ScoringEngine {
         };
     }
 
-    // Get benchmark comparison
     getBenchmarkComparison(subtest, grade, score) {
-        // Validate inputs
         if (!subtest || typeof subtest !== 'string') {
             return null;
         }
@@ -339,13 +312,11 @@ class ScoringEngine {
             return null;
         }
         
-        // Ensure score is a number
         const numericScore = typeof score === 'number' ? score : parseFloat(score);
         if (isNaN(numericScore) || numericScore < 0) {
             return null;
         }
         
-        // Get benchmarks from DIBELS_CONTENT
         if (!window.DIBELS_CONTENT || !window.DIBELS_CONTENT.benchmarks) {
             return null;
         }
@@ -360,13 +331,11 @@ class ScoringEngine {
             return null;
         }
 
-        // Validate benchmark values exist and are numbers
         const wellAbove = typeof subtestBenchmarks.wellAboveAverage === 'number' ? subtestBenchmarks.wellAboveAverage : Infinity;
         const above = typeof subtestBenchmarks.aboveAverage === 'number' ? subtestBenchmarks.aboveAverage : Infinity;
         const average = typeof subtestBenchmarks.average === 'number' ? subtestBenchmarks.average : Infinity;
         const below = typeof subtestBenchmarks.belowAverage === 'number' ? subtestBenchmarks.belowAverage : 0;
 
-        // Determine performance level
         let level = 'Well Below Average';
         let color = 'var(--warning-color)';
 
@@ -392,9 +361,7 @@ class ScoringEngine {
         };
     }
 
-    // Format score for display
     formatScoreDisplay(scoreData, subtest, grade) {
-        // Validate input
         if (!scoreData || typeof scoreData !== 'object') {
             console.error('Invalid scoreData provided to formatScoreDisplay', { scoreData, subtest, grade });
             return '<div class="error-message"><h3>Scoring Error</h3><p>Unable to display score results. Please try calculating the score again.</p></div>';
@@ -402,11 +369,9 @@ class ScoringEngine {
 
         const benchmark = this.getBenchmarkComparison(subtest, grade, scoreData.score || scoreData.wcpm || 0);
         
-        // Get accuracy level and badge
         const accuracy = parseFloat(scoreData.accuracy) || 0;
         const accuracyInfo = this.getAccuracyLevel(accuracy);
         
-        // Safely format display text - handle undefined, null, or object values
         const displayText = this.formatValueForDisplay(scoreData.display, 'Score information not available');
         const accuracyText = this.formatValueForDisplay(scoreData.accuracy, '0');
         
@@ -449,7 +414,6 @@ class ScoringEngine {
             `;
         }
 
-        // Benchmark visualization bar
         if (benchmark && benchmark.benchmarks) {
             const bm = benchmark.benchmarks;
             const maxScore = (bm.wellAboveAverage || 100) * 1.3;
@@ -545,7 +509,6 @@ class ScoringEngine {
     calculateAccuracy(correct, total, subtest = '') {
         if (total === 0) return 0;
         
-        // Validate inputs
         if (correct < 0 || total < 0) {
             console.warn(`[${subtest}] Negative values in accuracy calculation`);
             return 0;
