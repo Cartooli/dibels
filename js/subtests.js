@@ -10,7 +10,6 @@ class SubtestManager {
         this.endTime = null;
     }
 
-    // Initialize a subtest
     initSubtest(subtest, grade, options = {}) {
         this.currentSubtest = subtest;
         this.currentGrade = grade;
@@ -30,13 +29,11 @@ class SubtestManager {
         return true;
     }
 
-    // Start the practice session
     startPractice() {
         this.startTime = Date.now();
         this.renderContent();
         this.setupEventListeners();
         
-        // Start timer if timed mode is enabled
         if (this.practiceOptions.timed) {
             window.practiceTimer.setDuration(this.currentContent.timeLimit);
             window.practiceTimer.onComplete(() => this.endPractice());
@@ -103,7 +100,6 @@ class SubtestManager {
                 break;
         }
 
-        // Show guided practice tip if enabled
         if (this.options.guided) {
             this.showGuidedTip(contentElement);
         }
@@ -149,7 +145,6 @@ class SubtestManager {
             </div>
         `;
 
-        // Add CSS for letter grid
         this.addSubtestStyles(`
             .letter-grid {
                 display: grid;
@@ -336,7 +331,6 @@ class SubtestManager {
             </div>
         `;
         
-        // Add audio controls if audio modeling is enabled
         if (this.practiceOptions.audioModeling && window.audioControls) {
             const wrfContent = container.querySelector('#wrf-content');
             if (wrfContent) {
@@ -409,7 +403,6 @@ class SubtestManager {
             </div>
         `;
         
-        // Add audio controls if audio modeling is enabled
         if (this.practiceOptions.audioModeling && window.audioControls) {
             const orfContent = container.querySelector('#orf-content');
             if (orfContent) {
@@ -417,7 +410,6 @@ class SubtestManager {
             }
         }
         
-        // Setup word tracking for WCPM
         this.setupORFTracking();
 
         this.addSubtestStyles(`
@@ -490,7 +482,6 @@ class SubtestManager {
             </div>
         `;
 
-        // Add CSS for maze passage
         this.addSubtestStyles(`
             .passage-container {
                 max-width: 800px;
@@ -673,7 +664,6 @@ class SubtestManager {
         return result;
     }
 
-    // Setup event listeners for PSF
     setupPSFEventListeners() {
         const nextWordBtn = document.getElementById('next-word');
         const showAnswerBtn = document.getElementById('show-answer');
@@ -687,7 +677,6 @@ class SubtestManager {
         }
     }
 
-    // Setup event listeners for Maze
     setupMazeEventListeners() {
         const checkAnswersBtn = document.getElementById('check-answers');
         const showAnswersBtn = document.getElementById('show-answers');
@@ -701,9 +690,7 @@ class SubtestManager {
         }
     }
 
-    // Setup general event listeners
     setupEventListeners() {
-        // Add click handlers for interactive elements
         const contentElement = document.getElementById('practice-content');
         if (contentElement) {
             contentElement.addEventListener('click', (e) => {
@@ -718,7 +705,6 @@ class SubtestManager {
         }
     }
     
-    // Setup ORF word tracking
     setupORFTracking() {
         this.orfWordIndex = 0;
         this.orfStartTime = null;
@@ -740,7 +726,6 @@ class SubtestManager {
         }
     }
     
-    // Start ORF tracking
     startORFTracking() {
         this.orfStartTime = Date.now();
         this.orfWordIndex = 0;
@@ -753,7 +738,6 @@ class SubtestManager {
         }
     }
     
-    // Stop ORF tracking
     stopORFTracking() {
         if (this.orfStartTime) {
             const duration = (Date.now() - this.orfStartTime) / 1000;
@@ -765,16 +749,13 @@ class SubtestManager {
             const correctWords = wordsRead - errorWords;
             const actualWCPM = Math.round((correctWords / duration) * 60);
             
-            // Show results
             window.dibelsApp?.showToast(`Words read: ${wordsRead} | Time: ${duration.toFixed(1)}s | WCPM: ${actualWCPM}`, 'info', 6000);
         }
     }
     
-    // Handle passage word click
     handlePassageWordClick(element) {
         const wordIndex = parseInt(element.dataset.wordIndex);
         
-        // Remove current class from all words
         document.querySelectorAll('.passage-word.current').forEach(w => {
             w.classList.remove('current');
         });
@@ -804,7 +785,6 @@ class SubtestManager {
             element.classList.remove('read');
             element.classList.add('error');
         } else if (element.classList.contains('error')) {
-            // Reset on third click
             element.classList.remove('error');
             this.orfWordIndex--;
         }
@@ -817,7 +797,6 @@ class SubtestManager {
         });
     }
 
-    // Handle letter click (LNF)
     handleLetterClick(element) {
         if (element.classList.contains('correct') ||
             element.classList.contains('incorrect') ||
@@ -838,13 +817,11 @@ class SubtestManager {
             timestamp: Date.now()
         });
 
-        // Play subtle feedback sound if available
-        if (window.audioManager && window.audioManager.playCorrectSound) {
-            try { window.audioManager.playCorrectSound(); } catch (e) { /* silent */ }
+        if (window.audioManager?.playCorrectSound) {
+            window.audioManager.playCorrectSound();
         }
     }
 
-    // Handle word click (NWF, WRF)
     handleWordClick(element) {
         if (element.classList.contains('read')) {
             return;
@@ -872,7 +849,6 @@ class SubtestManager {
         
         if (this.currentWordIndex < this.currentContent.content.length) {
             const wordData = this.currentContent.content[this.currentWordIndex];
-            // Handle both string and object formats
             const word = typeof wordData === 'string' ? wordData : wordData.word;
             currentWordElement.textContent = word;
             wordNumberElement.textContent = this.currentWordIndex + 1;
@@ -882,7 +858,6 @@ class SubtestManager {
         }
     }
 
-    // Show answer for PSF
     showPSFAnswer() {
         const currentWord = this.currentContent.content[this.currentWordIndex];
         const answerDisplay = document.getElementById('answer-display');
@@ -940,7 +915,6 @@ class SubtestManager {
         
         const lowerWord = word.toLowerCase();
         
-        // Check dictionary first
         if (phonemeDict[lowerWord]) {
             return phonemeDict[lowerWord];
         }
@@ -976,7 +950,6 @@ class SubtestManager {
         return phonemes;
     }
 
-    // Check maze answers
     checkMazeAnswers() {
         const selects = document.querySelectorAll('.maze-select');
         let correct = 0;
@@ -1064,7 +1037,6 @@ class SubtestManager {
         resultsContainer.style.display = 'block';
     }
 
-    // Show maze answers
     showMazeAnswers() {
         const selects = document.querySelectorAll('.maze-select');
         
@@ -1079,12 +1051,10 @@ class SubtestManager {
             }
         });
         
-        // Show all answers, so display message
         const total = selects.length;
         this.displayMazeResults(total, 0, 0, total);
     }
 
-    // Show scoring panel
     showScoringPanel() {
         const scoringPanel = document.getElementById('scoring-panel');
         if (scoringPanel) {
@@ -1092,14 +1062,12 @@ class SubtestManager {
         }
     }
 
-    // Add subtest-specific styles
     addSubtestStyles(css) {
         const style = document.createElement('style');
         style.textContent = css;
         document.head.appendChild(style);
     }
 
-    // Get practice results
     getResults() {
         const duration = this.endTime ? (this.endTime - this.startTime) / 1000 : 0;
         const correctResponses = this.responses.filter(r => r.response === 'correct' || r.response === 'read').length;
@@ -1116,7 +1084,6 @@ class SubtestManager {
         };
     }
     
-    // Get current practice content for printing
     getCurrentContent() {
         return {
             subtest: this.currentSubtest,
@@ -1126,7 +1093,6 @@ class SubtestManager {
         };
     }
     
-    // Reset subtest
     reset() {
         this.responses = [];
         this.startTime = null;

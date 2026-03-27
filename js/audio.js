@@ -1,4 +1,3 @@
-// Audio functionality for DIBELS Practice Lab
 class AudioManager {
     constructor() {
         this.audioContext = null;
@@ -11,12 +10,10 @@ class AudioManager {
         };
     }
 
-    // Check if audio features are supported
     checkSupport() {
         return 'speechSynthesis' in window && 'AudioContext' in window;
     }
 
-    // Initialize audio context
     init() {
         if (!this.isSupported) {
             console.warn('Audio features not supported in this browser');
@@ -33,31 +30,26 @@ class AudioManager {
         }
     }
 
-    // Speak text using speech synthesis
     speak(text, options = {}) {
         if (!this.synthesis) {
             console.warn('Speech synthesis not available');
             return;
         }
 
-        // Cancel any ongoing speech
         this.synthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Set voice properties
+
         utterance.rate = options.rate || this.voiceSettings.rate;
         utterance.pitch = options.pitch || this.voiceSettings.pitch;
         utterance.volume = options.volume || this.voiceSettings.volume;
-        
-        // Set voice if specified
+
         if (options.voice) {
             utterance.voice = options.voice;
         } else {
-            // Try to use a child-friendly voice
             const voices = this.synthesis.getVoices();
-            const childVoice = voices.find(voice => 
-                voice.name.includes('Child') || 
+            const childVoice = voices.find(voice =>
+                voice.name.includes('Child') ||
                 voice.name.includes('Kid') ||
                 voice.name.includes('Young')
             );
@@ -66,35 +58,30 @@ class AudioManager {
             }
         }
 
-        // Set language
         utterance.lang = options.lang || 'en-US';
 
-        // Add event listeners
         utterance.onstart = () => {
             if (options.onStart) options.onStart();
         };
-        
+
         utterance.onend = () => {
             if (options.onEnd) options.onEnd();
         };
-        
+
         utterance.onerror = (event) => {
             console.error('Speech synthesis error:', event.error);
             if (options.onError) options.onError(event.error);
         };
 
-        // Speak
         this.synthesis.speak(utterance);
     }
 
-    // Stop current speech
     stop() {
         if (this.synthesis) {
             this.synthesis.cancel();
         }
     }
 
-    // Speak a letter with proper pronunciation
     speakLetter(letter, options = {}) {
         const letterMap = {
             'a': 'ay', 'b': 'bee', 'c': 'see', 'd': 'dee', 'e': 'ee',
@@ -108,42 +95,35 @@ class AudioManager {
         this.speak(pronunciation, options);
     }
 
-    // Speak a word with proper pronunciation
     speakWord(word, options = {}) {
         this.speak(word, options);
     }
 
-    // Speak phonemes for PSF
     speakPhonemes(phonemes, options = {}) {
         const phonemeText = phonemes.map(p => `/${p}/`).join(' ');
         this.speak(phonemeText, options);
     }
 
-    // Speak reading passage for ORF
     speakPassage(passage, options = {}) {
         this.speak(passage, {
             ...options,
-            rate: 0.7, // Slower for reading comprehension
+            rate: 0.7,
             pitch: 1.1
         });
     }
 
-    // Play audio for correct response
     playCorrectSound() {
-        this.playTone(440, 200); // A4 note
+        this.playTone(440, 200);
     }
 
-    // Play audio for incorrect response
     playIncorrectSound() {
-        this.playTone(220, 200); // A3 note
+        this.playTone(220, 200);
     }
 
-    // Play audio for timer warning
     playWarningSound() {
-        this.playTone(880, 100); // A5 note
+        this.playTone(880, 100);
     }
 
-    // Play a tone
     playTone(frequency, duration) {
         if (!this.audioContext) return;
 
@@ -163,18 +143,15 @@ class AudioManager {
         oscillator.stop(this.audioContext.currentTime + duration / 1000);
     }
 
-    // Get available voices
     getVoices() {
         if (!this.synthesis) return [];
         return this.synthesis.getVoices();
     }
 
-    // Set voice settings
     setVoiceSettings(settings) {
         this.voiceSettings = { ...this.voiceSettings, ...settings };
     }
 
-    // Create audio model for ORF passage
     createAudioModel(passage, options = {}) {
         const words = passage.split(' ');
         let currentWordIndex = 0;
@@ -185,7 +162,7 @@ class AudioManager {
                     ...options,
                     onEnd: () => {
                         currentWordIndex++;
-                        setTimeout(speakNextWord, 100); // Small pause between words
+                        setTimeout(speakNextWord, 100);
                     }
                 });
             }
@@ -198,7 +175,6 @@ class AudioManager {
         };
     }
 
-    // Create audio model for word list
     createWordListModel(words, options = {}) {
         let currentWordIndex = 0;
 
@@ -208,7 +184,7 @@ class AudioManager {
                     ...options,
                     onEnd: () => {
                         currentWordIndex++;
-                        setTimeout(speakNextWord, 500); // Pause between words
+                        setTimeout(speakNextWord, 500);
                     }
                 });
             }
@@ -221,7 +197,6 @@ class AudioManager {
         };
     }
 
-    // Enable/disable audio features
     setEnabled(enabled) {
         if (!enabled) {
             this.stop();
@@ -229,21 +204,17 @@ class AudioManager {
         this.enabled = enabled;
     }
 
-    // Check if audio is enabled
     isEnabled() {
         return this.enabled !== false;
     }
 }
 
-// Create global audio manager instance
 window.audioManager = new AudioManager();
 
-// Initialize audio when page loads
 document.addEventListener('DOMContentLoaded', () => {
     window.audioManager.init();
 });
 
-// Add audio control buttons to the UI
 class AudioControls {
     constructor() {
         this.audioManager = window.audioManager;
@@ -251,7 +222,6 @@ class AudioControls {
         this.currentModel = null;
     }
 
-    // Add audio controls to practice content
     addAudioControls(container, content, type) {
         if (!this.audioManager.isSupported) return;
 
@@ -268,12 +238,12 @@ class AudioControls {
             </div>
             <div class="audio-settings">
                 <label>
-                    Speed: 
+                    Speed:
                     <input type="range" id="audio-speed" min="0.5" max="1.5" step="0.1" value="0.8">
                     <span id="speed-value">0.8</span>
                 </label>
                 <label>
-                    Volume: 
+                    Volume:
                     <input type="range" id="audio-volume" min="0" max="1" step="0.1" value="0.8">
                     <span id="volume-value">0.8</span>
                 </label>
@@ -284,7 +254,6 @@ class AudioControls {
         this.setupEventListeners(content, type);
     }
 
-    // Setup event listeners for audio controls
     setupEventListeners(content, type) {
         const playBtn = document.getElementById('play-audio');
         const stopBtn = document.getElementById('stop-audio');
@@ -319,26 +288,13 @@ class AudioControls {
         }
     }
 
-    // Play audio based on content type
     playAudio(content, type) {
-        this.stopAudio(); // Stop any current audio
+        this.stopAudio();
 
         switch (type) {
             case 'LNF':
-                this.currentModel = this.audioManager.createWordListModel(content, {
-                    onEnd: () => this.updatePlayButton()
-                });
-                break;
             case 'PSF':
-                this.currentModel = this.audioManager.createWordListModel(content, {
-                    onEnd: () => this.updatePlayButton()
-                });
-                break;
             case 'NWF':
-                this.currentModel = this.audioManager.createWordListModel(content, {
-                    onEnd: () => this.updatePlayButton()
-                });
-                break;
             case 'WRF':
                 this.currentModel = this.audioManager.createWordListModel(content, {
                     onEnd: () => this.updatePlayButton()
@@ -358,7 +314,6 @@ class AudioControls {
         }
     }
 
-    // Stop audio
     stopAudio() {
         if (this.currentModel) {
             this.currentModel.stop();
@@ -368,12 +323,10 @@ class AudioControls {
         this.updatePlayButton();
     }
 
-    // Repeat audio
     repeatAudio(content, type) {
         this.playAudio(content, type);
     }
 
-    // Update play button state
     updatePlayButton() {
         const playBtn = document.getElementById('play-audio');
         const stopBtn = document.getElementById('stop-audio');
@@ -390,10 +343,8 @@ class AudioControls {
     }
 }
 
-// Create global audio controls instance
 window.audioControls = new AudioControls();
 
-// Add CSS for audio controls
 const audioStyle = document.createElement('style');
 audioStyle.textContent = `
     .audio-controls {
@@ -403,48 +354,47 @@ audioStyle.textContent = `
         padding: 1rem;
         margin: 1rem 0;
     }
-    
+
     .audio-controls-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
     }
-    
+
     .audio-controls-header h4 {
         margin: 0;
         color: var(--gray-700);
     }
-    
+
     .audio-controls-buttons {
         display: flex;
         gap: 0.5rem;
     }
-    
+
     .audio-settings {
         display: flex;
         gap: 2rem;
         align-items: center;
     }
-    
+
     .audio-settings label {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         font-size: 0.9rem;
-        color: #000000; /* Fallback */
+        color: #000000;
         color: var(--text-primary);
     }
-    
-    /* Dark mode audio settings */
+
     [data-theme="dark"] .audio-settings label {
         color: var(--text-primary);
     }
-    
+
     .audio-settings input[type="range"] {
         width: 100px;
     }
-    
+
     .audio-settings span {
         font-weight: 500;
         min-width: 30px;

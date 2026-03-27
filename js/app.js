@@ -1,4 +1,3 @@
-// Main application logic for DIBELS Practice Lab
 class DIBELSApp {
     constructor() {
         this.currentGrade = null;
@@ -8,7 +7,6 @@ class DIBELSApp {
         this.init();
     }
 
-    // Initialize the application
     init() {
         this.setupEventListeners();
         this.setupGradeSelection();
@@ -23,16 +21,13 @@ class DIBELSApp {
         this.updateStreakDisplay();
     }
 
-    // Setup event listeners
     setupEventListeners() {
-        // Grade selection
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('grade-btn')) {
                 this.selectGrade(e.target.dataset.grade);
             }
         });
 
-        // Subtest selection
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('subtest-btn') || e.target.closest('.subtest-btn')) {
                 const button = e.target.classList.contains('subtest-btn') ? e.target : e.target.closest('.subtest-btn');
@@ -40,14 +35,12 @@ class DIBELSApp {
             }
         });
 
-        // Start practice
         document.addEventListener('click', (e) => {
             if (e.target.id === 'start-practice') {
                 this.startPractice();
             }
         });
 
-        // Practice controls
         document.addEventListener('click', (e) => {
             if (e.target.id === 'pause-btn') {
                 this.pausePractice();
@@ -60,14 +53,12 @@ class DIBELSApp {
             }
         });
 
-        // Scoring
         document.addEventListener('click', (e) => {
             if (e.target.id === 'calculate-score') {
                 this.calculateScore();
             }
         });
 
-        // Educator modal close and action buttons (delegation)
         document.addEventListener('click', (e) => {
             const closeBtn = e.target.closest('.close-modal, [data-close="modal"]');
             if (closeBtn) {
@@ -82,7 +73,6 @@ class DIBELSApp {
             }
         });
 
-        // Breadcrumb navigation
         document.addEventListener('click', (e) => {
             if (e.target.id === 'breadcrumb-home') {
                 // eslint-disable-next-line no-alert
@@ -97,7 +87,6 @@ class DIBELSApp {
             }
         });
 
-        // Scoring input validation and real-time accuracy
         document.addEventListener('input', (e) => {
             if (e.target.id === 'correct-responses' || e.target.id === 'errors') {
                 const correctInput = document.getElementById('correct-responses');
@@ -109,7 +98,6 @@ class DIBELSApp {
             }
         });
 
-        // Timer events
         window.practiceTimer.onTick((timeLeft) => {
             this.updateTimerDisplay(timeLeft);
         });
@@ -119,7 +107,6 @@ class DIBELSApp {
         });
     }
 
-    // Setup grade selection
     setupGradeSelection() {
         const gradeButtons = document.querySelectorAll('.grade-btn');
         gradeButtons.forEach(btn => {
@@ -129,7 +116,6 @@ class DIBELSApp {
         });
     }
 
-    // Setup practice options
     setupPracticeOptions() {
         const optionInputs = document.querySelectorAll('.option-item input');
         optionInputs.forEach(input => {
@@ -139,7 +125,6 @@ class DIBELSApp {
         });
     }
 
-    // Setup educator mode
     setupEducatorMode() {
         const educatorBtn = document.getElementById('educator-mode-btn');
         if (educatorBtn) {
@@ -149,7 +134,6 @@ class DIBELSApp {
         }
     }
 
-    // Setup footer links
     setupFooterLinks() {
         const aboutBtn = document.getElementById('about-btn');
         const settingsBtn = document.getElementById('settings-btn');
@@ -193,35 +177,28 @@ class DIBELSApp {
         }
     }
 
-    // Select grade
     selectGrade(grade) {
         this.currentGrade = grade;
         
-        // Update UI
         document.querySelectorAll('.grade-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
         document.querySelector(`[data-grade="${grade}"]`).classList.add('selected');
         
-        // Show subtest selection
         this.showSubtestSelection(grade);
         this.updateStepIndicator(2);
     }
 
-    // Show subtest selection for grade
     showSubtestSelection(grade) {
         const subtestSelection = document.getElementById('subtest-selection');
         const subtestButtons = document.getElementById('subtest-buttons');
         
         if (!subtestSelection || !subtestButtons) return;
         
-        // Get available subtests for grade
         const availableSubtests = DIBELS_CONTENT.gradeSubtests[grade] || [];
         
-        // Clear existing buttons
         subtestButtons.innerHTML = '';
         
-        // Create subtest buttons
         availableSubtests.forEach(subtest => {
             const description = DIBELS_CONTENT.subtestDescriptions[subtest];
             const button = document.createElement('button');
@@ -234,7 +211,6 @@ class DIBELSApp {
             subtestButtons.appendChild(button);
         });
         
-        // Setup previous button
         const previousBtn = document.getElementById('previous-grade-btn');
         if (previousBtn) {
             previousBtn.onclick = () => {
@@ -247,18 +223,14 @@ class DIBELSApp {
             };
         }
         
-        // Show subtest selection
         subtestSelection.classList.remove('hidden');
         
-        // Show practice options
         this.showPracticeOptions();
     }
 
-    // Select subtest
     selectSubtest(subtest) {
         this.currentSubtest = subtest;
         
-        // Update UI
         document.querySelectorAll('.subtest-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
@@ -267,12 +239,10 @@ class DIBELSApp {
             selectedButton.classList.add('selected');
         }
         
-        // Update practice options based on subtest
         this.updatePracticeOptionsForSubtest(subtest);
         this.updateStepIndicator(3);
     }
 
-    // Show practice options
     showPracticeOptions() {
         const practiceOptions = document.getElementById('practice-options');
         if (practiceOptions) {
@@ -280,7 +250,6 @@ class DIBELSApp {
         }
     }
 
-    // Update practice options for subtest
     updatePracticeOptionsForSubtest(subtest) {
         const revealAnswers = document.getElementById('reveal-answers');
         const audioModeling = document.getElementById('audio-modeling');
@@ -291,7 +260,6 @@ class DIBELSApp {
             const isDisabled = !['PSF', 'NWF'].includes(subtest);
             revealAnswers.disabled = isDisabled;
             
-            // Add/update tooltip and disabled class
             if (revealAnswersLabel) {
                 if (isDisabled) {
                     revealAnswersLabel.setAttribute('title', 'Reveal Answers is only available for Phonemic Segmentation Fluency (PSF) and Nonsense Word Fluency (NWF) subtests');
@@ -309,7 +277,6 @@ class DIBELSApp {
             const isDisabled = !['ORF', 'WRF'].includes(subtest);
             audioModeling.disabled = isDisabled;
             
-            // Add/update tooltip and disabled class
             if (audioModelingLabel) {
                 if (isDisabled) {
                     audioModelingLabel.setAttribute('title', 'Audio Modeling is only available for Oral Reading Fluency (ORF) and Word Reading Fluency (WRF) subtests');
@@ -324,25 +291,22 @@ class DIBELSApp {
         }
     }
 
-    // Update practice options
     updatePracticeOptions() {
         this.practiceOptions = {
-            timed: document.getElementById('timed-mode')?.checked || false,
-            showTimer: document.getElementById('show-timer')?.checked || false,
-            revealAnswers: document.getElementById('reveal-answers')?.checked || false,
-            audioModeling: document.getElementById('audio-modeling')?.checked || false,
-            guided: document.getElementById('guided-mode')?.checked || false
+            timed: document.getElementById('timed-mode')?.checked,
+            showTimer: document.getElementById('show-timer')?.checked,
+            revealAnswers: document.getElementById('reveal-answers')?.checked,
+            audioModeling: document.getElementById('audio-modeling')?.checked,
+            guided: document.getElementById('guided-mode')?.checked
         };
     }
 
-    // Start practice
     async startPractice() {
         if (!this.currentGrade || !this.currentSubtest) {
             this.showToast('Please select a grade and subtest first.', 'warning');
             return;
         }
         
-        // Add loading spinner to button
         const startBtn = document.getElementById('start-practice');
         if (startBtn) {
             const originalText = startBtn.innerHTML;
@@ -350,15 +314,10 @@ class DIBELSApp {
             startBtn.disabled = true;
             startBtn.innerHTML = '<span class="button-spinner"></span> Starting...';
             
-            // Show loading
             this.showLoading('Preparing practice session...');
-            
+
             this.updatePracticeOptions();
-            
-            // Small delay to show loading animation
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            // Initialize subtest
+
             const success = window.subtestManager.initSubtest(
                 this.currentSubtest,
                 this.currentGrade,
@@ -374,39 +333,28 @@ class DIBELSApp {
                 return;
             }
             
-            // Show practice interface
             this.showPracticeInterface();
             
-            // Start practice
             window.subtestManager.startPractice();
             
             this.isPracticeActive = true;
             
-            // Hide loading and restore button
             this.hideLoading();
             startBtn.classList.remove('loading');
             startBtn.disabled = false;
             startBtn.innerHTML = originalText;
             
-            // Show success animation
-            this.showToast('Practice session started!', 'success', 3000);
-            
-            // Update accessibility
             window.accessibilityManager.setupPracticeAccessibility();
             window.accessibilityManager.updateFocusableElements();
         }
     }
 
-    // Show practice interface
     showPracticeInterface() {
-        // Hide welcome section
         document.getElementById('welcome-section').classList.add('hidden');
 
-        // Show practice section
         const practiceSection = document.getElementById('practice-section');
         practiceSection.classList.remove('hidden');
 
-        // Update practice title
         const practiceTitle = document.getElementById('practice-title');
         const practiceSubtitle = document.getElementById('practice-subtitle');
         const description = DIBELS_CONTENT.subtestDescriptions[this.currentSubtest];
@@ -418,7 +366,6 @@ class DIBELSApp {
             practiceSubtitle.textContent = `Grade ${this.currentGrade} - ${description.description}`;
         }
 
-        // Update breadcrumb navigation
         const breadcrumbGrade = document.getElementById('breadcrumb-grade');
         const breadcrumbSubtest = document.getElementById('breadcrumb-subtest');
         if (breadcrumbGrade) {
@@ -428,7 +375,6 @@ class DIBELSApp {
             breadcrumbSubtest.textContent = description.name;
         }
         
-        // Show/hide timer based on options
         const timerContainer = document.querySelector('.timer-container');
         if (timerContainer) {
             if (this.practiceOptions.timed) {
@@ -438,10 +384,8 @@ class DIBELSApp {
             }
         }
         
-        // Add print button
         this.addPrintButton();
         
-        // Focus practice content for accessibility
         setTimeout(() => {
             const practiceContent = document.getElementById('practice-content');
             if (practiceContent) {
@@ -456,7 +400,6 @@ class DIBELSApp {
         }, 100);
     }
 
-    // Pause practice
     pausePractice() {
         if (window.practiceTimer.getIsRunning()) {
             window.practiceTimer.pause();
@@ -493,7 +436,6 @@ class DIBELSApp {
         window.accessibilityManager?.announce('Practice resumed.');
     }
 
-    // Reset practice
     resetPractice() {
         this.showConfirmationDialog(
             'Reset Practice Session',
@@ -506,41 +448,32 @@ class DIBELSApp {
         );
     }
 
-    // New practice set
     newPracticeSet() {
         this.startPractice();
     }
 
-    // Back to menu
     backToMenu(skipHashUpdate) {
-        // Stop any ongoing practice
         window.practiceTimer.stop();
         window.audioManager.stop();
         this.hidePausedOverlay();
         
-        // Reset state
         this.currentGrade = null;
         this.currentSubtest = null;
         this.isPracticeActive = false;
         
-        // Hide practice section
         document.getElementById('practice-section').classList.add('hidden');
         
-        // Hide other sections
         document.getElementById('educator-section')?.classList.add('hidden');
         document.getElementById('settings-section')?.classList.add('hidden');
         document.getElementById('progress-section')?.classList.add('hidden');
         
-        // Show welcome section
         document.getElementById('welcome-section').classList.remove('hidden');
         
-        // Reset UI
         document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('selected'));
         document.querySelectorAll('.subtest-btn').forEach(btn => btn.classList.remove('selected'));
         document.getElementById('subtest-selection').classList.add('hidden');
         document.getElementById('practice-options').classList.add('hidden');
         
-        // Update bottom nav
         this.updateBottomNavActive('home');
         this.updateStepIndicator(1);
         if (!skipHashUpdate) this.replaceHash('home');
@@ -548,16 +481,13 @@ class DIBELSApp {
 
 
     backToSubtestSelection() {
-        // Stop any ongoing practice
         window.practiceTimer.stop();
         window.audioManager.stop();
         this.hidePausedOverlay();
 
-        // Keep current grade, clear subtest
         this.currentSubtest = null;
         this.isPracticeActive = false;
 
-        // Hide practice section
         document.getElementById('practice-section').classList.add('hidden');
 
         // Show welcome section with subtest selection visible
@@ -569,14 +499,11 @@ class DIBELSApp {
         this.updateStepIndicator(2);
     }
 
-    // End practice
     endPractice() {
         this.isPracticeActive = false;
         
-        // Get results
         const results = window.subtestManager.getResults();
         
-        // Show scoring panel with animation (skip if reduced motion preferred)
         const scoringPanel = document.getElementById('scoring-panel');
         scoringPanel.classList.remove('hidden');
         const reducedMotion = document.body.classList.contains('reduced-motion') ||
@@ -589,21 +516,16 @@ class DIBELSApp {
             setTimeout(() => scoringPanel.classList.remove('success-celebration'), 600);
         }
         
-        // Auto-scroll scoring panel into view
         setTimeout(() => {
             scoringPanel.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
         }, reducedMotion ? 0 : 450);
 
-        // Update accessibility
         window.accessibilityManager.setupScoringAccessibility();
         
-        // Announce completion
         window.accessibilityManager.announce('Practice session completed. Please enter your scoring information.');
         
-        // Play completion sound
         window.audioManager.playCorrectSound();
 
-        // Show celebration overlay
         this.showCelebration();
     }
 
@@ -616,7 +538,6 @@ class DIBELSApp {
         const message = overlay.querySelector('.celebration-message');
         const detail = overlay.querySelector('.celebration-detail');
 
-        // Randomize encouraging messages
         const celebrations = [
             { emoji: '\u2B50', msg: 'Great Work!', detail: 'Keep practicing to build fluency!' },
             { emoji: '\uD83C\uDF1F', msg: 'Well Done!', detail: 'You\'re making great progress!' },
@@ -631,13 +552,11 @@ class DIBELSApp {
 
         overlay.classList.remove('hidden');
 
-        // Auto-dismiss after 2.5 seconds
         setTimeout(() => {
             overlay.classList.add('hidden');
         }, reducedMotion ? 1500 : 2500);
     }
 
-    // Calculate score
     calculateScore() {
         const correctInput = document.getElementById('correct-responses');
         const errorsInput = document.getElementById('errors');
@@ -645,7 +564,6 @@ class DIBELSApp {
         
         if (!correctInput || !errorsInput || !scoreResult) return;
         
-        // Validate inputs
         const validationResult = this.validateScoreInputs(correctInput, errorsInput);
         if (!validationResult.isValid) {
             scoreResult.innerHTML = `<div class="error-message">${validationResult.message}</div>`;
@@ -661,10 +579,8 @@ class DIBELSApp {
             return;
         }
         
-        // Get actual time used from timer
         const timeUsed = this.getActualTimeUsed();
         
-        // Use scoring engine for accurate DIBELS scoring
         const scoreData = window.scoringEngine.calculateScore(
             this.currentSubtest,
             { 
@@ -675,26 +591,24 @@ class DIBELSApp {
             { mode: 'detailed' }
         );
         
-        // Display formatted score with benchmark comparison
         const scoreHTML = window.scoringEngine.formatScoreDisplay(
             scoreData,
             this.currentSubtest,
             this.currentGrade
         );
 
-        // Build error feedback section
         let feedbackHTML = '';
         const accuracy = parseFloat(scoreData.accuracy) || 0;
         if (errors > 0) {
             let suggestion = '';
             if (accuracy >= 95) {
-                suggestion = 'Excellent accuracy! A few minor errors — keep up the great work.';
+                suggestion = 'Nearly perfect — keep it up.';
             } else if (accuracy >= 85) {
-                suggestion = 'Strong performance! Focus on the tricky items to push even higher.';
+                suggestion = 'Strong result. Focus on tricky items to improve further.';
             } else if (accuracy >= 70) {
-                suggestion = 'Good effort! Consider using Guided Practice mode to build confidence on challenging items.';
+                suggestion = 'Try Guided Practice mode for challenging items.';
             } else {
-                suggestion = 'Keep practicing! Try a slower, untimed session with Guided Practice enabled to strengthen foundational skills.';
+                suggestion = 'Try a slower, untimed session with Guided Practice enabled.';
             }
             feedbackHTML = `<div style="margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--bg-tertiary);border-radius:var(--radius-md);font-size:var(--font-size-sm);">
                 <strong>Feedback:</strong> ${errors} error${errors !== 1 ? 's' : ''} out of ${total} items. ${suggestion}
@@ -706,7 +620,6 @@ class DIBELSApp {
 
         scoreResult.innerHTML = scoreHTML + '<span class="success-checkmark">✓</span>' + feedbackHTML;
         
-        // Add success animation to result (skip if reduced motion preferred)
         const reduceMotion = document.body.classList.contains('reduced-motion') ||
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!reduceMotion) {
@@ -714,15 +627,11 @@ class DIBELSApp {
             setTimeout(() => scoreResult.classList.remove('success-celebration'), 600);
         }
         
-        // Enhanced accessibility announcement
         if (window.accessibilityManager && window.accessibilityManager.announceAccuracy) {
             window.accessibilityManager.announceAccuracy(parseFloat(scoreData.accuracy), scoreData);
         } else {
             const accuracyLevel = window.scoringEngine.getAccuracyLevel(parseFloat(scoreData.accuracy));
-            // Safely format display text
-            const displayText = (scoreData && typeof scoreData.display === 'string') 
-                ? scoreData.display 
-                : 'Score calculated';
+            const displayText = scoreData?.display ?? 'Score calculated';
             const accuracyText = scoreData?.accuracy ?? '0';
             window.accessibilityManager?.announce(
                 `Practice completed. ${displayText}. Accuracy: ${accuracyText} percent. ${accuracyLevel.label}.`
@@ -730,26 +639,21 @@ class DIBELSApp {
         }
     }
 
-    // Get actual time used in practice
     getActualTimeUsed() {
         if (window.practiceTimer && this.practiceOptions.timed) {
-            // Get elapsed time from timer
             return window.practiceTimer.getTimeElapsed();
         }
-        // For untimed practice, estimate based on actual elapsed time
         if (window.practiceTimer && window.practiceTimer.getActualElapsedTime() > 0) {
             return Math.round(window.practiceTimer.getActualElapsedTime() / 1000);
         }
-        return 60; // Default to 60 seconds if timer not available
+        return 60;
     }
 
-    // Real-time accuracy calculation
     updateRealTimeAccuracy(correctInput, errorsInput) {
         const correct = parseInt(correctInput.value) || 0;
         const errors = parseInt(errorsInput.value) || 0;
         const total = correct + errors;
         
-        // Get or create accuracy indicator
         let indicator = document.getElementById('accuracy-indicator');
         if (!indicator) {
             return; // Will be created in HTML
@@ -794,12 +698,10 @@ class DIBELSApp {
         }
     }
 
-    // Validate score inputs
     validateScoreInputs(correctInput, errorsInput) {
         const correctError = document.getElementById('correct-responses-error');
         const errorsError = document.getElementById('errors-error');
         
-        // Clear previous errors
         if (correctError) correctError.textContent = '';
         if (errorsError) errorsError.textContent = '';
         correctInput.setAttribute('aria-invalid', 'false');
@@ -808,7 +710,6 @@ class DIBELSApp {
         const correct = correctInput.value.trim();
         const errors = errorsInput.value.trim();
         
-        // Check if empty
         if (correct === '' && errors === '') {
             return {
                 isValid: false,
@@ -816,7 +717,6 @@ class DIBELSApp {
             };
         }
         
-        // Validate correct responses
         if (correct !== '') {
             const correctNum = parseInt(correct);
             if (isNaN(correctNum)) {
@@ -836,7 +736,6 @@ class DIBELSApp {
             }
         }
 
-        // Validate errors
         if (errors !== '') {
             const errorsNum = parseInt(errors);
             if (isNaN(errorsNum)) {
@@ -856,7 +755,6 @@ class DIBELSApp {
             }
         }
         
-        // Add helpful accuracy warning for low accuracy
         if (correct !== '' && errors !== '') {
             const correctNum = parseInt(correct);
             const errorsNum = parseInt(errors);
@@ -883,7 +781,6 @@ class DIBELSApp {
         return { isValid: true };
     }
 
-    // Update timer display
     updateTimerDisplay(timeLeft) {
         const timer = document.getElementById('timer');
         if (timer) {
@@ -901,7 +798,6 @@ class DIBELSApp {
         }
     }
 
-    // Add print button
     addPrintButton() {
         const practiceControls = document.querySelector('.practice-controls');
         if (practiceControls && !document.getElementById('print-btn')) {
@@ -916,22 +812,17 @@ class DIBELSApp {
         }
     }
 
-    // Show educator mode
     showEducatorMode(skipHashUpdate) {
-        // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
         
-        // Show educator section
         document.getElementById('educator-section').classList.remove('hidden');
         
-        // Setup educator modules
         this.setupEducatorModules();
         this.updateBottomNavActive('educator');
         if (!skipHashUpdate) this.replaceHash('educator');
     }
 
-    // Setup educator modules
     setupEducatorModules() {
         const moduleButtons = document.querySelectorAll('.module-btn');
         moduleButtons.forEach(btn => {
@@ -942,7 +833,6 @@ class DIBELSApp {
         });
     }
 
-    // Show educator module
     showEducatorModule(module) {
         switch (module) {
             case 'administration':
@@ -957,7 +847,6 @@ class DIBELSApp {
         }
     }
 
-    // Show administration guide
     showAdministrationGuide() {
         const guide = `
             <div class="educator-content">
@@ -1015,7 +904,6 @@ class DIBELSApp {
         this.showEducatorModal(guide);
     }
 
-    // Show scoring practice
     showScoringPractice() {
         const practice = `
             <div class="educator-content">
@@ -1079,7 +967,6 @@ class DIBELSApp {
         this.showEducatorModal(practice);
     }
 
-    // Show error analysis
     showErrorAnalysis() {
         const analysis = `
             <div class="educator-content">
@@ -1134,7 +1021,6 @@ class DIBELSApp {
         this.showEducatorModal(analysis);
     }
 
-    // Show educator modal
     showEducatorModal(content) {
         const modal = document.createElement('div');
         modal.className = 'educator-modal';
@@ -1146,7 +1032,6 @@ class DIBELSApp {
         
         document.body.appendChild(modal);
         
-        // Add modal styles
         const style = document.createElement('style');
         style.textContent = `
             .educator-modal {
@@ -1213,46 +1098,35 @@ class DIBELSApp {
         document.head.appendChild(style);
     }
 
-    // Show settings
     showSettings(skipHashUpdate) {
-        // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
         document.getElementById('educator-section').classList.add('hidden');
         document.getElementById('progress-section').classList.add('hidden');
         
-        // Show settings section
         document.getElementById('settings-section').classList.remove('hidden');
         
-        // Setup settings event listeners
         this.setupSettingsEventListeners();
         
-        // Load current settings
         this.loadSettings();
         this.updateBottomNavActive('settings');
         if (!skipHashUpdate) this.replaceHash('settings');
     }
 
-    // Show progress
     showProgress(skipHashUpdate) {
-        // Hide other sections
         document.getElementById('welcome-section').classList.add('hidden');
         document.getElementById('practice-section').classList.add('hidden');
         document.getElementById('educator-section').classList.add('hidden');
         document.getElementById('settings-section').classList.add('hidden');
         
-        // Show progress section
         document.getElementById('progress-section').classList.remove('hidden');
         
-        // Load progress data
         this.loadProgressData();
         this.updateBottomNavActive('progress');
         if (!skipHashUpdate) this.replaceHash('progress');
     }
 
-    // Setup settings event listeners
     setupSettingsEventListeners() {
-        // Font size
         const fontSizeSelect = document.getElementById('font-size-select');
         if (fontSizeSelect) {
             fontSizeSelect.addEventListener('change', (e) => {
@@ -1260,7 +1134,6 @@ class DIBELSApp {
             });
         }
 
-        // High contrast
         const highContrastToggle = document.getElementById('high-contrast-toggle');
         if (highContrastToggle) {
             highContrastToggle.addEventListener('change', (e) => {
@@ -1268,7 +1141,6 @@ class DIBELSApp {
             });
         }
 
-        // Reduced motion
         const reducedMotionToggle = document.getElementById('reduced-motion-toggle');
         if (reducedMotionToggle) {
             reducedMotionToggle.addEventListener('change', (e) => {
@@ -1276,7 +1148,6 @@ class DIBELSApp {
             });
         }
 
-        // Default timer
         const defaultTimer = document.getElementById('default-timer');
         if (defaultTimer) {
             defaultTimer.addEventListener('change', (e) => {
@@ -1284,7 +1155,6 @@ class DIBELSApp {
             });
         }
 
-        // Auto-save
         const autoSaveToggle = document.getElementById('auto-save-toggle');
         if (autoSaveToggle) {
             autoSaveToggle.addEventListener('change', (e) => {
@@ -1292,7 +1162,6 @@ class DIBELSApp {
             });
         }
 
-        // Sound effects
         const soundEffectsToggle = document.getElementById('sound-effects-toggle');
         if (soundEffectsToggle) {
             soundEffectsToggle.addEventListener('change', (e) => {
@@ -1300,7 +1169,6 @@ class DIBELSApp {
             });
         }
 
-        // Data management
         const exportDataBtn = document.getElementById('export-data-btn');
         const importDataBtn = document.getElementById('import-data-btn');
         const importFile = document.getElementById('import-file');
@@ -1338,41 +1206,34 @@ class DIBELSApp {
         }
     }
 
-    // Settings methods
     loadSettings() {
         const settings = window.progressTracker.getSettings();
         
-        // Font size
         const fontSizeSelect = document.getElementById('font-size-select');
         if (fontSizeSelect && settings.fontSize) {
             fontSizeSelect.value = settings.fontSize;
         }
 
-        // High contrast
         const highContrastToggle = document.getElementById('high-contrast-toggle');
         if (highContrastToggle) {
             highContrastToggle.checked = settings.highContrast || false;
         }
 
-        // Reduced motion
         const reducedMotionToggle = document.getElementById('reduced-motion-toggle');
         if (reducedMotionToggle) {
             reducedMotionToggle.checked = settings.reducedMotion || false;
         }
 
-        // Default timer
         const defaultTimer = document.getElementById('default-timer');
         if (defaultTimer) {
             defaultTimer.value = settings.defaultTimer || 60;
         }
 
-        // Auto-save
         const autoSaveToggle = document.getElementById('auto-save-toggle');
         if (autoSaveToggle) {
             autoSaveToggle.checked = settings.autoSave !== false;
         }
 
-        // Sound effects
         const soundEffectsToggle = document.getElementById('sound-effects-toggle');
         if (soundEffectsToggle) {
             soundEffectsToggle.checked = settings.soundEffects !== false;
@@ -1421,7 +1282,7 @@ class DIBELSApp {
     async importData(file) {
         try {
             await window.progressTracker.importData(file);
-            this.showToast('Data imported successfully!', 'success');
+            this.showToast('Data imported.', 'success');
             this.loadSettings();
             this.loadProgressData();
         } catch (error) {
@@ -1435,42 +1296,34 @@ class DIBELSApp {
             'Are you sure you want to clear all data? This will permanently delete all progress, sessions, and settings. This action cannot be undone.',
             () => {
                 window.progressTracker.clearAllData();
-                this.showToast('All data cleared successfully!', 'success');
+                this.showToast('All data cleared.', 'success');
                 this.loadSettings();
                 this.loadProgressData();
             }
         );
     }
 
-    // Progress methods
     async loadProgressData() {
         const analytics = await window.progressTracker.getAnalytics();
 
-        // Overall stats
         document.getElementById('total-sessions').textContent = analytics.totalSessions;
         document.getElementById('total-time').textContent = Math.round(analytics.totalTime / 60000) + ' minutes';
         document.getElementById('average-score').textContent = Math.round(analytics.averageScore);
         document.getElementById('average-accuracy').textContent = Math.round(analytics.averageAccuracy) + '%';
 
-        // Recent sessions
         this.displayRecentSessions(analytics.recentSessions);
 
-        // Grade stats
         this.displayGradeStats(analytics.byGrade);
 
-        // Score trend chart (SVG)
         this.renderScoreTrendChart(analytics.recentSessions);
 
-        // Session history with filters
         this.renderSessionHistory();
 
-        // Setup filter listeners
         const gradeFilter = document.getElementById('history-grade-filter');
         const subtestFilter = document.getElementById('history-subtest-filter');
         if (gradeFilter) gradeFilter.onchange = () => this.renderSessionHistory();
         if (subtestFilter) subtestFilter.onchange = () => this.renderSessionHistory();
 
-        // Print report button
         const printBtn = document.getElementById('print-progress-btn');
         if (printBtn) {
             printBtn.onclick = () => this.printProgressReport(analytics);
@@ -1541,7 +1394,6 @@ class DIBELSApp {
         `;
     }
 
-    // Toast notification system
     showToast(message, type = 'info', duration = 5000) {
         let toastContainer = document.querySelector('.toast-container');
         if (!toastContainer) {
@@ -1570,12 +1422,10 @@ class DIBELSApp {
         
         toastContainer.appendChild(toast);
         
-        // Close button handler
         toast.querySelector('.toast-close').addEventListener('click', () => {
             toast.remove();
         });
         
-        // Auto-remove after duration
         if (duration > 0) {
             setTimeout(() => {
                 if (toast.parentElement) {
@@ -1585,13 +1435,11 @@ class DIBELSApp {
             }, duration);
         }
         
-        // Announce to screen readers
         window.accessibilityManager?.announce(message);
         
         return toast;
     }
     
-    // Show loading overlay
     showLoading(message = 'Loading...') {
         const overlay = document.createElement('div');
         overlay.id = 'loading-overlay';
@@ -1606,7 +1454,6 @@ class DIBELSApp {
         return overlay;
     }
     
-    // Hide loading overlay
     hideLoading() {
         const overlay = document.getElementById('loading-overlay');
         if (overlay) {
@@ -1614,7 +1461,6 @@ class DIBELSApp {
         }
     }
     
-    // Show about
     showAbout() {
         const about = `
             <div class="about-content">
@@ -1648,7 +1494,6 @@ class DIBELSApp {
         this.showEducatorModal(about);
     }
 
-    // Setup tutorial system
     setupTutorial() {
         const tutorialBtn = document.getElementById('show-tutorial-btn');
         const tutorialOverlay = document.getElementById('tutorial-overlay');
@@ -1771,7 +1616,6 @@ class DIBELSApp {
     }
 
 
-    // Setup keyboard shortcuts
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             // Don't trigger shortcuts when typing in inputs
@@ -1845,7 +1689,6 @@ class DIBELSApp {
         }
     }
 
-    // Setup bottom navigation
     setupBottomNavigation() {
         const homeBtn = document.getElementById('bottom-nav-home');
         const educatorBtn = document.getElementById('bottom-nav-educator');
@@ -1881,7 +1724,6 @@ class DIBELSApp {
         }
     }
 
-    // Update bottom nav active state
     updateBottomNavActive(active) {
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
             item.classList.remove('active');
@@ -1927,7 +1769,6 @@ class DIBELSApp {
         window.addEventListener('popstate', () => this.applySectionFromHash());
     }
 
-    // Update grade buttons with subtest counts
     updateGradeButtonsWithCounts() {
         document.querySelectorAll('.grade-btn').forEach(btn => {
             const grade = btn.dataset.grade;
@@ -1943,7 +1784,6 @@ class DIBELSApp {
         });
     }
 
-    // Show confirmation dialog
     showConfirmationDialog(title, message, onConfirm) {
         const dialog = document.createElement('div');
         dialog.className = 'confirmation-dialog';
@@ -1977,7 +1817,6 @@ class DIBELSApp {
             if (e.target === dialog) close();
         });
         
-        // Focus on cancel button
         cancelBtn.focus();
     }
 
@@ -2030,8 +1869,8 @@ class DIBELSApp {
         const container = document.getElementById('session-history-list');
         if (!container) return;
 
-        const gradeFilter = document.getElementById('history-grade-filter')?.value || '';
-        const subtestFilter = document.getElementById('history-subtest-filter')?.value || '';
+        const gradeFilter = document.getElementById('history-grade-filter')?.value;
+        const subtestFilter = document.getElementById('history-subtest-filter')?.value;
 
         const filters = {};
         if (gradeFilter) filters.grade = gradeFilter;
