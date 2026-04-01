@@ -104,7 +104,7 @@ class SubtestManager {
         }
 
         // Show guided practice tip if enabled
-        if (this.options.guided) {
+        if (this.practiceOptions.guided) {
             this.showGuidedTip(contentElement);
         }
     }
