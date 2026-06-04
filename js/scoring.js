@@ -350,12 +350,16 @@ class ScoringEngine {
             return null;
         }
 
-        const gradeBenchmarks = window.DIBELS_CONTENT.benchmarks[grade];
+        // Grades 7 and 8 share a combined '7-8' benchmark key
+        const gradeKey = (grade === '7' || grade === '8') ? '7-8' : grade;
+        const gradeBenchmarks = window.DIBELS_CONTENT.benchmarks[gradeKey];
         if (!gradeBenchmarks || typeof gradeBenchmarks !== 'object') {
             return null;
         }
 
-        const subtestBenchmarks = gradeBenchmarks[subtest];
+        // NWF is stored as 'NWF-CLS' (correct letter sounds, the primary metric)
+        const subtestKey = subtest === 'NWF' ? 'NWF-CLS' : subtest;
+        const subtestBenchmarks = gradeBenchmarks[subtestKey];
         if (!subtestBenchmarks || typeof subtestBenchmarks !== 'object') {
             return null;
         }
@@ -400,7 +404,7 @@ class ScoringEngine {
             return '<div class="error-message"><h3>Scoring Error</h3><p>Unable to display score results. Please try calculating the score again.</p></div>';
         }
 
-        const benchmark = this.getBenchmarkComparison(subtest, grade, scoreData.score || scoreData.wcpm || 0);
+        const benchmark = this.getBenchmarkComparison(subtest, grade, scoreData.score || scoreData.wcpm || scoreData.cls || 0);
         
         // Get accuracy level and badge
         const accuracy = parseFloat(scoreData.accuracy) || 0;
@@ -453,7 +457,7 @@ class ScoringEngine {
         if (benchmark && benchmark.benchmarks) {
             const bm = benchmark.benchmarks;
             const maxScore = (bm.wellAboveAverage || 100) * 1.3;
-            const rawScore = scoreData.score || scoreData.wcpm || 0;
+            const rawScore = scoreData.score || scoreData.wcpm || scoreData.cls || 0;
             const pct = Math.min((rawScore / maxScore) * 100, 100);
             let levelClass = 'level-below';
             if (rawScore >= (bm.wellAboveAverage || Infinity)) levelClass = 'level-above';
