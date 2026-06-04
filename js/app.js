@@ -665,13 +665,20 @@ class DIBELSApp {
         const timeUsed = this.getActualTimeUsed();
         
         // Use scoring engine for accurate DIBELS scoring
+        // NWF scoring reads correctLetterSounds (CLS); the panel's "correct
+        // responses" field maps to CLS for this subtest.
+        const scoreInput = {
+            correct,
+            errors,
+            timeInSeconds: timeUsed
+        };
+        if (this.currentSubtest === 'NWF') {
+            scoreInput.correctLetterSounds = correct;
+        }
+
         const scoreData = window.scoringEngine.calculateScore(
             this.currentSubtest,
-            { 
-                correct, 
-                errors,
-                timeInSeconds: timeUsed
-            },
+            scoreInput,
             { mode: 'detailed' }
         );
         

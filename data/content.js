@@ -862,6 +862,11 @@ const ContentGenerator = {
     }
 };
 
+// Expose on window for browser modules (scoring.js reads window.DIBELS_CONTENT)
+if (typeof window !== 'undefined') {
+    window.DIBELS_CONTENT = DIBELS_CONTENT;
+}
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { DIBELS_CONTENT, ContentGenerator };
