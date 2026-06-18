@@ -1,6 +1,6 @@
 # DIBELS Practice Lab
 
-📚 **DIBELS practice. No sign-up. No paywall. K–8.**
+**DIBELS practice. No sign-up. No paywall. K-8.**
 
 DIBELS Practice Lab is a free, open-source web application designed to help educators, interventionists, and families practice DIBELS 8 subtests with students in grades K-8.
 
@@ -8,7 +8,7 @@ Use this when you want unlimited DIBELS-style practice with no account, optional
 
 ## Features
 
-### 🧠 Skill-Based Practice by Grade and Subtest
+### Skill-Based Practice by Grade and Subtest
 - **Grade filters**: K-8
 - **Subtests**:
   - Letter Naming Fluency (LNF)
@@ -20,18 +20,18 @@ Use this when you want unlimited DIBELS-style practice with no account, optional
 - Toggle between timed and untimed practice
 - Option to reveal answers and explanations
 
-### ⏱️ Timer & Scoring Mode
+### Timer & Scoring Mode
 - Built-in 60-second timer
 - Option to hide/show timer
 - Live word counter / error tracker
 - **Scoring is manual:** you enter scores; the app provides the timer and optional score entry.
 
-### 🎧 Read-Aloud + Audio Modeling
+### Read-Aloud + Audio Modeling
 - Audio models of fluent readers for ORF and WRF
 - Tap-to-hear phoneme segmentation models
 - Error analysis: examples of common student errors per subtest
 
-### 📋 Printable & On-Screen Practice Sheets
+### Printable & On-Screen Practice Sheets
 - Generate or randomize printable student-facing prompts
 - Printable PDF or in-browser version of:
   - Letter lists
@@ -40,7 +40,7 @@ Use this when you want unlimited DIBELS-style practice with no account, optional
   - Oral reading passages
   - Maze cloze activities
 
-### 📚 Educator Mode
+### Educator Mode
 - Brief training videos on how to administer and score each subtest
 - Simulated student responses (for practice scoring)
 - Miscue analysis and scoring practice module (with answer keys)

@@ -1,4 +1,3 @@
-// Timer functionality for DIBELS Practice Lab
 class Timer {
     constructor() {
         this.timeLeft = 60;
@@ -12,35 +11,30 @@ class Timer {
         };
     }
 
-    // Set the timer duration
     setDuration(seconds) {
         this.timeLeft = seconds;
         this.initialDuration = seconds;
         this.updateDisplay();
     }
 
-    // Start the timer
     start() {
         if (this.isRunning) return;
-        
-        // Record start time
+
         if (!this.startTime) {
             this.startTime = Date.now();
         }
-        
+
         this.isRunning = true;
         this.intervalId = setInterval(() => {
             this.timeLeft--;
             this.updateDisplay();
-            
-            // Call all onTick callbacks
+
             this.callbacks.onTick.forEach(callback => {
                 if (callback) callback(this.timeLeft);
             });
-            
+
             if (this.timeLeft <= 0) {
                 this.stop();
-                // Call all onComplete callbacks
                 this.callbacks.onComplete.forEach(callback => {
                     if (callback) callback();
                 });
@@ -48,7 +42,6 @@ class Timer {
         }, 1000);
     }
 
-    // Pause the timer
     pause() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
@@ -57,14 +50,12 @@ class Timer {
         this.isRunning = false;
     }
 
-    // Stop the timer
     stop() {
         this.pause();
         this.timeLeft = 0;
         this.updateDisplay();
     }
 
-    // Reset the timer
     reset(seconds = 60) {
         this.timeLeft = seconds;
         this.initialDuration = seconds;
@@ -74,13 +65,11 @@ class Timer {
         this.updateDisplay();
     }
 
-    // Update the timer display
     updateDisplay() {
         const timerElement = document.getElementById('timer');
         if (timerElement) {
             timerElement.textContent = this.timeLeft;
-            
-            // Add visual warning when time is running low
+
             if (this.timeLeft <= 10) {
                 timerElement.classList.add('warning');
             } else {
@@ -89,7 +78,6 @@ class Timer {
         }
     }
 
-    // Set callback functions
     onTick(callback) {
         this.callbacks.onTick.push(callback);
     }
@@ -97,29 +85,24 @@ class Timer {
     onComplete(callback) {
         this.callbacks.onComplete.push(callback);
     }
-    
-    // Clear all callbacks
+
     clearCallbacks() {
         this.callbacks.onTick = [];
         this.callbacks.onComplete = [];
     }
 
-    // Get current time left
     getTimeLeft() {
         return this.timeLeft;
     }
 
-    // Check if timer is running
     getIsRunning() {
         return this.isRunning;
     }
 
-    // Get elapsed time in seconds
     getTimeElapsed() {
         return this.initialDuration - this.timeLeft;
     }
 
-    // Get elapsed time from start in milliseconds
     getActualElapsedTime() {
         if (this.startTime) {
             return Date.now() - this.startTime;
@@ -127,12 +110,10 @@ class Timer {
         return 0;
     }
 
-    // Get initial duration
     getInitialDuration() {
         return this.initialDuration;
     }
 
-    // Format time as MM:SS
     formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
@@ -140,17 +121,15 @@ class Timer {
     }
 }
 
-// Create global timer instance
 window.practiceTimer = new Timer();
 
-// Add CSS for timer warning state
 const style = document.createElement('style');
 style.textContent = `
     .timer.warning {
         color: var(--accent-color) !important;
         animation: pulse 1s infinite;
     }
-    
+
     @keyframes pulse {
         0% { transform: scale(1); }
         50% { transform: scale(1.1); }

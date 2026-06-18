@@ -1,4 +1,3 @@
-// DIBELS Practice Lab - Progress Tracking System
 class ProgressTracker {
     constructor() {
         this.storageKey = 'dibels-practice-progress';
@@ -80,11 +79,10 @@ class ProgressTracker {
         };
         
         request.onblocked = () => {
-            console.warn('IndexedDB open request blocked. Please close other tabs with this application to enable full functionality.');
+            console.warn('IndexedDB blocked. Close other tabs with this app.');
         };
     }
 
-    // Session Management
     startSession(grade, subtest, options = {}) {
         const session = {
             id: Date.now(),
